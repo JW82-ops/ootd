@@ -1,0 +1,17 @@
+{
+  "name": "OOTD · Out Of Town Day",
+  "short_name": "OOTD",
+  "description": "도시를 입는 여행 매거진 — 날씨 맞춤 룩, 뷰티 키트, 하루 코스, 짐 체크리스트, 나만의 zine.",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3EAD8",
+  "theme_color": "#F3EAD8",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -92,6 +92,15 @@
     return `${m}월 ${dd}일`;
   }
 
+  function dday(city) {
+    if (!state.date) return null;
+    const a = Date.UTC(+state.date.slice(0, 4), +state.date.slice(5, 7) - 1, +state.date.slice(8, 10));
+    const t = todayIn(city.tz);
+    const b = Date.UTC(+t.slice(0, 4), +t.slice(5, 7) - 1, +t.slice(8, 10));
+    const n = Math.round((a - b) / 86400000);
+    return { n, label: n > 0 ? 'D-' + n : n === 0 ? 'D-DAY' : 'D+' + (-n) };
+  }
+
   function toast(msg) {
     const t = document.getElementById('toast');
     if (!t) return;
@@ -266,7 +275,19 @@
     <div style="display:flex;flex-direction:column"><span class="anton" style="font-size:11px;letter-spacing:2px">NOW OPEN</span><span class="anton" style="font-size:26px;line-height:1.1">LOS ANGELES</span></div>
     <span style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700">잡지 펼치기 ${chev('right')}</span>
   </a>
+  ${tripCard()}
 </main>`;
+  }
+
+  function tripCard() {
+    const city = C.la;
+    const d = dday(city);
+    const big = d ? d.label : 'D-?';
+    const sub = d ? (d.n > 0 ? 'LA 여행까지 ' + d.n + '일 남았어요' : d.n === 0 ? '오늘 LA로 떠나요!' : '다녀온 LA, zine으로 남겨요') : '여행 날짜를 넣으면 D-day가 떠요';
+    return `<section class="card" aria-label="내 여행" style="display:flex;align-items:center;gap:14px;margin:14px 20px 0;padding:12px 14px;background:#FFFFFF">
+      <div style="flex:none;min-width:96px;text-align:center"><div class="anton" style="font-size:11px;letter-spacing:2px">MY TRIP</div><div class="anton" style="font-size:38px;line-height:1;color:#F2457C;text-shadow:2px 2px 0 #141210">${big}</div></div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700">${sub}</span><label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700">LA 출발일<input type="date" data-date value="${state.date || ''}" style="min-height:36px;border:2px solid #141210;border-radius:8px;background:#F3EAD8;padding:0 6px;font-size:13px"></label></div>
+    </section>`;
   }
 
   function bindHome() {
@@ -379,6 +400,12 @@
       flyTo(-(C[id].mapX - VIEW() / 2));
       if (!C[id].open) toast(C[id].name + '은(는) 준비 중이에요');
     }));
+    $app.querySelectorAll('[data-date]').forEach((inp) => inp.addEventListener('change', () => {
+      state.date = inp.value || null;
+      store.set('date', state.date);
+      render();
+      toast(state.date ? 'D-day를 맞췄어요' : '날짜를 지웠어요');
+    }));
     $app.querySelectorAll('[data-soon]').forEach((b) => b.addEventListener('click', () => {
       toast(C[b.getAttribute('data-soon')].name + '은(는) 준비 중이에요');
     }));
@@ -471,6 +498,7 @@
     <div class="torn" style="display:inline-block;margin:-4px 0 0 32px;padding:6px 16px;background:#F2457C;color:#141210;transform:rotate(-2deg)"><span class="anton" style="font-size:36px;line-height:1">IN LOS ANGELES.</span></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:0 16px">
       <a href="#${city.id}-notes" class="anton" style="height:48px;display:flex;align-items:center;gap:8px;padding:0 16px;background:#141210;color:#F3EAD8;transform:rotate(-3deg);font-size:22px;letter-spacing:1px">OPEN <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2 L14 8 L3 14 Z" fill="#F2457C"/></svg><span style="font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:0">펼쳐 보기</span></a>
+      ${dday(city) ? `<span class="anton" style="position:absolute;right:20px;bottom:calc(98px + env(safe-area-inset-bottom));padding:4px 10px;background:#F2457C;color:#141210;border:2px solid #141210;font-size:20px;transform:rotate(8deg)">${dday(city).label}</span>` : ''}
       <div style="width:100px;background:#F3EAD8;padding:6px 8px 4px;color:#141210;border:2px solid #141210">
         <div style="display:flex;justify-content:space-between;font-size:8px;font-weight:700"><span>${esc(city.country)}</span></div>
         <svg width="84" height="26" viewBox="0 0 88 30" aria-hidden="true" style="display:block;margin-top:3px"><path d="M2 0v30M5 0v30M9 0v30M11 0v30M15 0v30M20 0v30M22 0v30M26 0v30M31 0v30M33 0v30M36 0v30M41 0v30M44 0v30M46 0v30M51 0v30M55 0v30M57 0v30M62 0v30M64 0v30M68 0v30M72 0v30M75 0v30M78 0v30M82 0v30M86 0v30" stroke="#141210" stroke-width="1.6"/></svg>
@@ -525,7 +553,7 @@ ${wxLine(city, { extra: () => `이 날씨엔 <b>${esc(L.look.name)}</b> — ${es
   ${burst('left:79%;top:84%;width:19cqw;height:19cqw;transform:rotate(-12deg)', String(boardItems.length), 'ITEMS', '5.5cqw', '2.8cqw')}
 </div>
 <ol class="item-list">${list.map((it, i) => `<li data-row="${i}" class="${state.pick === i ? 'hl' : ''}"><span class="num">${i + 1}</span><span><b>${esc(it.name)}</b> <span class="muted">— ${esc(it.note)}</span></span></li>`).join('')}</ol>
-<div class="section" style="margin-top:14px"><a class="btn yellow" href="#${city.id}-pack" style="width:100%">이 룩으로 짐 싸기 ${chev('right')}</a></div>`;
+<div class="section" style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><button type="button" class="btn" data-lookcard style="width:100%">룩 카드 저장 · 공유</button><a class="btn yellow" href="#${city.id}-pack" style="width:100%">이 룩으로 짐 싸기 ${chev('right')}</a></div>`;
   }
 
   function pBeauty(city) {
@@ -690,6 +718,70 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
 </div>`;
   }
 
+  /* ---------- look card (1080x1350 image) ---------- */
+  const loadImg = (src) => new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+  const svgData = (svg) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" '));
+  async function lookCard(city) {
+    const L = lookFor(city);
+    if (document.fonts && document.fonts.load) {
+      await Promise.all(["400 60px 'Anton'", "900 60px 'Bodoni Moda'", "400 40px 'Nanum Pen Script'", "700 30px 'Noto Sans KR'"].map((f) => document.fonts.load(f).catch(() => null)));
+    }
+    const W = 1080, H = 1350;
+    const c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    const g = c.getContext('2d');
+    const INK = '#141210';
+    g.fillStyle = '#F3EAD8'; g.fillRect(0, 0, W, H);
+    g.strokeStyle = INK; g.lineWidth = 6; g.strokeRect(18, 18, W - 36, H - 36);
+    g.textBaseline = 'alphabetic'; g.textAlign = 'left';
+    g.font = "400 120px 'Anton', sans-serif";
+    g.fillStyle = INK; g.fillText('OOTD', 66, 176); g.fillStyle = '#F2457C'; g.fillText('OOTD', 60, 170);
+    g.fillStyle = INK; g.font = "400 30px 'Anton', sans-serif"; g.fillText(city.en + ' · THE LOOK', 360, 92);
+    g.font = "400 64px 'Anton', sans-serif"; g.fillText(L.look.name, 360, 168);
+    const w = L.w;
+    g.font = "400 40px 'Nanum Pen Script', 'Noto Sans KR', cursive";
+    g.fillText(fmtDate(w.date) + ' · ' + w.max + '° / ' + w.min + '° · ' + L.look.ko, 64, 240);
+    const bx = 60, by = 276, bw = 640, bh = 924;
+    g.fillStyle = '#FFFFFF'; g.fillRect(bx, by, bw, bh);
+    g.fillStyle = INK; g.fillRect(bx + 10, by + bh, bw, 10); g.fillRect(bx + bw, by + 10, 10, bh);
+    g.lineWidth = 4; g.strokeRect(bx, by, bw, bh);
+    const P = (p) => [bx + bw * p[0] / 100, by + bh * p[1] / 100, bw * p[2] / 100, bh * p[3] / 100];
+    const fit = async (svg, r) => { const im = await loadImg(svgData(svg)); if (!im) return; const s = Math.min(r[2], r[3]); g.drawImage(im, r[0] + (r[2] - s) / 2, r[1] + (r[3] - s) / 2, s, s); };
+    g.fillStyle = '#F3E6CF'; const hr = P([3, 2, 44, 25]); g.fillRect(hr[0], hr[1], hr[2], hr[3]);
+    await fit(IC.house(), hr);
+    await fit(IC.camera('#D6D2CC', '#3A3F5C'), P([36, 20, 17, 11]));
+    g.font = "900 96px 'Bodoni Moda', serif";
+    const wx = bx + bw * 0.04, wy = by + bh * 0.29 + 86;
+    g.fillStyle = INK; g.fillText('LOS', wx, wy);
+    g.fillStyle = '#F2457C'; g.fillText('A', wx + 44, wy + 86); const aw = g.measureText('A').width;
+    g.fillStyle = INK; g.fillText('NGE', wx + 44 + aw, wy + 86); g.fillText('LES', wx + 12, wy + 172);
+    const board = L.items.filter((it) => it.slot);
+    for (let i = 0; i < board.length; i++) {
+      const it = board[i];
+      const r = P(SLOTS[it.slot]);
+      await fit(IC[it.icon](it.c, it.a), r);
+      g.fillStyle = INK; g.beginPath(); g.arc(r[0] + 8, r[1] + 8, 17, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#F3EAD8'; g.font = "400 20px 'Anton', sans-serif"; g.textAlign = 'center'; g.fillText(String(i + 1), r[0] + 8, r[1] + 15); g.textAlign = 'left';
+    }
+    const list = board.concat(L.items.filter((it) => !it.slot));
+    let ly = 330;
+    list.forEach((it, i) => {
+      g.fillStyle = INK; g.beginPath(); g.arc(752, ly - 10, 17, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#F3EAD8'; g.font = "400 20px 'Anton', sans-serif"; g.textAlign = 'center'; g.fillText(String(i + 1), 752, ly - 3); g.textAlign = 'left';
+      g.fillStyle = INK; g.font = "700 27px 'Noto Sans KR', sans-serif"; g.fillText(it.name, 780, ly);
+      g.fillStyle = '#4A433C'; g.font = "400 22px 'Noto Sans KR', sans-serif"; g.fillText(it.note, 780, ly + 32);
+      ly += 104;
+    });
+    g.fillStyle = '#FFD23F'; g.strokeStyle = INK; g.lineWidth = 3;
+    g.save(); g.translate(880, 1150); g.rotate(-0.2);
+    g.beginPath(); STAR.split(' ').forEach((p, i) => { const q = p.split(','); const x = (+q[0] - 50) * 1.5, y = (+q[1] - 50) * 1.5; if (i) g.lineTo(x, y); else g.moveTo(x, y); }); g.closePath(); g.fill(); g.stroke();
+    g.fillStyle = INK; g.textAlign = 'center'; g.font = "400 40px 'Anton', sans-serif"; g.fillText(String(board.length), 0, 4); g.font = "400 18px 'Anton', sans-serif"; g.fillText('ITEMS', 0, 28);
+    g.restore();
+    g.textAlign = 'left'; g.fillStyle = INK; g.font = "400 34px 'Nanum Pen Script', cursive"; g.fillText(L.look.tip, 64, 1262);
+    g.globalAlpha = 0.7; g.textAlign = 'right'; g.font = "400 26px 'Anton', sans-serif"; g.fillText('OOTD · OUT OF TOWN DAY', W - 44, H - 40); g.globalAlpha = 1;
+    return c;
+  }
+
   /* ---------- binding ---------- */
   function bindMag(r) {
     const city = C[r.city];
@@ -734,6 +826,16 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     if (page.id === 'zine' && window.Zine) {
       const stop = window.Zine.mount(document.getElementById('zine-root'), city, { toast });
       cleanups.push(stop);
+    }
+
+    if (page.id === 'look') {
+      const b = $app.querySelector('[data-lookcard]');
+      if (b) b.addEventListener('click', async () => {
+        b.disabled = true; b.textContent = '카드 만드는 중…';
+        try { const c = await lookCard(city); await window.Zine.share(c, 'ootd-' + city.id + '-look.png', 'OOTD ' + city.en + ' look'); }
+        catch (err) { toast('카드를 만들지 못했어요'); }
+        finally { b.disabled = false; b.textContent = '룩 카드 저장 · 공유'; }
+      });
     }
 
     if (page.id === 'notes') {
@@ -794,4 +896,10 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
 
   window.addEventListener('hashchange', () => { state.pick = -1; render(); });
   render();
+
+  try {
+    if ('serviceWorker' in navigator && location.protocol === 'https:' && location.hostname.endsWith('github.io')) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  } catch (e) { /* not available in this viewer */ }
 })();

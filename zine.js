@@ -49,6 +49,20 @@
     ];
   }
 
+  async function shareCanvas(c, filename, title) {
+    const blob = await new Promise((res) => c.toBlob(res, 'image/png'));
+    const file = blob && typeof File !== 'undefined' ? new File([blob], filename, { type: 'image/png' }) : null;
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: title }); return; } catch (err) { if (err && err.name === 'AbortError') return; }
+    }
+    const url = c.toDataURL('image/png');
+    const ov = document.createElement('div');
+    ov.className = 'zine-overlay';
+    ov.innerHTML = `<div class="zine-over-in" role="dialog" aria-label="저장할 이미지"><img src="${url}" alt="${esc(title)}"><p>이미지를 길게 눌러 사진에 저장하세요</p><div style="display:flex;gap:8px"><a class="btn yellow" href="${url}" download="${esc(filename)}" style="flex:1">다운로드</a><button type="button" class="btn" data-close style="flex:1">닫기</button></div></div>`;
+    ov.addEventListener('click', (e) => { if (e.target === ov || e.target.closest('[data-close]')) ov.remove(); });
+    document.body.appendChild(ov);
+  }
+
   function mount(root, city, api) {
     const KEY = 'ootd:zine:' + city.id;
     let items = storeGet(KEY) || template(city);
@@ -384,12 +398,7 @@
         ctx.fillText('OOTD · ' + city.en, W - 44, H - 44);
         ctx.globalAlpha = 1;
 
-        const blob = await new Promise((res) => c.toBlob(res, 'image/png'));
-        const file = blob && typeof File !== 'undefined' ? new File([blob], 'ootd-' + city.id + '-zine.png', { type: 'image/png' }) : null;
-        if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-          try { await navigator.share({ files: [file], title: 'My ' + city.en + ' zine' }); return; } catch (err) { if (err && err.name === 'AbortError') return; }
-        }
-        showOverlay(c.toDataURL('image/png'));
+        await shareCanvas(c, 'ootd-' + city.id + '-zine.png', 'My ' + city.en + ' zine');
       } catch (err) {
         api.toast('이미지를 만들지 못했어요');
       } finally {
@@ -409,5 +418,5 @@
     return () => { window.removeEventListener('resize', onResize); save(); };
   }
 
-  window.Zine = { mount };
+  window.Zine = { mount, share: shareCanvas };
 })();
