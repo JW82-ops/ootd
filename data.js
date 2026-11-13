@@ -131,6 +131,21 @@ window.CITIES = {
       { label: 'LA Travel Guide', sub: '영어 가이드 영상', q: 'Los Angeles travel guide' },
       { label: 'Discover LA', sub: '관광청 영상', q: 'Discover Los Angeles' }
     ],
+    arrive: {
+      asOf: '2026년 11월 기준',
+      note: 'LAX 무인 열차(피플무버)는 아직 개통 전이에요 — 2027년 1월 이후로 미뤄졌어요. 그 전까지는 아래처럼 색깔 표지판을 따라가면 돼요.',
+      opts: [
+        { id: 'flyaway', sign: '#1F6FD6', signName: '파란 기둥', en: 'FLYAWAY', name: '플라이어웨이 버스', cost: '$12.75', time: '35~55분', how: '도착층(1층) 파란 FlyAway 기둥에서 타면 다운타운 유니언 역까지 바로 가요.', best: '다운타운 숙소 · 짐이 많아도 편해요' },
+        { id: 'metro', sign: '#E0247A', signName: '분홍 표지판', en: 'METRO', name: '메트로 (전철)', cost: '$1.75 · 하루 최대 $5', time: '60분 이상', how: '분홍 LAX Shuttle 표지판에서 무료 셔틀을 타고 LAX/Metro 환승센터로 가서 C·K 라인을 타요.', best: '짐이 적고 아끼고 싶을 때 · TAP 카드 필요' },
+        { id: 'laxit', sign: '#2E9E4F', signName: '초록 표지판', en: 'LAX-it', name: '우버 · 리프트 · 택시', cost: '다운타운·할리우드 약 $42~55', time: '픽업장까지 +20~40분', how: '터미널 앞에선 못 타요. 초록 LAX-it 셔틀(또는 도보)로 1터미널 옆 픽업장에 가서 불러요.', best: '산타모니카·베니스·할리우드 숙소, 일행이 있을 때' },
+        { id: 'rental', sign: '#7A3FB0', signName: '보라 표지판', en: 'RENTAL CAR', name: '렌터카', cost: '회사마다 달라요', time: '회사 셔틀로 이동', how: '보라색 Rental Car 표지판에서 렌터카 회사 셔틀을 타요.', best: 'LA는 차 이동이 기본 · 국제운전면허증 챙기기' }
+      ],
+      picks: [{ label: '다운타운 숙소', id: 'flyaway' }, { label: '산타모니카·베니스', id: 'laxit' }, { label: '할리우드', id: 'laxit' }, { label: '최대한 아끼기', id: 'metro' }, { label: '차 빌릴 거예요', id: 'rental' }]
+    },
+    events: [
+      { name: 'Discover LA', what: 'LA 관광청 공식 행사 캘린더', url: 'https://www.discoverlosangeles.com/events' },
+      { name: 'Time Out LA', what: '이번 주·이번 주말에 할 것', url: 'https://www.timeout.com/los-angeles/things-to-do' }
+    ],
     tax: [{ name: 'LA시', rate: 10.25 }, { name: '산타모니카', rate: 11.25 }],
     taxNote: '세율은 동네마다 달라요 (2026년 10월 기준). 캘리포니아는 여행자 세금 환급이 없어요.',
     hoods: [

@@ -9,6 +9,7 @@
   const PAGES = [
     { id: 'cover', label: 'COVER' },
     { id: 'notes', label: 'CITY NOTES' },
+    { id: 'arrive', label: 'ARRIVAL' },
     { id: 'look', label: 'THE LOOK' },
     { id: 'hoods', label: 'NEIGHBORHOODS' },
     { id: 'beauty', label: 'BEAUTY KIT' },
@@ -455,7 +456,7 @@
     loadFx();
     const page = PAGES[r.idx];
     curIdx = r.idx;
-    const body = ({ cover: pCover, notes: pNotes, look: pLook, hoods: pHoods, beauty: pBeauty, day: pDay, eat: pEat, read: pRead, tools: pTools, pack: pPack, zine: pZine, next: pNext })[page.id](city, r);
+    const body = ({ cover: pCover, notes: pNotes, arrive: pArrive, look: pLook, hoods: pHoods, beauty: pBeauty, day: pDay, eat: pEat, read: pRead, tools: pTools, pack: pPack, zine: pZine, next: pNext })[page.id](city, r);
     if (page.id === 'cover') return `<main class="view cover-view ${dir}" data-swipe style="touch-action:pan-y">${body}</main>`;
     const prev = r.idx > 0 ? hashFor(r.city, r.idx - 1) : null;
     const next = r.idx < PAGES.length - 1 ? hashFor(r.city, r.idx + 1) : null;
@@ -574,6 +575,44 @@ ${goldenCard(city)}
       <div style="display:flex;gap:14px;font-size:12px;font-weight:700;margin-top:4px"><span>일몰 ${g.sunset}</span><span>블루아워 ~${g.blue}</span></div>
       <svg width="70" height="70" viewBox="0 0 100 100" aria-hidden="true" style="position:absolute;right:-8px;bottom:-18px;opacity:.9"><circle cx="50" cy="50" r="30" fill="#FFF1B0" stroke="#141210" stroke-width="4"/></svg>
     </section>`;
+  }
+
+  function pArrive(city) {
+    const A = city.arrive;
+    const d = tripDate(city);
+    const monthEn = new Date(Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, 15)).toLocaleString('en-US', { month: 'long', timeZone: 'UTC' });
+    const gq = 'https://www.google.com/search?q=' + encodeURIComponent('Los Angeles events ' + monthEn + ' ' + d.slice(0, 4));
+    return `
+${head(0, 'ARRIVAL', 'LAX에서 시내로 · 그날의 행사')}
+<div class="card" style="margin:14px 20px 0;padding:12px 14px;background:#FFD23F;box-shadow:3px 3px 0 #141210">
+  <div class="anton" style="font-size:12px;letter-spacing:2px">LAX → CITY · ${esc(A.asOf)}</div>
+  <p style="margin:6px 0 0;font-size:13px;font-weight:500;line-height:1.5">${esc(A.note)}</p>
+</div>
+<div class="section" style="margin-top:14px">
+  <div style="font-size:12px;font-weight:700;margin-bottom:6px">내 숙소는…</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap">${A.picks.map((p, i) => `<button type="button" class="chip" data-arr="${p.id}" data-arri="${i}" aria-pressed="false">${esc(p.label)}</button>`).join('')}</div>
+</div>
+<div class="section" style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+  ${A.opts.map((o) => `<article class="card arr" id="arr-${o.id}" style="display:flex;padding:0;overflow:hidden;box-shadow:3px 3px 0 #141210">
+    <div style="flex:none;width:74px;background:${o.sign};color:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 4px;border-right:2px solid #141210;text-align:center">
+      <span class="anton" style="font-size:14px;line-height:1.1;letter-spacing:.5px">${esc(o.en)}</span><span style="font-size:10px;font-weight:700">${esc(o.signName)}</span>
+    </div>
+    <div style="flex:1;min-width:0;padding:10px 12px">
+      <div style="font-size:16px;font-weight:700">${esc(o.name)}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><span class="look" style="margin:0">${esc(o.cost)}</span><span class="look" style="margin:0;background:#FFFFFF">${esc(o.time)}</span></div>
+      <p style="margin:8px 0 0;font-size:13px;line-height:1.5">${esc(o.how)}</p>
+      <p class="muted" style="margin:4px 0 0;font-size:12px">${esc(o.best)}</p>
+    </div>
+  </article>`).join('')}
+  <p class="muted" style="font-size:11px;margin:0">요금·시간은 대략이에요. 우버·리프트는 시간대에 따라 더 비싸질 수 있어요. 출발 전 flylax.com에서 한 번 더 확인하세요.</p>
+</div>
+<div class="section">
+  <div class="rule"><span>WHAT'S ON · ${esc(fmtDate(d))}</span><i></i></div>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+    ${city.events.map((e) => `<a class="card" href="${e.url}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;box-shadow:3px 3px 0 #141210"><div><div class="anton" style="font-size:18px">${esc(e.name)}</div><div class="muted" style="font-size:12px">${esc(e.what)}</div></div><span style="font-size:12px;font-weight:700;color:#1F4FBF;flex:none">보러 가기 ↗</span></a>`).join('')}
+    <a class="card" href="${gq}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;box-shadow:3px 3px 0 #141210;background:#F2457C"><div><div class="anton" style="font-size:18px">${esc(monthEn.toUpperCase())} IN L.A.</div><div style="font-size:12px;font-weight:500">여행 달에 열리는 행사 검색</div></div><span style="font-size:12px;font-weight:700;flex:none">검색 ↗</span></a>
+  </div>
+</div>`;
   }
 
   function pHoods(city) {
@@ -923,6 +962,16 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     if (page.id === 'zine' && window.Zine) {
       const stop = window.Zine.mount(document.getElementById('zine-root'), city, { toast });
       cleanups.push(stop);
+    }
+
+    if (page.id === 'arrive') {
+      $app.querySelectorAll('[data-arr]').forEach((b) => b.addEventListener('click', () => {
+        const id = b.getAttribute('data-arr');
+        $app.querySelectorAll('[data-arr]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        $app.querySelectorAll('.arr').forEach((x) => x.classList.toggle('hl', x.id === 'arr-' + id));
+        const el = document.getElementById('arr-' + id);
+        if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }));
     }
 
     if (page.id === 'hoods') {

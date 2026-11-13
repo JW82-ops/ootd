@@ -219,3 +219,6 @@ button { cursor: pointer; }
 .hood-pin small { font-family: var(--anton); font-size: 9px; letter-spacing: .5px; background: var(--white); border: 1.5px solid var(--ink); padding: 1px 4px; white-space: nowrap; }
 .hood-pin[aria-pressed="true"] span { background: var(--yellow); }
 .hood.hl { background: #FFF6CC; }
+
+.arr.hl { outline: 4px solid var(--yellow); outline-offset: 2px; }
+.arr .look { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; background: var(--yellow); border: 1.5px solid var(--ink); border-radius: 12px; }
