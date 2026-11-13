@@ -16,6 +16,7 @@
     { id: 'read', label: 'READ & WATCH' },
     { id: 'tools', label: 'TOOLS' },
     { id: 'pack', label: 'PACKING' },
+    { id: 'zine', label: 'MY ZINE' },
     { id: 'next', label: 'NEXT STOP' }
   ];
 
@@ -187,7 +188,11 @@
     else bindMag(r);
     lastRoute = r;
   }
-  function refresh() { render({ keepScroll: true }); }
+  function refresh() {
+    const r = parse();
+    if (r.view === 'mag' && PAGES[r.idx].id === 'zine') return; // never rebuild the zine editor mid-edit
+    render({ keepScroll: true });
+  }
 
   const grainSvg = () => '<svg class="grain" width="100%" height="100%" aria-hidden="true"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#grain)"/></svg>';
 
@@ -388,7 +393,7 @@
     loadWx(city);
     loadFx();
     const page = PAGES[r.idx];
-    const body = ({ cover: pCover, notes: pNotes, look: pLook, beauty: pBeauty, day: pDay, eat: pEat, read: pRead, tools: pTools, pack: pPack, next: pNext })[page.id](city, r);
+    const body = ({ cover: pCover, notes: pNotes, look: pLook, beauty: pBeauty, day: pDay, eat: pEat, read: pRead, tools: pTools, pack: pPack, zine: pZine, next: pNext })[page.id](city, r);
     if (page.id === 'cover') return `<main class="view cover-view ${dir}" data-swipe style="touch-action:pan-y">${body}</main>`;
     const prev = r.idx > 0 ? hashFor(r.city, r.idx - 1) : null;
     const next = r.idx < PAGES.length - 1 ? hashFor(r.city, r.idx + 1) : null;
@@ -410,7 +415,7 @@
   }
 
   function head(n, title, sub, right) {
-    return `<div class="page-head"><div style="display:flex;align-items:flex-end;gap:10px"><span class="page-num">0${n}</span><div><h2 class="page-title" style="margin:0">${title}</h2><div class="page-sub">${sub}</div></div></div>${right || ''}</div>`;
+    return `<div class="page-head"><div style="display:flex;align-items:flex-end;gap:10px"><span class="page-num">${String(n).padStart(2, '0')}</span><div><h2 class="page-title" style="margin:0">${title}</h2><div class="page-sub">${sub}</div></div></div>${right || ''}</div>`;
   }
 
   function wxLine(city, opts) {
@@ -668,10 +673,14 @@ ${groups.map((g) => `<fieldset class="check-group" style="border:0;padding:0;min
 <div class="section" style="display:flex;gap:10px;margin-top:18px"><button type="button" class="btn yellow" data-copy style="flex:1">목록 복사</button><button type="button" class="btn ghost" data-reset style="flex:1">체크 초기화</button></div>`;
   }
 
+  function pZine(city) {
+    return `${head(9, 'MY ZINE', '나만의 ' + esc(city.name) + ' 한 페이지')}<div id="zine-root"></div>`;
+  }
+
   function pNext(city) {
     const soon = Object.keys(C).filter((id) => !C[id].open);
     return `
-${head(9, 'NEXT STOP', '다음 도시를 준비 중이에요')}
+${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
 <div class="section" style="margin-top:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
   ${soon.map((id, i) => `<div class="card" style="padding:14px;transform:rotate(${i % 2 ? 2 : -2}deg);background:${['#F2457C', '#FFD23F', '#BFD9E6', '#FFFFFF'][i % 4]}"><div class="anton" style="font-size:26px;line-height:1">${esc(C[id].en)}</div><div style="font-size:12px;font-weight:700;margin-top:4px">${esc(C[id].name)} · SOON</div></div>`).join('')}
 </div>
@@ -690,7 +699,7 @@ ${head(9, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     // swipe between pages
     let sx = 0, sy = 0, st = 0, ok = false;
     view.addEventListener('pointerdown', (e) => {
-      ok = e.pointerType !== 'mouse' && !e.target.closest('input,select,textarea,.piece,.stepper');
+      ok = page.id !== 'zine' && e.pointerType !== 'mouse' && !e.target.closest('input,select,textarea,.piece,.stepper');
       sx = e.clientX; sy = e.clientY; st = Date.now();
     });
     view.addEventListener('pointerup', (e) => {
@@ -721,6 +730,11 @@ ${head(9, 'NEXT STOP', '다음 도시를 준비 중이에요')}
       const row = $app.querySelector('[data-row="' + i + '"]');
       if (row && state.pick === i) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }));
+
+    if (page.id === 'zine' && window.Zine) {
+      const stop = window.Zine.mount(document.getElementById('zine-root'), city, { toast });
+      cleanups.push(stop);
+    }
 
     if (page.id === 'notes') {
       timers.push(setInterval(() => { const el = $app.querySelector('[data-clock]'); if (el) el.textContent = localTime(city.tz); }, 20000));

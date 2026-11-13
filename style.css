@@ -167,3 +167,47 @@ button { cursor: pointer; }
 
 .toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 60; padding: 10px 16px; background: var(--ink); color: var(--paper); border-radius: 20px; font-size: 13px; font-weight: 700; opacity: 0; transition: opacity .2s; pointer-events: none; }
 .toast.show { opacity: 1; }
+
+/* zine maker */
+.zine-wrap { padding: 14px 12px 0; }
+.zine-page { position: relative; width: 100%; aspect-ratio: 4 / 5; background: #FBF5E9; border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+.zine-page::before { content: ''; position: absolute; inset: 1.6%; border: 1.5px solid rgba(20,18,16,.85); pointer-events: none; z-index: 0; }
+.zine-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20%; font-family: var(--pen); font-size: 24px; color: var(--muted); pointer-events: none; }
+.zi { position: absolute; cursor: grab; touch-action: none; }
+.zi.on { outline: 2px dashed var(--blue); outline-offset: 4px; }
+.zi-photo .zf { background: #FFFFFF; }
+.zi-photo img { display: block; width: 100%; height: auto; pointer-events: none; }
+.zf-torn .zf { padding: 3.5%; }
+.zf-polaroid .zf { padding: 5% 5% 16%; box-shadow: 0 6px 14px rgba(20,18,16,.25); }
+.zf-torn { filter: drop-shadow(3px 5px 6px rgba(20,18,16,.25)); }
+.zf-plain .zf { padding: 0; background: transparent; }
+.zi-tape { box-shadow: 0 1px 2px rgba(20,18,16,.15); }
+.zi-sticker svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+.zi-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; white-space: pre; line-height: 1.02; pointer-events: none; }
+.zi-text { white-space: pre; line-height: 1.05; text-align: center; padding: 0 .1em; }
+.zine-hint { margin: 10px 4px 0; text-align: center; font-size: 12px; color: var(--muted); }
+.zine-sel { margin-top: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.zine-range { display: grid; grid-template-columns: 40px 1fr; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
+.zine-range input { width: 100%; accent-color: var(--pink); min-height: 32px; }
+.zine-field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 700; }
+.zine-field textarea, .zine-field input { border: 2px solid var(--ink); border-radius: 10px; padding: 8px 10px; font-size: 16px; background: var(--paper); resize: vertical; }
+.zine-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.zine-color { width: 36px; height: 36px; border-radius: 18px; border: 2px solid var(--ink); padding: 0; }
+.zine-color[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--ink); }
+.zine-tools { margin-top: 14px; }
+.zine-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.zine-photo { cursor: pointer; }
+.zine-photo:focus-within { outline: 3px solid var(--blue); outline-offset: 2px; }
+.zine-row-label { margin: 14px 2px 6px; font-family: var(--anton); font-size: 13px; letter-spacing: 2px; }
+.zine-stickers { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.zine-st { aspect-ratio: 1 / 1; padding: 8px; background: var(--white); border: 2px solid var(--ink); border-radius: 12px; }
+.zine-st svg { width: 100%; height: 100%; display: block; }
+.zine-tapes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.zine-tape { height: 40px; border: 0; transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(20,18,16,.25); }
+.zine-tape:nth-child(even) { transform: rotate(3deg); }
+.zine-actions { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+.zine-actions .btn[disabled] { opacity: .6; }
+.zine-overlay { position: fixed; inset: 0; z-index: 80; background: rgba(20,18,16,.82); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.zine-overlay[hidden] { display: none; }
+.zine-over-in { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; color: var(--paper); text-align: center; font-size: 14px; font-weight: 700; }
+.zine-over-in img { width: 100%; height: auto; border: 2px solid var(--paper); -webkit-touch-callout: default; }
