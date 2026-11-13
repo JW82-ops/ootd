@@ -110,6 +110,27 @@ window.CITIES = {
       { name: '베니스 비치', what: '보드워크 산책', q: 'Venice Beach Los Angeles', c: '#A9C6DE' }
     ],
     goTip: '천문대는 해 지기 1시간 전 도착 — 운영 시간은 가기 전에 공식 사이트에서 확인!',
+    read: [
+      { k: 'FASHION', items: [
+        { mag: 'W Magazine', title: 'The Insider’s Guide to Los Angeles', ko: '현지 테이스트메이커 3인이 꼽은 LA', url: 'https://www.wmagazine.com/culture/los-angeles-city-guide-hotels-restaurants-bars-shopping' },
+        { mag: 'Marie Claire UK', title: 'The stylish insider’s guide to LA', ko: '스타일리시한 식당·숍 위주 가이드', url: 'https://www.marieclaire.co.uk/life/travel/la-city-guide-654188' },
+        { mag: 'Fashion Journal', title: 'LA, according to a fashion editor', ko: '패션 에디터의 숙소·쇼핑·빈티지숍', url: 'https://fashionjournal.com.au/life/la-city-guide/' }
+      ] },
+      { k: 'TRAVEL', items: [
+        { mag: 'Time Out', title: 'Your essential Los Angeles travel guide', ko: '숙소·이동 시간까지 담은 기본 가이드', url: 'https://www.timeout.com/los-angeles/things-to-do/your-essential-los-angeles-travel-guide' },
+        { mag: 'Monocle', title: 'Los Angeles travel guide', ko: '처음 가는 사람을 위한 큐레이션', url: 'https://monocle.com/travel-guides/los-angeles/' },
+        { mag: 'AFAR', title: 'Los Angeles travel guide', ko: '동네별 여행 기사 모음', url: 'https://www.afar.com/travel-guides/united-states/california/los-angeles/guide' },
+        { mag: 'Discover Los Angeles', title: 'The official guide to Los Angeles', ko: 'LA 관광청 공식 사이트 · 이번 주 행사', url: 'https://www.discoverlosangeles.com' }
+      ] }
+    ],
+    watch: [
+      { label: 'LA 여행 브이로그', sub: '한국 여행자 시선', q: 'LA 여행 브이로그' },
+      { label: 'LA 여행 코스', sub: '처음 가는 LA 루트', q: 'LA 여행 코스 추천' },
+      { label: 'LA Street Style', sub: '현지 스트리트 패션', q: 'Los Angeles street style' },
+      { label: 'LA 맛집', sub: '먹방 & 로컬 맛집', q: 'LA 맛집 추천' },
+      { label: 'LA Travel Guide', sub: '영어 가이드 영상', q: 'Los Angeles travel guide' },
+      { label: 'Discover LA', sub: '관광청 영상', q: 'Discover Los Angeles' }
+    ],
     tipNote: '카운터에서 주문하는 곳(인앤아웃 등)은 팁이 꼭 필요하진 않아요.',
     essentials: ['여권 (유효기간 6개월 이상)', 'ESTA 승인 확인', '항공권·숙소 예약 확인', '해외 결제 카드', '국제운전면허증 (렌터카 시)', 'A타입 플러그 어댑터', '보조배터리']
   },

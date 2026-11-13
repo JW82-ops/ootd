@@ -13,6 +13,7 @@
     { id: 'beauty', label: 'BEAUTY KIT' },
     { id: 'day', label: 'DAY COURSE' },
     { id: 'eat', label: 'EAT & GO' },
+    { id: 'read', label: 'READ & WATCH' },
     { id: 'tools', label: 'TOOLS' },
     { id: 'pack', label: 'PACKING' },
     { id: 'next', label: 'NEXT STOP' }
@@ -387,7 +388,7 @@
     loadWx(city);
     loadFx();
     const page = PAGES[r.idx];
-    const body = ({ cover: pCover, notes: pNotes, look: pLook, beauty: pBeauty, day: pDay, eat: pEat, tools: pTools, pack: pPack, next: pNext })[page.id](city, r);
+    const body = ({ cover: pCover, notes: pNotes, look: pLook, beauty: pBeauty, day: pDay, eat: pEat, read: pRead, tools: pTools, pack: pPack, next: pNext })[page.id](city, r);
     if (page.id === 'cover') return `<main class="view cover-view ${dir}" data-swipe style="touch-action:pan-y">${body}</main>`;
     const prev = r.idx > 0 ? hashFor(r.city, r.idx - 1) : null;
     const next = r.idx < PAGES.length - 1 ? hashFor(r.city, r.idx + 1) : null;
@@ -577,6 +578,27 @@ ${head(5, 'EAT &amp; GO', '맛집 &amp; 꼭 가볼 곳')}
 </div>`;
   }
 
+  function pRead(city) {
+    const yt = (q) => 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
+    const rot = [-1.2, 1, -0.6, 1.4];
+    return `
+${head(6, 'READ &amp; WATCH', '매거진 기사 &amp; 유튜브 가이드')}
+${city.read.map((g) => `<div class="section"><div class="rule"><span>${g.k}</span><i></i></div>
+  <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px">${g.items.map((m, i) => `<a class="card" href="${m.url}" target="_blank" rel="noopener" style="display:block;padding:12px 14px;box-shadow:3px 3px 0 #141210;transform:rotate(${rot[i % rot.length]}deg)">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><span class="anton" style="font-size:18px">${esc(m.mag)}</span><span style="font-size:11px;font-weight:700;color:#1F4FBF;flex:none">읽으러 가기 ↗</span></div>
+    <div style="font-size:13px;font-weight:700;margin-top:4px">${esc(m.title)}</div>
+    <div class="muted" style="font-size:12px;margin-top:2px">${esc(m.ko)}</div>
+  </a>`).join('')}</div></div>`).join('')}
+<div class="section"><div class="rule"><span>WATCH</span><i></i></div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px">${city.watch.map((w, i) => `<a class="card" href="${yt(w.q)}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:6px;padding:12px;box-shadow:3px 3px 0 #141210;background:${i % 2 ? '#FFFFFF' : '#FFD23F'}">
+    <span aria-hidden="true" style="width:40px;height:28px;border-radius:8px;background:#E0245E;border:2px solid #141210;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 1 L11 6 L2 11 Z" fill="#FFFFFF"/></svg></span>
+    <span style="font-size:14px;font-weight:700;line-height:1.2">${esc(w.label)}</span>
+    <span class="muted" style="font-size:11px">${esc(w.sub)} · 유튜브 ↗</span>
+  </a>`).join('')}</div>
+  <p class="muted" style="font-size:11px;margin:12px 0 0">기사는 각 매체 사이트에서, 영상은 유튜브에서 열려요. 유튜브는 늘 최신 영상이 나오도록 검색 결과로 연결해요.</p>
+</div>`;
+  }
+
   function tipResult() {
     const bill = parseFloat(String(state.bill).replace(/,/g, ''));
     if (!(bill > 0)) return null;
@@ -599,7 +621,7 @@ ${head(5, 'EAT &amp; GO', '맛집 &amp; 꼭 가볼 곳')}
       ? `<table class="size-table"><thead><tr><th>한국</th><th>US 사이즈</th>${g === 'women' ? '<th>US 숫자</th>' : ''}</tr></thead><tbody>${rows.map((r) => `<tr><td>${r[0]}</td><td><b>${r[1]}</b></td>${g === 'women' ? `<td>${r[2]}</td>` : ''}</tr>`).join('')}</tbody></table>`
       : `<table class="size-table"><thead><tr><th>한국 (mm)</th><th>US</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${r[0]}</td><td><b>${r[1]}</b></td></tr>`).join('')}</tbody></table>`;
     return `
-${head(6, 'TOOLS', '현지에서 바로 쓰는 계산기')}
+${head(7, 'TOOLS', '현지에서 바로 쓰는 계산기')}
 <section class="card tool" aria-label="팁 계산기">
   <div style="display:flex;align-items:center;justify-content:space-between"><h3 class="anton" style="margin:0;font-size:20px;font-weight:400">TIP CALCULATOR</h3><span class="pen" style="font-size:19px">식당에서 바로!</span></div>
   <label class="field" style="margin-top:10px"><span class="anton" style="font-size:24px">$</span><input data-bill inputmode="decimal" placeholder="계산서 금액" value="${esc(state.bill)}" aria-label="계산서 금액 (달러)"></label>
@@ -636,7 +658,7 @@ ${head(6, 'TOOLS', '현지에서 바로 쓰는 계산기')}
     groups.forEach((g) => g.items.forEach((n) => { total++; if (st[g.id + '|' + n]) done++; }));
     const pct = total ? Math.round(done / total * 100) : 0;
     return `
-${head(7, 'PACKING', '룩 + 뷰티로 짐 싸기', `<div class="seg" role="group" aria-label="룩 선택"><button type="button" data-who="her" aria-pressed="${state.who === 'her'}">HER</button><button type="button" data-who="him" aria-pressed="${state.who === 'him'}">HIM</button></div>`)}
+${head(8, 'PACKING', '룩 + 뷰티로 짐 싸기', `<div class="seg" role="group" aria-label="룩 선택"><button type="button" data-who="her" aria-pressed="${state.who === 'her'}">HER</button><button type="button" data-who="him" aria-pressed="${state.who === 'him'}">HIM</button></div>`)}
 ${wxLine(city, { extra: (w) => `${fmtDate(w.date)} 날씨 기준으로 옷이 바뀌어요` })}
 <div class="section" style="margin-top:16px">
   <div style="display:flex;align-items:baseline;justify-content:space-between"><span class="anton" style="font-size:22px"><span data-done>${done}</span> / ${total}</span><span style="font-size:12px;font-weight:700"><span data-pct>${pct}</span>% 완료</span></div>
@@ -649,7 +671,7 @@ ${groups.map((g) => `<fieldset class="check-group" style="border:0;padding:0;min
   function pNext(city) {
     const soon = Object.keys(C).filter((id) => !C[id].open);
     return `
-${head(8, 'NEXT STOP', '다음 도시를 준비 중이에요')}
+${head(9, 'NEXT STOP', '다음 도시를 준비 중이에요')}
 <div class="section" style="margin-top:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
   ${soon.map((id, i) => `<div class="card" style="padding:14px;transform:rotate(${i % 2 ? 2 : -2}deg);background:${['#F2457C', '#FFD23F', '#BFD9E6', '#FFFFFF'][i % 4]}"><div class="anton" style="font-size:26px;line-height:1">${esc(C[id].en)}</div><div style="font-size:12px;font-weight:700;margin-top:4px">${esc(C[id].name)} · SOON</div></div>`).join('')}
 </div>
