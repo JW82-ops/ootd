@@ -95,8 +95,8 @@ window.CITIES = {
       { time: '09:30', place: '레퍼블리크', area: '미드시티', what: '브런치 & 베이커리로 하루 시작', look: '셔츠에 가디건 걸치고 출발', q: 'Republique Los Angeles', icon: 'fork', c: '#FFD23F' },
       { time: '11:30', place: '게티 센터', area: '브렌트우드', what: '언덕 위 미술관과 정원 산책', look: '많이 걸어요 — 편한 신발', q: 'Getty Center Los Angeles', icon: 'house', c: '#FFFFFF' },
       { time: '15:00', place: '애벗 키니 & 베니스 비치', area: '베니스', what: '편집숍 구경 후 보드워크 산책', look: '가디건은 가방에, 선글라스 장착', q: 'Abbot Kinney Boulevard Venice', icon: 'tote', c: '#F3EAD8' },
-      { time: '17:00', place: '선셋 해변', area: '베니스 · 산타모니카', what: '골든아워 사진 타임', look: '블러셔 한 번 더, 선크림 덧바르기', q: 'Venice Beach Los Angeles', icon: 'sun', c: '#FFD23F' },
-      { time: '19:30', place: '인앤아웃 버거', area: '근처 지점', what: '캘리포니아 대표 버거로 마무리', look: '해 지면 쌀쌀 — 가디건 다시 입기', q: 'In-N-Out Burger Los Angeles', icon: 'moon', c: '#F2A7B8' }
+      { time: '17:00', at: 'golden', place: '선셋 해변', area: '베니스 · 산타모니카', what: '골든아워 사진 타임', look: '블러셔 한 번 더, 선크림 덧바르기', q: 'Venice Beach Los Angeles', icon: 'sun', c: '#FFD23F' },
+      { time: '19:30', at: 'after', place: '인앤아웃 버거', area: '근처 지점', what: '캘리포니아 대표 버거로 마무리', look: '해 지면 쌀쌀 — 가디건 다시 입기', q: 'In-N-Out Burger Los Angeles', icon: 'moon', c: '#F2A7B8' }
     ],
     dayAlt: '다운타운 코스도 좋아요: 그랜드 센트럴 마켓 → 그리피스 천문대 야경',
     eat: [
@@ -130,6 +130,16 @@ window.CITIES = {
       { label: 'LA 맛집', sub: '먹방 & 로컬 맛집', q: 'LA 맛집 추천' },
       { label: 'LA Travel Guide', sub: '영어 가이드 영상', q: 'Los Angeles travel guide' },
       { label: 'Discover LA', sub: '관광청 영상', q: 'Discover Los Angeles' }
+    ],
+    tax: [{ name: 'LA시', rate: 10.25 }, { name: '산타모니카', rate: 11.25 }],
+    taxNote: '세율은 동네마다 달라요 (2026년 10월 기준). 캘리포니아는 여행자 세금 환급이 없어요.',
+    hoods: [
+      { name: '산타모니카', en: 'SANTA MONICA', vibe: 'CLEAN BEACH', what: '바닷가 산책과 쇼핑을 한 번에', wear: ['스트라이프 티', '화이트 데님', '캔버스 스니커즈'], spots: ['산타모니카 피어', '서드 스트리트 프롬나드'], pal: ['#A9C6DE', '#FFFFFF', '#E8D9C0'], q: 'Third Street Promenade Santa Monica', x: 70, y: 152 },
+      { name: '베니스', en: 'VENICE', vibe: 'SURF CASUAL', what: '보드워크, 운하, 편집숍 거리', wear: ['린넨 셔츠', '쇼츠', '버킷햇', '플랫 샌들'], spots: ['베니스 운하', '애벗 키니 블러바드'], pal: ['#F2DCC8', '#2E5C9E', '#FFD23F'], q: 'Venice Canals Los Angeles', x: 92, y: 188 },
+      { name: '비벌리힐스', en: 'BEVERLY HILLS', vibe: 'DRESS UP', what: '명품 거리와 호텔 라운지', wear: ['셋업 또는 슬립 원피스', '로퍼', '미니백', '선글라스'], spots: ['로데오 드라이브'], pal: ['#141210', '#F3EAD8', '#D9B44A'], q: 'Rodeo Drive Beverly Hills', x: 160, y: 122 },
+      { name: '웨스트할리우드 & 멜로즈', en: 'WEHO & MELROSE', vibe: 'STREET TREND', what: '스트리트 브랜드, 벽화, 선셋 스트립', wear: ['그래픽 티', '배기 데님', '볼캡', '하이탑 스니커즈'], spots: ['멜로즈 애비뉴', '선셋 스트립'], pal: ['#F2457C', '#141210', '#FFFFFF'], q: 'Melrose Avenue Los Angeles', x: 206, y: 104 },
+      { name: '실버레이크 & 로스펠리즈', en: 'SILVER LAKE', vibe: 'VINTAGE', what: '빈티지숍과 카페가 모인 언덕 동네', wear: ['빈티지 셔츠', '코듀로이 팬츠', '니트 조끼', '캔버스 토트'], spots: ['선셋 정션', '실버레이크 저수지'], pal: ['#8A5A3B', '#E3D3B8', '#6B8E5A'], q: 'Sunset Junction Silver Lake', x: 282, y: 76 },
+      { name: '다운타운 & 아트 디스트릭트', en: 'DTLA', vibe: 'CITY MINIMAL', what: '미술관, 푸드홀, 창고 갤러리', wear: ['블랙 셔츠', '와이드 슬랙스', '앵클부츠', '크로스백'], spots: ['더 브로드', '그랜드 센트럴 마켓', '아트 디스트릭트'], pal: ['#141210', '#9C958C', '#F3EAD8'], q: 'Arts District Los Angeles', x: 302, y: 146 }
     ],
     tipNote: '카운터에서 주문하는 곳(인앤아웃 등)은 팁이 꼭 필요하진 않아요.',
     essentials: ['여권 (유효기간 6개월 이상)', 'ESTA 승인 확인', '항공권·숙소 예약 확인', '해외 결제 카드', '국제운전면허증 (렌터카 시)', 'A타입 플러그 어댑터', '보조배터리']

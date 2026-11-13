@@ -41,7 +41,7 @@ button { cursor: pointer; }
 .small-caps { font-family: var(--anton); font-size: 12px; letter-spacing: 3px; }
 
 /* shared bits */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 22px; border: 2px solid var(--ink); background: var(--ink); color: var(--paper); font-weight: 700; font-size: 14px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 22px; border: 2px solid var(--ink); background: var(--ink); color: var(--paper); font-weight: 700; font-size: 14px; white-space: nowrap; }
 .btn.ghost { background: transparent; color: var(--ink); }
 .btn.yellow { background: var(--yellow); color: var(--ink); }
 .icon-btn { width: 44px; height: 44px; border-radius: 22px; border: 2px solid var(--ink); background: var(--yellow); display: inline-flex; align-items: center; justify-content: center; padding: 0; }
@@ -211,3 +211,11 @@ button { cursor: pointer; }
 .zine-overlay[hidden] { display: none; }
 .zine-over-in { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; color: var(--paper); text-align: center; font-size: 14px; font-weight: 700; }
 .zine-over-in img { width: 100%; height: auto; border: 2px solid var(--paper); -webkit-touch-callout: default; }
+
+/* neighborhoods */
+.hood-map { position: relative; aspect-ratio: 360 / 240; overflow: hidden; }
+.hood-pin { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0; border: 0; background: transparent; min-width: 44px; min-height: 44px; justify-content: center; }
+.hood-pin span { width: 26px; height: 26px; border-radius: 13px; background: var(--pink); border: 2px solid var(--ink); font-family: var(--anton); font-size: 13px; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0 var(--ink); }
+.hood-pin small { font-family: var(--anton); font-size: 9px; letter-spacing: .5px; background: var(--white); border: 1.5px solid var(--ink); padding: 1px 4px; white-space: nowrap; }
+.hood-pin[aria-pressed="true"] span { background: var(--yellow); }
+.hood.hl { background: #FFF6CC; }

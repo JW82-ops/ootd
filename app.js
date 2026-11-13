@@ -10,6 +10,7 @@
     { id: 'cover', label: 'COVER' },
     { id: 'notes', label: 'CITY NOTES' },
     { id: 'look', label: 'THE LOOK' },
+    { id: 'hoods', label: 'NEIGHBORHOODS' },
     { id: 'beauty', label: 'BEAUTY KIT' },
     { id: 'day', label: 'DAY COURSE' },
     { id: 'eat', label: 'EAT & GO' },
@@ -50,12 +51,15 @@
     sizeG: 'women',
     sizeT: 'clothes',
     tipPct: 20,
+    shopPrice: '',
+    taxRate: null,
     split: 1,
     bill: '',
     pick: -1
   };
 
   let lastRoute = null;
+  let curIdx = 0;
   let timers = [];
   let cleanups = [];
 
@@ -99,6 +103,36 @@
     const b = Date.UTC(+t.slice(0, 4), +t.slice(5, 7) - 1, +t.slice(8, 10));
     const n = Math.round((a - b) / 86400000);
     return { n, label: n > 0 ? 'D-' + n : n === 0 ? 'D-DAY' : 'D+' + (-n) };
+  }
+
+  function sunTimes(lat, lon, ymd) {
+    const rad = Math.PI / 180;
+    const [y, m, d] = ymd.split('-').map(Number);
+    const JD = Date.UTC(y, m - 1, d, 12) / 86400000 + 2440587.5;
+    const n = Math.round(JD - 2451545.0 + 0.0008);
+    const Js = n - lon / 360;
+    const M = (357.5291 + 0.98560028 * Js) % 360;
+    const Cc = 1.9148 * Math.sin(M * rad) + 0.02 * Math.sin(2 * M * rad) + 0.0003 * Math.sin(3 * M * rad);
+    const L = (M + Cc + 180 + 102.9372) % 360;
+    const Jt = 2451545.0 + Js + 0.0053 * Math.sin(M * rad) - 0.0069 * Math.sin(2 * L * rad);
+    const dec = Math.asin(Math.sin(L * rad) * Math.sin(23.4397 * rad));
+    const at = (h) => {
+      const c = (Math.sin(h * rad) - Math.sin(lat * rad) * Math.sin(dec)) / (Math.cos(lat * rad) * Math.cos(dec));
+      if (c < -1 || c > 1) return null;
+      return new Date(((Jt + Math.acos(c) / rad / 360) - 2440587.5) * 86400000);
+    };
+    return { golden: at(6), sunset: at(-0.833), blue: at(-6) };
+  }
+  const hm = (t, tz) => (t ? new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(t) : '--:--');
+  function goldenFor(city) {
+    const s = sunTimes(city.lat, city.lon, tripDate(city));
+    return { golden: hm(s.golden, city.tz), sunset: hm(s.sunset, city.tz), blue: hm(s.blue, city.tz), sunsetDate: s.sunset };
+  }
+  function roundTo10(t, addMin, tz) {
+    if (!t) return null;
+    const d = new Date(t.getTime() + addMin * 60000);
+    const ms = 10 * 60000;
+    return hm(new Date(Math.round(d.getTime() / ms) * ms), tz);
   }
 
   function toast(msg) {
@@ -420,7 +454,8 @@
     loadWx(city);
     loadFx();
     const page = PAGES[r.idx];
-    const body = ({ cover: pCover, notes: pNotes, look: pLook, beauty: pBeauty, day: pDay, eat: pEat, read: pRead, tools: pTools, pack: pPack, zine: pZine, next: pNext })[page.id](city, r);
+    curIdx = r.idx;
+    const body = ({ cover: pCover, notes: pNotes, look: pLook, hoods: pHoods, beauty: pBeauty, day: pDay, eat: pEat, read: pRead, tools: pTools, pack: pPack, zine: pZine, next: pNext })[page.id](city, r);
     if (page.id === 'cover') return `<main class="view cover-view ${dir}" data-swipe style="touch-action:pan-y">${body}</main>`;
     const prev = r.idx > 0 ? hashFor(r.city, r.idx - 1) : null;
     const next = r.idx < PAGES.length - 1 ? hashFor(r.city, r.idx + 1) : null;
@@ -442,7 +477,7 @@
   }
 
   function head(n, title, sub, right) {
-    return `<div class="page-head"><div style="display:flex;align-items:flex-end;gap:10px"><span class="page-num">${String(n).padStart(2, '0')}</span><div><h2 class="page-title" style="margin:0">${title}</h2><div class="page-sub">${sub}</div></div></div>${right || ''}</div>`;
+    return `<div class="page-head"><div style="display:flex;align-items:flex-end;gap:10px"><span class="page-num">${String(curIdx).padStart(2, '0')}</span><div><h2 class="page-title" style="margin:0">${title}</h2><div class="page-sub">${sub}</div></div></div>${right || ''}</div>`;
   }
 
   function wxLine(city, opts) {
@@ -527,7 +562,51 @@
 ${head(1, 'CITY NOTES', '도시·나라 노트')}
 <p class="section" style="margin:16px 0 0;font-size:15px;line-height:1.6">${esc(city.intro)}</p>
 <div class="notes-grid">${cards.map((c, i) => `<div class="note" style="transform:rotate(${rot[i % rot.length]}deg)"><div class="k">${c.k}</div><div class="v">${c.v}</div><div class="d">${c.d}</div></div>`).join('')}</div>
+${goldenCard(city)}
 <div class="band"><span class="anton" style="font-size:20px;flex:none">USA</span><span class="pen" style="font-size:22px;line-height:1.15">${esc(city.countryTip)}</span></div>`;
+  }
+
+  function goldenCard(city) {
+    const g = goldenFor(city);
+    return `<section class="card" aria-label="골든아워" style="position:relative;margin:18px 20px 0;padding:14px 16px;background:linear-gradient(180deg,#FFD23F,#FF8A3D);overflow:hidden">
+      <div style="display:flex;align-items:baseline;justify-content:space-between"><span class="anton" style="font-size:12px;letter-spacing:2px">GOLDEN HOUR · ${esc(fmtDate(tripDate(city)))}</span><span class="pen" style="font-size:19px">사진 찍기 제일 예쁜 시간</span></div>
+      <div class="anton" style="font-size:40px;line-height:1.05;margin-top:4px">${g.golden} – ${g.sunset}</div>
+      <div style="display:flex;gap:14px;font-size:12px;font-weight:700;margin-top:4px"><span>일몰 ${g.sunset}</span><span>블루아워 ~${g.blue}</span></div>
+      <svg width="70" height="70" viewBox="0 0 100 100" aria-hidden="true" style="position:absolute;right:-8px;bottom:-18px;opacity:.9"><circle cx="50" cy="50" r="30" fill="#FFF1B0" stroke="#141210" stroke-width="4"/></svg>
+    </section>`;
+  }
+
+  function pHoods(city) {
+    const pins = city.hoods.map((h, i) => `<button type="button" class="hood-pin" data-hood="${i}" aria-label="${i + 1}. ${esc(h.name)}" style="left:${(h.x / 360 * 100).toFixed(2)}%;top:${(h.y / 240 * 100).toFixed(2)}%"><span>${i + 1}</span><small>${esc(h.en)}</small></button>`).join('');
+    return `
+${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
+<div class="hood-map card" style="margin:14px 12px 0">
+  <svg viewBox="0 0 360 240" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%">
+    <rect width="360" height="240" fill="#F3EAD8"/>
+    <path d="M0 0 H40 C 52 60 50 110 60 150 C 72 196 96 214 118 240 H0 Z" fill="#BFD9E6"/>
+    <path d="M40 0 C 52 60 50 110 60 150 C 72 196 96 214 118 240" fill="none" stroke="#141210" stroke-width="2"/>
+    <path d="M120 20 C 170 40 230 30 260 40 C 290 50 320 40 360 52 V0 H120 Z" fill="#D9C3A0" opacity=".7"/>
+    <text x="210" y="24" font-family="Permanent Marker, cursive" font-size="12" fill="#6B6259">hills</text>
+    <path d="M60 162 C 140 150 220 148 360 158" stroke="#141210" stroke-width="2.2" stroke-dasharray="7 5" fill="none"/>
+    <path d="M150 240 C 160 170 170 110 190 40" stroke="#141210" stroke-width="2.2" stroke-dasharray="7 5" fill="none"/>
+    <path d="M230 240 C 260 200 290 150 330 90" stroke="#141210" stroke-width="2.2" stroke-dasharray="7 5" fill="none"/>
+    <text x="16" y="222" font-family="Permanent Marker, cursive" font-size="13" fill="#5D8BA6" transform="rotate(-70 16 222)">Pacific</text>
+    <text x="352" y="232" text-anchor="end" font-family="Anton, sans-serif" font-size="9" letter-spacing="1" fill="#6B6259">NOT TO SCALE</text>
+  </svg>
+  ${pins}
+</div>
+<div class="section" style="display:flex;flex-direction:column;gap:14px;margin-top:16px">
+  ${city.hoods.map((h, i) => `<article class="card hood" id="hood-${i}" style="padding:12px 14px;transform:rotate(${i % 2 ? 0.8 : -0.8}deg)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0"><span class="num">${i + 1}</span><span style="font-size:16px;font-weight:700">${esc(h.name)}</span></div>
+      <span class="anton" style="flex:none;font-size:12px;letter-spacing:1px;padding:3px 8px;background:${h.pal[0]};color:${h.pal[0] === '#141210' || h.pal[0] === '#8A5A3B' ? '#F3EAD8' : '#141210'};border:1.5px solid #141210">${esc(h.vibe)}</span>
+    </div>
+    <div class="muted" style="font-size:13px;margin-top:4px">${esc(h.what)}</div>
+    <div style="display:flex;gap:6px;margin-top:8px" aria-hidden="true">${h.pal.map((p) => `<span style="width:28px;height:28px;border-radius:14px;background:${p};border:2px solid #141210"></span>`).join('')}</div>
+    <div style="font-size:13px;margin-top:8px"><b>입을 것</b> · ${h.wear.map(esc).join(', ')}</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px"><span style="font-size:13px"><b>갈 곳</b> · ${h.spots.map(esc).join(', ')}</span><a href="${mapsUrl(h.q)}" target="_blank" rel="noopener" style="flex:none;font-size:12px;font-weight:700;color:#1F4FBF;min-height:32px;display:inline-flex;align-items:center">지도 ↗</a></div>
+  </article>`).join('')}
+</div>`;
   }
 
   function pieces(items) {
@@ -574,11 +653,12 @@ ${wxLine(city, { extra: () => esc(note) })}
 
   function pDay(city) {
     const L = lookFor(city);
+    const G = goldenFor(city);
     return `
 ${head(4, 'DAY COURSE', '이 룩 입고 하루 돌기')}
-${wxLine(city, { extra: () => `오늘의 룩: <b>${esc(L.look.name)}</b> · 차로 이동, 구간마다 30분~1시간` })}
+${wxLine(city, { extra: () => `오늘의 룩: <b>${esc(L.look.name)}</b> · 골든아워 ${G.golden}–${G.sunset}` })}
 <div class="timeline">
-  ${city.day.map((s) => `<article class="stop">
+  ${city.day.map((s0) => { const s = Object.assign({}, s0, s0.at === 'golden' ? { time: G.golden } : s0.at === 'after' ? { time: roundTo10(G.sunsetDate, 40, city.tz) || s0.time } : {}); return `<article class="stop">
     <div style="display:flex;gap:12px;align-items:flex-start">
       <div style="flex:none;width:52px;height:52px;border:2px solid #141210;border-radius:12px;background:${s.c};padding:6px">${svgIcon(s.icon, s.c === '#FFFFFF' ? '#F3EAD8' : s.c)}</div>
       <div style="flex:1;min-width:0">
@@ -591,7 +671,7 @@ ${wxLine(city, { extra: () => `오늘의 룩: <b>${esc(L.look.name)}</b> · 차�
       <span class="look">${esc(s.look)}</span>
       <a href="${mapsUrl(s.q)}" target="_blank" rel="noopener" style="font-size:12px;font-weight:700;color:#1F4FBF;min-height:32px;display:inline-flex;align-items:center">지도 보기 ↗</a>
     </div>
-  </article>`).join('')}
+  </article>`; }).join('')}
 </div>
 <p class="section pen" style="font-size:21px;margin:4px 0 0">${esc(city.dayAlt)}</p>
 <p class="section muted" style="font-size:11px;margin:6px 0 0">추천 시간은 참고용이에요. 운영 시간·휴무일은 방문 전 확인하세요.</p>`;
@@ -647,6 +727,16 @@ ${city.read.map((g) => `<div class="section"><div class="rule"><span>${g.k}</spa
     return `<div class="result"><div><small>팁 ${state.tipPct}%</small><b>${fmtUSD(r.tip)}</b></div><div><small>합계</small><b>${fmtUSD(r.total)}</b></div><div><small>1인당 (${state.split}명)</small><b>${fmtUSD(r.per)}</b></div></div>${krw}`;
   }
 
+  const taxRate = (city) => (state.taxRate != null ? state.taxRate : city.tax[0].rate);
+  function shopHtml(city) {
+    const p = parseFloat(String(state.shopPrice).replace(/,/g, ''));
+    if (!(p > 0)) return '<p class="muted" style="font-size:13px;margin:12px 0 0">가격을 넣으면 세금 포함 금액과 원화가 나와요.</p>';
+    const r = taxRate(city);
+    const tax = p * r / 100, total = p + tax;
+    const krw = state.fx ? `<div><small>원화 (실시간)</small><b>${fmtKRW(total * state.fx)}</b></div>` : `<div><small>원화</small><b>—</b></div>`;
+    return `<div class="result"><div><small>세금 ${r}%</small><b>${fmtUSD(tax)}</b></div><div><small>결제 금액</small><b>${fmtUSD(total)}</b></div>${krw}</div>`;
+  }
+
   function pTools(city) {
     const g = state.sizeG, t = state.sizeT;
     const rows = SIZES[g][t];
@@ -662,6 +752,13 @@ ${head(7, 'TOOLS', '현지에서 바로 쓰는 계산기')}
   <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px"><span style="font-size:13px;font-weight:700">나눠 낼 사람</span><div class="stepper"><button type="button" data-split="-1" aria-label="한 명 빼기">−</button><output data-splitout>${state.split}</output><button type="button" data-split="1" aria-label="한 명 더하기">+</button></div></div>
   <div data-tipout>${tipHtml()}</div>
   <p class="muted" style="font-size:12px;margin:10px 0 0">${esc(city.tipNote)}</p>
+</section>
+<section class="card tool" aria-label="쇼핑 계산기">
+  <div style="display:flex;align-items:center;justify-content:space-between"><h3 class="anton" style="margin:0;font-size:20px;font-weight:400">SHOPPING</h3><span class="pen" style="font-size:19px">가격표엔 세금이 빠져 있어요</span></div>
+  <label class="field" style="margin-top:10px"><span class="anton" style="font-size:24px">$</span><input data-price inputmode="decimal" placeholder="가격표 금액" value="${esc(state.shopPrice)}" aria-label="가격표 금액 (달러)"></label>
+  <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">${city.tax.map((t) => `<button type="button" class="chip" data-tax="${t.rate}" aria-pressed="${taxRate(city) === t.rate}">${esc(t.name)} ${t.rate}%</button>`).join('')}</div>
+  <div data-shopout>${shopHtml(city)}</div>
+  <p class="muted" style="font-size:12px;margin:10px 0 0">${esc(city.taxNote)}</p>
 </section>
 <section class="card tool" aria-label="사이즈 변환표">
   <h3 class="anton" style="margin:0;font-size:20px;font-weight:400">SIZE GUIDE</h3>
@@ -828,6 +925,16 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
       cleanups.push(stop);
     }
 
+    if (page.id === 'hoods') {
+      $app.querySelectorAll('[data-hood]').forEach((b) => b.addEventListener('click', () => {
+        const i = b.getAttribute('data-hood');
+        $app.querySelectorAll('.hood').forEach((x) => x.classList.toggle('hl', x.id === 'hood-' + i));
+        $app.querySelectorAll('[data-hood]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        const el = document.getElementById('hood-' + i);
+        if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }));
+    }
+
     if (page.id === 'look') {
       const b = $app.querySelector('[data-lookcard]');
       if (b) b.addEventListener('click', async () => {
@@ -855,6 +962,14 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
         state.split = Math.max(1, Math.min(20, state.split + +b.getAttribute('data-split')));
         $app.querySelector('[data-splitout]').textContent = state.split;
         out.innerHTML = tipHtml();
+      }));
+      const shopOut = $app.querySelector('[data-shopout]');
+      const price = $app.querySelector('[data-price]');
+      price.addEventListener('input', () => { state.shopPrice = price.value; shopOut.innerHTML = shopHtml(city); });
+      $app.querySelectorAll('[data-tax]').forEach((b) => b.addEventListener('click', () => {
+        state.taxRate = +b.getAttribute('data-tax');
+        $app.querySelectorAll('[data-tax]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        shopOut.innerHTML = shopHtml(city);
       }));
       $app.querySelectorAll('[data-sg]').forEach((b) => b.addEventListener('click', () => { state.sizeG = b.getAttribute('data-sg'); refresh(); }));
       $app.querySelectorAll('[data-st]').forEach((b) => b.addEventListener('click', () => { state.sizeT = b.getAttribute('data-st'); refresh(); }));
