@@ -7,4 +7,4 @@
 - 팁 계산기(실시간 환율), 한국↔미국 사이즈표
 - 룩 + 뷰티로 만드는 짐 체크리스트
 
-첫 도시: Los Angeles. 정적 파일만으로 동작해서 GitHub Pages에서 바로 열려요.
+도시: Los Angeles, Seoul. 정적 파일만으로 동작해서 GitHub Pages에서 바로 열려요.

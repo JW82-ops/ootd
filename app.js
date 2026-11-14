@@ -43,6 +43,7 @@
   const state = {
     who: store.get('who', 'her'),
     date: store.get('date', null),
+    trip: store.get('trip', 'la'),
     sel: 'la',
     mapX: 0,
     wx: {},
@@ -180,10 +181,10 @@
     const m = +d.slice(5, 7) - 1;
     return { max: city.normals[m][0], min: city.normals[m][1], uv: null, pop: null, src: 'normal', date: d };
   }
-  const bucketOf = (w) => (w.max >= 27 ? 'hot' : w.max >= 20 ? 'mild' : 'cool');
+  const bucketOf = (w, city) => (w.max >= 27 ? 'hot' : w.max >= 20 ? 'mild' : (w.max < 8 && city.looks.cold) ? 'cold' : 'cool');
   function lookFor(city) {
     const w = dayWx(city);
-    const b = bucketOf(w);
+    const b = bucketOf(w, city);
     const look = city.looks[b];
     const items = look[state.who].slice();
     if (w.pop != null && w.pop >= 50) items.push({ slot: null, icon: 'umbrella', c: '#2D5BFF', name: '접이식 우산', note: '비 올 확률 ' + w.pop + '%' });
@@ -250,7 +251,7 @@
       const dot = `<span class="dot${c.open ? ' open' : ''}" style="left:${c.mapX}px;top:${c.mapY}px"></span>`;
       const tag = c.open
         ? `<a class="tag open" href="#${id}" style="left:${t[0]}px;top:${t[1]}px;transform:rotate(${t[2]}deg)"><b>${esc(c.en)}</b><small>잡지 열기 →</small></a>
-           <span class="tag" style="left:${t[0] + 92}px;top:${t[1] - 22}px;padding:2px 8px;background:#F2457C;border-width:2px;transform:rotate(10deg)"><b style="font-size:12px">NEW!</b></span>`
+           ${c.isNew ? `<span class="tag" style="left:${t[0] + 50}px;top:${t[1] - 22}px;padding:2px 8px;background:#F2457C;border-width:2px;transform:rotate(10deg)"><b style="font-size:12px">NEW!</b></span>` : ''}`
         : `<button class="tag" type="button" data-soon="${id}" style="left:${t[0]}px;top:${t[1]}px;transform:rotate(${t[2]}deg);text-align:left"><b>${esc(c.en)}</b><small>SOON</small></button>`;
       return dot + tag;
     }).join('');
@@ -307,23 +308,62 @@
     <div class="hscroll">${chips}</div>
   </section>
 
-  <a href="#la" class="card" style="display:flex;align-items:center;justify-content:space-between;margin:22px 20px 0;padding:12px 16px;background:#FFD23F">
-    <div style="display:flex;flex-direction:column"><span class="anton" style="font-size:11px;letter-spacing:2px">NOW OPEN</span><span class="anton" style="font-size:26px;line-height:1.1">LOS ANGELES</span></div>
+  ${ids.filter((id) => C[id].open).sort((a, b) => (C[b].isNew ? 1 : 0) - (C[a].isNew ? 1 : 0)).map((id, i) => `<a href="#${id}" class="card" style="display:flex;align-items:center;justify-content:space-between;margin:${i ? 12 : 22}px 20px 0;padding:12px 16px;background:${C[id].isNew ? '#F2457C' : '#FFD23F'}">
+    <div style="display:flex;flex-direction:column"><span class="anton" style="font-size:11px;letter-spacing:2px">${C[id].isNew ? 'NEW CITY' : 'NOW OPEN'}</span><span class="anton" style="font-size:26px;line-height:1.1">${esc(C[id].en)}</span></div>
     <span style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700">잡지 펼치기 ${chev('right')}</span>
-  </a>
+  </a>`).join('')}
   ${tripCard()}
-</main>`;
+  ${closetHtml()}
+</main>
+${store.get('seen', false) ? '' : introHtml()}`;
   }
 
   function tripCard() {
-    const city = C.la;
+    const open = Object.keys(C).filter((id) => C[id].open);
+    const city = C[state.trip] && C[state.trip].open ? C[state.trip] : C.la;
     const d = dday(city);
     const big = d ? d.label : 'D-?';
-    const sub = d ? (d.n > 0 ? 'LA 여행까지 ' + d.n + '일 남았어요' : d.n === 0 ? '오늘 LA로 떠나요!' : '다녀온 LA, zine으로 남겨요') : '여행 날짜를 넣으면 D-day가 떠요';
+    const n = city.nick;
+    const sub = d ? (d.n > 0 ? n + ' 가는 날까지 ' + d.n + '일 남았어요' : d.n === 0 ? '오늘 ' + n + '(으)로 떠나요!' : '다녀온 ' + n + ', zine으로 남겨요') : '날짜를 넣으면 D-day가 떠요';
     return `<section class="card" aria-label="내 여행" style="display:flex;align-items:center;gap:14px;margin:14px 20px 0;padding:12px 14px;background:#FFFFFF">
       <div style="flex:none;min-width:96px;text-align:center"><div class="anton" style="font-size:11px;letter-spacing:2px">MY TRIP</div><div class="anton" style="font-size:38px;line-height:1;color:#F2457C;text-shadow:2px 2px 0 #141210">${big}</div></div>
-      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700">${sub}</span><label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700">LA 출발일<input type="date" data-date value="${state.date || ''}" style="min-height:36px;border:2px solid #141210;border-radius:8px;background:#F3EAD8;padding:0 6px;font-size:13px"></label></div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700">${sub}</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${open.map((id) => `<button type="button" class="chip" data-trip="${id}" aria-pressed="${city.id === id}" style="min-height:32px;padding:0 10px;font-size:12px">${esc(C[id].nick)}</button>`).join('')}</div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700">가는 날<input type="date" data-date value="${state.date || ''}" style="min-height:36px;border:2px solid #141210;border-radius:8px;background:#F3EAD8;padding:0 6px;font-size:13px"></label></div>
     </section>`;
+  }
+
+  /* ---------- closet ---------- */
+  const closet = () => store.get('closet', []);
+  const inCloset = (id) => closet().some((e) => e.id === id);
+  function toggleCloset(entry) {
+    const list = closet();
+    const k = list.findIndex((e) => e.id === entry.id);
+    if (k >= 0) list.splice(k, 1); else list.unshift(entry);
+    store.set('closet', list.slice(0, 40));
+    return k < 0;
+  }
+  function closetHtml() {
+    const list = closet();
+    if (!list.length) return `<section style="margin:26px 20px 0"><div class="anton" style="font-size:20px;letter-spacing:1px">MY CLOSET</div><div class="card" style="margin-top:10px;padding:14px;border-style:dashed;box-shadow:none"><span class="pen" style="font-size:21px;line-height:1.15">마음에 드는 룩이나 동네 스타일에서 "옷장에 담기"를 누르면 여기에 모여요</span></div></section>`;
+    return `<section style="margin:26px 20px 0"><div style="display:flex;align-items:baseline;gap:8px"><span class="anton" style="font-size:20px;letter-spacing:1px">MY CLOSET</span><span class="muted" style="font-size:12px">${list.length}개 담았어요</span></div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:10px">${list.map((e) => `<article class="card" style="padding:12px 14px;box-shadow:3px 3px 0 #141210">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px"><div style="min-width:0"><div class="anton" style="font-size:18px;line-height:1.1">${esc(e.title)}</div><div class="muted" style="font-size:12px;margin-top:2px">${esc(e.sub)}</div></div>
+          <button type="button" class="chip" data-unsave="${esc(e.id)}" aria-label="${esc(e.title)} 옷장에서 빼기" style="min-height:32px;padding:0 10px;font-size:12px">빼기</button></div>
+        <div style="font-size:13px;margin-top:8px;line-height:1.5">${e.items.map(esc).join(' · ')}</div>
+        <a href="#${e.href}" style="display:inline-flex;align-items:center;min-height:32px;margin-top:4px;font-size:12px;font-weight:700;color:#1F4FBF">잡지에서 보기 →</a>
+      </article>`).join('')}</div></section>`;
+  }
+
+  /* ---------- first-visit intro ---------- */
+  function introHtml() {
+    const steps = [['1', '지도에서 도시 고르기', '지도를 밀어서 열려 있는 도시를 눌러요'], ['2', '가는 날 넣기', '그날 날씨에 맞는 룩과 짐 리스트가 나와요'], ['3', '잡지처럼 넘겨 보기', '룩 · 동네 · 맛집 · 내 zine까지 옆으로 넘겨요']];
+    return `<div class="zine-overlay" id="intro" role="dialog" aria-label="OOTD 소개"><div class="card" style="width:100%;max-width:360px;padding:18px 18px 16px;background:#F3EAD8;transform:rotate(-1deg)">
+      <div class="mast" style="font-size:64px">OOTD</div>
+      <div class="pen" style="font-size:24px;line-height:1.1;margin-top:6px">도시를 입는 여행 매거진</div>
+      <ol style="list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:10px">${steps.map((st) => `<li style="display:flex;gap:10px;align-items:flex-start"><span class="num" style="width:26px;height:26px;border-radius:13px;background:#F2457C;color:#141210;border:2px solid #141210">${st[0]}</span><span><b style="font-size:15px">${st[1]}</b><br><span class="muted" style="font-size:13px">${st[2]}</span></span></li>`).join('')}</ol>
+      <button type="button" class="btn yellow" data-intro-close style="width:100%;margin-top:16px">시작하기</button>
+    </div></div>`;
   }
 
   function bindHome() {
@@ -439,9 +479,13 @@
     $app.querySelectorAll('[data-date]').forEach((inp) => inp.addEventListener('change', () => {
       state.date = inp.value || null;
       store.set('date', state.date);
-      render();
+      render({ keepScroll: true });
       toast(state.date ? 'D-day를 맞췄어요' : '날짜를 지웠어요');
     }));
+    $app.querySelectorAll('[data-trip]').forEach((b) => b.addEventListener('click', () => { state.trip = b.getAttribute('data-trip'); store.set('trip', state.trip); render({ keepScroll: true }); }));
+    $app.querySelectorAll('[data-unsave]').forEach((b) => b.addEventListener('click', () => { toggleCloset({ id: b.getAttribute('data-unsave') }); render({ keepScroll: true }); toast('옷장에서 뺐어요'); }));
+    const introBtn = $app.querySelector('[data-intro-close]');
+    if (introBtn) { introBtn.addEventListener('click', () => { store.set('seen', true); const el = document.getElementById('intro'); if (el) el.remove(); }); introBtn.focus(); }
     $app.querySelectorAll('[data-soon]').forEach((b) => b.addEventListener('click', () => {
       toast(C[b.getAttribute('data-soon')].name + '은(는) 준비 중이에요');
     }));
@@ -474,7 +518,7 @@
 <nav class="mag-bar" aria-label="페이지 이동">
   <a class="btn ghost" href="#${prev}" aria-label="이전 페이지" style="padding:0 12px">${chev('left')}</a>
   <div class="dots" aria-label="${r.idx + 1} / ${PAGES.length}">${dots}</div>
-  ${next ? `<a class="btn" href="#${next}">${esc(PAGES[r.idx + 1].label)} ${chev('right')}</a>` : `<a class="btn yellow" href="#home">지도로 ${chev('right')}</a>`}
+  ${next ? `<a class="btn" href="#${next}">${esc((city.labels && city.labels[PAGES[r.idx + 1].id]) || PAGES[r.idx + 1].label)} ${chev('right')}</a>` : `<a class="btn yellow" href="#home">지도로 ${chev('right')}</a>`}
 </nav>`;
   }
 
@@ -526,19 +570,19 @@ ${scene}
   <h1 class="mast" style="position:relative;padding:0 10px;font-size:min(47vw,190px)">OOTD</h1>
 
   <div style="position:absolute;right:12px;top:212px;width:124px;height:68px;border-radius:62px/34px;background:#FFD23F;border:2.5px solid #141210;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-8deg);color:#141210">
-    <span class="anton" style="font-size:30px;line-height:1">L.A.</span><span class="anton" style="font-size:13px;letter-spacing:2px;line-height:1.1">SPECIAL</span>
+    <span class="anton" style="font-size:${city.short.length > 4 ? 24 : 30}px;line-height:1">${esc(city.short)}</span><span class="anton" style="font-size:13px;letter-spacing:2px;line-height:1.1">SPECIAL</span>
   </div>
   ${burst('left:6px;top:250px;width:108px;height:108px;transform:rotate(-12deg);color:#141210', 'NEW', 'CITY!', '26px', '13px')}
   <svg width="64" height="120" viewBox="0 0 54 100" aria-hidden="true" style="position:absolute;right:34px;top:300px;transform:rotate(10deg)"><path d="M34 0 L6 54 H24 L12 100 L50 38 H32 L44 0 Z" fill="#FFD23F" stroke="#141210" stroke-width="2.5" stroke-linejoin="round"/></svg>
   <div style="position:absolute;left:18px;top:378px;display:flex;flex-direction:column;align-items:flex-start;gap:4px">${lines}</div>
-  <div class="marker" style="position:absolute;right:18px;top:450px;width:190px;text-align:right;font-size:26px;line-height:1.05;transform:rotate(-6deg);color:#FFFFFF;text-shadow:2px 2px 0 #141210">${esc(city.tagline)}</div>
+  <div class="marker" style="position:absolute;right:18px;top:450px;width:190px;text-align:right;font-size:26px;line-height:1.05;transform:rotate(-6deg);color:#FFFFFF;text-shadow:2px 2px 0 #141210;word-break:keep-all">${esc(city.tagline)}</div>
 
   <div style="position:absolute;left:0;right:0;bottom:0;padding:0 0 calc(22px + env(safe-area-inset-bottom))">
-    <div class="torn" style="display:inline-block;margin-left:10px;padding:8px 16px 6px;background:#FFD23F;color:#141210;transform:rotate(-4deg)"><span class="anton" style="font-size:48px;line-height:1">GOLDEN HOUR</span></div><br>
-    <div class="torn" style="display:inline-block;margin:-4px 0 0 32px;padding:6px 16px;background:#F2457C;color:#141210;transform:rotate(-2deg)"><span class="anton" style="font-size:36px;line-height:1">IN LOS ANGELES.</span></div>
+    <div class="torn" style="display:inline-block;margin-left:10px;padding:8px 16px 6px;background:#FFD23F;color:#141210;transform:rotate(-4deg)"><span class="anton" style="font-size:48px;line-height:1">${esc(city.coverHead[0])}</span></div><br>
+    <div class="torn" style="display:inline-block;margin:-4px 0 0 32px;padding:6px 16px;background:#F2457C;color:#141210;transform:rotate(-2deg)"><span class="anton" style="font-size:${city.coverHead[1].length > 15 ? 32 : 36}px;line-height:1">${esc(city.coverHead[1])}</span></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:0 16px">
       <a href="#${city.id}-notes" class="anton" style="height:48px;display:flex;align-items:center;gap:8px;padding:0 16px;background:#141210;color:#F3EAD8;transform:rotate(-3deg);font-size:22px;letter-spacing:1px">OPEN <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2 L14 8 L3 14 Z" fill="#F2457C"/></svg><span style="font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:0">펼쳐 보기</span></a>
-      ${dday(city) ? `<span class="anton" style="position:absolute;right:20px;bottom:calc(98px + env(safe-area-inset-bottom));padding:4px 10px;background:#F2457C;color:#141210;border:2px solid #141210;font-size:20px;transform:rotate(8deg)">${dday(city).label}</span>` : ''}
+      ${state.trip === city.id && dday(city) ? `<span class="anton" style="position:absolute;right:20px;bottom:calc(98px + env(safe-area-inset-bottom));padding:4px 10px;background:#F2457C;color:#141210;border:2px solid #141210;font-size:20px;transform:rotate(8deg)">${dday(city).label}</span>` : ''}
       <div style="width:100px;background:#F3EAD8;padding:6px 8px 4px;color:#141210;border:2px solid #141210">
         <div style="display:flex;justify-content:space-between;font-size:8px;font-weight:700"><span>${esc(city.country)}</span></div>
         <svg width="84" height="26" viewBox="0 0 88 30" aria-hidden="true" style="display:block;margin-top:3px"><path d="M2 0v30M5 0v30M9 0v30M11 0v30M15 0v30M20 0v30M22 0v30M26 0v30M31 0v30M33 0v30M36 0v30M41 0v30M44 0v30M46 0v30M51 0v30M55 0v30M57 0v30M62 0v30M64 0v30M68 0v30M72 0v30M75 0v30M78 0v30M82 0v30M86 0v30" stroke="#141210" stroke-width="1.6"/></svg>
@@ -554,10 +598,11 @@ ${scene}
     let wxV = '…', wxD = '날씨 불러오는 중';
     if (w && w.ok && w.current) { wxV = Math.round(w.current.temperature_2m) + '°C'; wxD = '지금 ' + city.name + ' 기온 (실시간)'; }
     else if (w && !w.ok) { const m = +todayIn(city.tz).slice(5, 7) - 1; wxV = city.normals[m][0] + '° / ' + city.normals[m][1] + '°'; wxD = '이번 달 평년 낮·밤 기온'; }
-    const fxV = state.fx ? '₩' + Math.round(state.fx).toLocaleString('ko-KR') : 'USD $';
-    const fxD = state.fx ? '1달러 기준 (실시간 환율)' : '식당 팁 18~20%가 보통';
+    const kr = city.money === 'krw';
+    const fxV = kr ? '₩ KRW' : state.fx ? '₩' + Math.round(state.fx).toLocaleString('ko-KR') : 'USD $';
+    const fxD = kr ? '팁 없음 · 가격에 부가세 포함' : state.fx ? '1달러 기준 (실시간 환율)' : '식당 팁 18~20%가 보통';
     const live = [
-      { k: 'LOCAL TIME', v: `<span data-clock>${esc(localTime(city.tz))}</span>`, d: `${esc(localDay(city.tz))} · 한국보다 ${diff}시간 느려요` },
+      { k: 'LOCAL TIME', v: `<span data-clock>${esc(localTime(city.tz))}</span>`, d: `${esc(localDay(city.tz))} · ${diff === 0 ? '한국 시간 그대로예요' : diff > 0 ? '한국보다 ' + diff + '시간 느려요' : '한국보다 ' + (-diff) + '시간 빨라요'}` },
       { k: 'WEATHER', v: wxV, d: wxD },
       { k: 'MONEY', v: fxV, d: fxD }
     ];
@@ -568,7 +613,7 @@ ${head(1, 'CITY NOTES', '도시·나라 노트')}
 <p class="section" style="margin:16px 0 0;font-size:15px;line-height:1.6">${esc(city.intro)}</p>
 <div class="notes-grid">${cards.map((c, i) => `<div class="note" style="transform:rotate(${rot[i % rot.length]}deg)"><div class="k">${c.k}</div><div class="v">${c.v}</div><div class="d">${c.d}</div></div>`).join('')}</div>
 ${goldenCard(city)}
-<div class="band"><span class="anton" style="font-size:20px;flex:none">USA</span><span class="pen" style="font-size:22px;line-height:1.15">${esc(city.countryTip)}</span></div>`;
+<div class="band"><span class="anton" style="font-size:20px;flex:none">${esc(city.bandLabel)}</span><span class="pen" style="font-size:22px;line-height:1.15">${esc(city.countryTip)}</span></div>`;
   }
 
   function goldenCard(city) {
@@ -585,15 +630,15 @@ ${goldenCard(city)}
     const A = city.arrive;
     const d = tripDate(city);
     const monthEn = new Date(Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, 15)).toLocaleString('en-US', { month: 'long', timeZone: 'UTC' });
-    const gq = 'https://www.google.com/search?q=' + encodeURIComponent('Los Angeles events ' + monthEn + ' ' + d.slice(0, 4));
+    const gq = 'https://www.google.com/search?q=' + encodeURIComponent(city.eventsKo ? city.eventsQuery + ' ' + d.slice(0, 4) + '년 ' + (+d.slice(5, 7)) + '월' : city.eventsQuery + ' ' + monthEn + ' ' + d.slice(0, 4));
     return `
-${head(0, 'ARRIVAL', 'LAX에서 시내로 · 그날의 행사')}
+${head(0, esc(city.arriveTitle), esc(city.arriveSub))}
 <div class="card" style="margin:14px 20px 0;padding:12px 14px;background:#FFD23F;box-shadow:3px 3px 0 #141210">
-  <div class="anton" style="font-size:12px;letter-spacing:2px">LAX → CITY · ${esc(A.asOf)}</div>
+  <div class="anton" style="font-size:12px;letter-spacing:2px">${esc(city.arriveHead)} · ${esc(A.asOf)}</div>
   <p style="margin:6px 0 0;font-size:13px;font-weight:500;line-height:1.5">${esc(A.note)}</p>
 </div>
 <div class="section" style="margin-top:14px">
-  <div style="font-size:12px;font-weight:700;margin-bottom:6px">내 숙소는…</div>
+  <div style="font-size:12px;font-weight:700;margin-bottom:6px">${esc(city.arrivePick)}</div>
   <div style="display:flex;gap:6px;flex-wrap:wrap">${A.picks.map((p, i) => `<button type="button" class="chip" data-arr="${p.id}" data-arri="${i}" aria-pressed="false">${esc(p.label)}</button>`).join('')}</div>
 </div>
 <div class="section" style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
@@ -608,13 +653,13 @@ ${head(0, 'ARRIVAL', 'LAX에서 시내로 · 그날의 행사')}
       <p class="muted" style="margin:4px 0 0;font-size:12px">${esc(o.best)}</p>
     </div>
   </article>`).join('')}
-  <p class="muted" style="font-size:11px;margin:0">요금·시간은 대략이에요. 우버·리프트는 시간대에 따라 더 비싸질 수 있어요. 출발 전 flylax.com에서 한 번 더 확인하세요.</p>
+  <p class="muted" style="font-size:11px;margin:0">${esc(A.foot || '요금·시간은 대략이에요. 우버·리프트는 시간대에 따라 더 비싸질 수 있어요. 출발 전 flylax.com에서 한 번 더 확인하세요.')}</p>
 </div>
 <div class="section">
   <div class="rule"><span>WHAT'S ON · ${esc(fmtDate(d))}</span><i></i></div>
   <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
     ${city.events.map((e) => `<a class="card" href="${e.url}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;box-shadow:3px 3px 0 #141210"><div><div class="anton" style="font-size:18px">${esc(e.name)}</div><div class="muted" style="font-size:12px">${esc(e.what)}</div></div><span style="font-size:12px;font-weight:700;color:#1F4FBF;flex:none">보러 가기 ↗</span></a>`).join('')}
-    <a class="card" href="${gq}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;box-shadow:3px 3px 0 #141210;background:#F2457C"><div><div class="anton" style="font-size:18px">${esc(monthEn.toUpperCase())} IN L.A.</div><div style="font-size:12px;font-weight:500">여행 달에 열리는 행사 검색</div></div><span style="font-size:12px;font-weight:700;flex:none">검색 ↗</span></a>
+    <a class="card" href="${gq}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;box-shadow:3px 3px 0 #141210;background:#F2457C"><div><div class="anton" style="font-size:18px">${esc(monthEn.toUpperCase())} IN ${esc(city.short)}</div><div style="font-size:12px;font-weight:500">여행 달에 열리는 행사 검색</div></div><span style="font-size:12px;font-weight:700;flex:none">검색 ↗</span></a>
   </div>
 </div>`;
   }
@@ -626,7 +671,7 @@ ${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
 <div class="hood-map card" style="margin:14px 12px 0">
   <svg viewBox="0 0 360 240" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%">
     <rect width="360" height="240" fill="#F3EAD8"/>
-    <path d="M0 0 H40 C 52 60 50 110 60 150 C 72 196 96 214 118 240 H0 Z" fill="#BFD9E6"/>
+    ${city.hoodSvg || `<path d="M0 0 H40 C 52 60 50 110 60 150 C 72 196 96 214 118 240 H0 Z" fill="#BFD9E6"/>
     <path d="M40 0 C 52 60 50 110 60 150 C 72 196 96 214 118 240" fill="none" stroke="#141210" stroke-width="2"/>
     <path d="M120 20 C 170 40 230 30 260 40 C 290 50 320 40 360 52 V0 H120 Z" fill="#D9C3A0" opacity=".7"/>
     <text x="210" y="24" font-family="Permanent Marker, cursive" font-size="12" fill="#6B6259">hills</text>
@@ -634,7 +679,7 @@ ${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
     <path d="M150 240 C 160 170 170 110 190 40" stroke="#141210" stroke-width="2.2" stroke-dasharray="7 5" fill="none"/>
     <path d="M230 240 C 260 200 290 150 330 90" stroke="#141210" stroke-width="2.2" stroke-dasharray="7 5" fill="none"/>
     <text x="16" y="222" font-family="Permanent Marker, cursive" font-size="13" fill="#5D8BA6" transform="rotate(-70 16 222)">Pacific</text>
-    <text x="352" y="232" text-anchor="end" font-family="Anton, sans-serif" font-size="9" letter-spacing="1" fill="#6B6259">NOT TO SCALE</text>
+    <text x="352" y="232" text-anchor="end" font-family="Anton, sans-serif" font-size="9" letter-spacing="1" fill="#6B6259">NOT TO SCALE</text>`}
   </svg>
   ${pins}
 </div>
@@ -648,6 +693,7 @@ ${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
     <div style="display:flex;gap:6px;margin-top:8px" aria-hidden="true">${h.pal.map((p) => `<span style="width:28px;height:28px;border-radius:14px;background:${p};border:2px solid #141210"></span>`).join('')}</div>
     <div style="font-size:13px;margin-top:8px"><b>입을 것</b> · ${h.wear.map(esc).join(', ')}</div>
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px"><span style="font-size:13px"><b>갈 곳</b> · ${h.spots.map(esc).join(', ')}</span><a href="${mapsUrl(h.q)}" target="_blank" rel="noopener" style="flex:none;font-size:12px;font-weight:700;color:#1F4FBF;min-height:32px;display:inline-flex;align-items:center">지도 ↗</a></div>
+    <button type="button" class="chip" data-savehood="${i}" aria-pressed="${inCloset(city.id + '|hood|' + i)}" style="margin-top:8px;min-height:36px;font-size:12px">${inCloset(city.id + '|hood|' + i) ? '옷장에 담김 ✓' : '옷장에 담기'}</button>
   </article>`).join('')}
 </div>`;
   }
@@ -668,28 +714,28 @@ ${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
 ${head(2, 'THE LOOK', esc(L.look.ko), `<div class="seg" role="group" aria-label="룩 선택"><button type="button" data-who="her" aria-pressed="${state.who === 'her'}">HER</button><button type="button" data-who="him" aria-pressed="${state.who === 'him'}">HIM</button></div>`)}
 ${wxLine(city, { extra: () => `이 날씨엔 <b>${esc(L.look.name)}</b> — ${esc(L.look.tip)}` })}
 <div class="board" style="container-type:inline-size">
-  <div style="position:absolute;left:3%;top:2%;width:44%;height:25%;background:#F3E6CF;display:flex;align-items:center;justify-content:center">${svgIcon('house')}</div>
-  <div class="word" style="left:4%;top:29%;font-size:15cqw"><div>LOS</div><div style="padding-left:7%"><span style="color:#F2457C">A</span>NGE</div><div style="padding-left:2%">LES</div></div>
+  <div style="position:absolute;left:3%;top:2%;width:44%;height:25%;background:#F3E6CF;display:flex;align-items:center;justify-content:center">${svgIcon(city.boardArt)}</div>
+  <div class="word" style="left:4%;top:29%;font-size:15cqw"><div>${esc(city.word[0])}</div><div style="padding-left:7%"><span style="color:#F2457C">${esc(city.word[1][0])}</span>${esc(city.word[1].slice(1))}</div><div style="padding-left:2%">${esc(city.word[2])}</div></div>
   <div style="position:absolute;left:36%;top:20%;width:17%;height:11%;transform:rotate(-8deg)">${svgIcon('camera', '#D6D2CC', '#3A3F5C')}</div>
   ${pieces(L.items)}
   ${burst('left:79%;top:84%;width:19cqw;height:19cqw;transform:rotate(-12deg)', String(boardItems.length), 'ITEMS', '5.5cqw', '2.8cqw')}
 </div>
 <ol class="item-list">${list.map((it, i) => `<li data-row="${i}" class="${state.pick === i ? 'hl' : ''}"><span class="num">${i + 1}</span><span><b>${esc(it.name)}</b> <span class="muted">— ${esc(it.note)}</span></span></li>`).join('')}</ol>
-<div class="section" style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><button type="button" class="btn" data-lookcard style="width:100%">룩 카드 저장 · 공유</button><a class="btn yellow" href="#${city.id}-pack" style="width:100%">이 룩으로 짐 싸기 ${chev('right')}</a></div>`;
+<div class="section" style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><button type="button" class="btn" data-lookcard style="width:100%">룩 카드 저장 · 공유</button><button type="button" class="btn ghost" data-savelook aria-pressed="${inCloset(city.id + '|' + L.b + '|' + state.who)}" style="width:100%">${inCloset(city.id + '|' + L.b + '|' + state.who) ? '옷장에 담김 ✓' : '옷장에 담기'}</button><a class="btn yellow" href="#${city.id}-pack" style="width:100%">이 룩으로 짐 싸기 ${chev('right')}</a></div>`;
   }
 
   function pBeauty(city) {
     const w = dayWx(city);
-    const note = w.uv != null ? `그날 자외선 지수 최고 ${Math.round(w.uv)} — ${w.uv >= 6 ? '선크림 필수!' : '그래도 선크림은 챙기기'}` : 'LA는 겨울에도 햇살이 강하고 공기가 건조해요';
+    const note = w.uv != null ? `그날 자외선 지수 최고 ${Math.round(w.uv)} — ${w.uv >= 6 ? '선크림 필수!' : '그래도 자외선 차단은 챙기기'}` : city.beautyNote;
     return `
-${head(3, 'BEAUTY KIT', 'LA 파우치에 꼭 넣을 것')}
+${head(3, 'BEAUTY KIT', esc(city.beautySub))}
 ${wxLine(city, { extra: () => esc(note) })}
 <div class="board short" style="container-type:inline-size">
-  <div class="word" style="left:4%;top:5%;font-size:14cqw"><div>GLOW</div><div style="padding-left:9%;color:#F2457C">IN</div><div style="padding-left:3%">L.A.</div></div>
+  <div class="word" style="left:4%;top:5%;font-size:14cqw"><div>${esc(city.glow[0])}</div><div style="padding-left:9%;color:#F2457C">${esc(city.glow[1])}</div><div style="padding-left:3%">${esc(city.glow[2])}</div></div>
   ${city.beauty.map((b, i) => `<button class="piece" type="button" data-pick="${i}" aria-pressed="${state.pick === i}" aria-label="${i + 1}. ${esc(b.name)}" style="left:${b.pos[0]}%;top:${b.pos[1]}%;width:${b.pos[2]}%;height:${b.pos[3]}%">${art(b)}<span class="num">${i + 1}</span></button>`).join('')}
   <div style="position:absolute;left:24%;top:80%;width:18%;height:13%;transform:rotate(-10deg)">${svgIcon('clip', '#FFD23F')}</div>
-  ${burst('left:80%;top:40%;width:17cqw;height:17cqw;transform:rotate(12deg)', '5', 'ITEMS', '5cqw', '2.5cqw')}
-  <div class="pen" style="position:absolute;left:4%;top:60%;font-size:6.2cqw;line-height:1.05;color:#C2185B;transform:rotate(-4deg)">햇빛 강하고<br>공기는 건조!</div>
+  ${burst('left:80%;top:40%;width:17cqw;height:17cqw;transform:rotate(12deg)', String(city.beauty.length), 'ITEMS', '5cqw', '2.5cqw')}
+  <div class="pen" style="position:absolute;left:4%;top:60%;font-size:6.2cqw;line-height:1.05;color:#C2185B;transform:rotate(-4deg)">${esc(city.beautyScribble[0])}<br>${esc(city.beautyScribble[1])}</div>
 </div>
 <ol class="item-list">${city.beauty.map((b, i) => `<li data-row="${i}" class="${state.pick === i ? 'hl' : ''}"><span class="num">${i + 1}</span><span><b>${esc(b.name)}</b> <span class="muted">— ${esc(b.why)}</span></span></li>`).join('')}</ol>`;
   }
@@ -780,7 +826,32 @@ ${city.read.map((g) => `<div class="section"><div class="rule"><span>${g.k}</spa
     return `<div class="result"><div><small>세금 ${r}%</small><b>${fmtUSD(tax)}</b></div><div><small>결제 금액</small><b>${fmtUSD(total)}</b></div>${krw}</div>`;
   }
 
+  function splitHtml() {
+    const amt = parseFloat(String(state.bill).replace(/,/g, ''));
+    if (!(amt > 0)) return '<p class="muted" style="font-size:13px;margin:12px 0 0">금액을 넣으면 1인당 금액이 나와요.</p>';
+    return `<div class="result" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div><small>합계</small><b>${fmtKRW(amt)}</b></div><div><small>1인당 (${state.split}명)</small><b>${fmtKRW(Math.ceil(amt / state.split / 100) * 100)}</b></div></div><p class="muted" style="font-size:12px;margin:8px 0 0">1인당 금액은 100원 단위로 올림했어요.</p>`;
+  }
+  function pToolsKr(city) {
+    return `
+${head(7, 'TOOLS', '같이 간 사람과 깔끔하게')}
+<section class="card tool" aria-label="더치페이 계산기">
+  <div style="display:flex;align-items:center;justify-content:space-between"><h3 class="anton" style="margin:0;font-size:20px;font-weight:400">SPLIT THE BILL</h3><span class="pen" style="font-size:19px">N분의 1!</span></div>
+  <label class="field" style="margin-top:10px"><span class="anton" style="font-size:24px">₩</span><input data-kbill inputmode="numeric" placeholder="계산 금액" value="${esc(state.bill)}" aria-label="계산 금액 (원)"></label>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px"><span style="font-size:13px;font-weight:700">나눠 낼 사람</span><div class="stepper"><button type="button" data-ksplit="-1" aria-label="한 명 빼기">−</button><output data-ksplitout>${state.split}</output><button type="button" data-ksplit="1" aria-label="한 명 더하기">+</button></div></div>
+  <div data-kout>${splitHtml()}</div>
+</section>
+<section class="card tool" aria-label="서울 팁">
+  <h3 class="anton" style="margin:0;font-size:20px;font-weight:400">GOOD TO KNOW</h3>
+  <ul style="margin:10px 0 0;padding-left:18px;font-size:14px;line-height:1.7">
+    <li>팁 문화가 없고, 가격에 부가세가 포함돼 있어요.</li>
+    <li>인기 팝업·맛집은 현장 대기 앱이나 예약이 필요한 곳이 많아요.</li>
+    <li>시장에선 현금이나 계좌이체가 편할 때가 있어요.</li>
+  </ul>
+</section>`;
+  }
+
   function pTools(city) {
+    if (city.tools === 'kr') return pToolsKr(city);
     const g = state.sizeG, t = state.sizeT;
     const rows = SIZES[g][t];
     const table = t === 'clothes'
@@ -888,13 +959,13 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     const P = (p) => [bx + bw * p[0] / 100, by + bh * p[1] / 100, bw * p[2] / 100, bh * p[3] / 100];
     const fit = async (svg, r) => { const im = await loadImg(svgData(svg)); if (!im) return; const s = Math.min(r[2], r[3]); g.drawImage(im, r[0] + (r[2] - s) / 2, r[1] + (r[3] - s) / 2, s, s); };
     g.fillStyle = '#F3E6CF'; const hr = P([3, 2, 44, 25]); g.fillRect(hr[0], hr[1], hr[2], hr[3]);
-    await fit(IC.house(), hr);
+    await fit(IC[city.boardArt](), hr);
     await fit(IC.camera('#D6D2CC', '#3A3F5C'), P([36, 20, 17, 11]));
     g.font = "900 96px 'Bodoni Moda', serif";
     const wx = bx + bw * 0.04, wy = by + bh * 0.29 + 86;
-    g.fillStyle = INK; g.fillText('LOS', wx, wy);
-    g.fillStyle = '#F2457C'; g.fillText('A', wx + 44, wy + 86); const aw = g.measureText('A').width;
-    g.fillStyle = INK; g.fillText('NGE', wx + 44 + aw, wy + 86); g.fillText('LES', wx + 12, wy + 172);
+    g.fillStyle = INK; g.fillText(city.word[0], wx, wy);
+    g.fillStyle = '#F2457C'; g.fillText(city.word[1][0], wx + 44, wy + 86); const aw = g.measureText(city.word[1][0]).width;
+    g.fillStyle = INK; g.fillText(city.word[1].slice(1), wx + 44 + aw, wy + 86); g.fillText(city.word[2], wx + 12, wy + 172);
     const board = L.items.filter((it) => it.slot);
     for (let i = 0; i < board.length; i++) {
       const it = board[i];
@@ -980,6 +1051,14 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     }
 
     if (page.id === 'hoods') {
+      $app.querySelectorAll('[data-savehood]').forEach((b) => b.addEventListener('click', () => {
+        const i = +b.getAttribute('data-savehood');
+        const h = city.hoods[i];
+        const on = toggleCloset({ id: city.id + '|hood|' + i, title: h.name + ' · ' + h.vibe, sub: city.name + ' 동네 스타일', items: h.wear, href: city.id + '-hoods' });
+        b.setAttribute('aria-pressed', String(on));
+        b.textContent = on ? '옷장에 담김 ✓' : '옷장에 담기';
+        toast(on ? '옷장에 담았어요 — 지도 화면 아래에서 볼 수 있어요' : '옷장에서 뺐어요');
+      }));
       $app.querySelectorAll('[data-hood]').forEach((b) => b.addEventListener('click', () => {
         const i = b.getAttribute('data-hood');
         $app.querySelectorAll('.hood').forEach((x) => x.classList.toggle('hl', x.id === 'hood-' + i));
@@ -990,6 +1069,14 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     }
 
     if (page.id === 'look') {
+      const sv = $app.querySelector('[data-savelook]');
+      if (sv) sv.addEventListener('click', () => {
+        const L = lookFor(city);
+        const on = toggleCloset({ id: city.id + '|' + L.b + '|' + state.who, title: L.look.name, sub: city.name + ' · ' + (state.who === 'her' ? 'HER' : 'HIM') + ' · ' + L.look.ko, items: L.items.map((it) => it.name), href: city.id + '-look' });
+        sv.setAttribute('aria-pressed', String(on));
+        sv.textContent = on ? '옷장에 담김 ✓' : '옷장에 담기';
+        toast(on ? '옷장에 담았어요 — 지도 화면 아래에서 볼 수 있어요' : '옷장에서 뺐어요');
+      });
       const b = $app.querySelector('[data-lookcard]');
       if (b) b.addEventListener('click', async () => {
         b.disabled = true; b.textContent = '카드 만드는 중…';
@@ -1003,7 +1090,18 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
       timers.push(setInterval(() => { const el = $app.querySelector('[data-clock]'); if (el) el.textContent = localTime(city.tz); }, 20000));
     }
 
-    if (page.id === 'tools') {
+    if (page.id === 'tools' && city.tools === 'kr') {
+      const out = $app.querySelector('[data-kout]');
+      const bill = $app.querySelector('[data-kbill]');
+      bill.addEventListener('input', () => { state.bill = bill.value; out.innerHTML = splitHtml(); });
+      $app.querySelectorAll('[data-ksplit]').forEach((b) => b.addEventListener('click', () => {
+        state.split = Math.max(1, Math.min(20, state.split + +b.getAttribute('data-ksplit')));
+        $app.querySelector('[data-ksplitout]').textContent = state.split;
+        out.innerHTML = splitHtml();
+      }));
+    }
+
+    if (page.id === 'tools' && city.tools !== 'kr') {
       const out = $app.querySelector('[data-tipout]');
       const bill = $app.querySelector('[data-bill]');
       bill.addEventListener('input', () => { state.bill = bill.value; out.innerHTML = tipHtml(); });

@@ -40,12 +40,12 @@
   function template(city) {
     const d = new Intl.DateTimeFormat('en-CA', { timeZone: city.tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()).replace(/-/g, '.');
     return [
-      { id: uid(), type: 'text', text: 'MY L.A.\nDIARY', font: 'anton', color: '#F2457C', shadow: true, size: 120, x: 300, y: 190, rot: -5, z: 1 },
-      { id: uid(), type: 'sticker', key: 'stamp', x: 820, y: 170, w: 190, rot: 10, z: 2 },
+      { id: uid(), type: 'text', text: city.zineTitle, font: 'anton', color: '#F2457C', shadow: true, size: 120, x: 300, y: 190, rot: -5, z: 1 },
+      { id: uid(), type: 'sticker', key: 'stamp', label: city.zineStamp, x: 820, y: 170, w: 190, rot: 10, z: 2 },
       { id: uid(), type: 'text', text: d, font: 'pen', color: K, shadow: false, size: 64, x: 250, y: 380, rot: -3, z: 3 },
       { id: uid(), type: 'tape', color: TAPES[0], x: 560, y: 560, w: 300, rot: -8, z: 4 },
-      { id: uid(), type: 'sticker', key: 'burst', label: 'GOLDEN\nHOUR', x: 800, y: 1060, w: 240, rot: 8, z: 5 },
-      { id: uid(), type: 'sticker', key: 'palm', x: 150, y: 1060, w: 220, rot: -6, z: 6 }
+      { id: uid(), type: 'sticker', key: 'burst', label: city.zineBurst, x: 800, y: 1060, w: 240, rot: 8, z: 5 },
+      { id: uid(), type: 'sticker', key: city.zineSticker, x: 150, y: 1060, w: 220, rot: -6, z: 6 }
     ];
   }
 
@@ -297,7 +297,7 @@
     });
     root.querySelectorAll('[data-st]').forEach((b) => b.addEventListener('click', () => {
       const k = b.getAttribute('data-st');
-      add({ type: 'sticker', key: k, w: k === 'burst' || k === 'stamp' ? 220 : 170 });
+      add(Object.assign({ type: 'sticker', key: k, w: k === 'burst' || k === 'stamp' ? 220 : 170 }, k === 'stamp' ? { label: city.zineStamp } : {}));
     }));
     root.querySelectorAll('[data-tape]').forEach((b) => b.addEventListener('click', () => add({ type: 'tape', color: TAPES[+b.getAttribute('data-tape')], w: 280 })));
 
@@ -306,7 +306,7 @@
       if (!b) return;
       const act = b.getAttribute('data-z');
       const it = sel && byId(sel);
-      if (act === 'text') add({ type: 'text', text: '오늘의 LA', font: 'pen', color: K, shadow: false, size: 90 });
+      if (act === 'text') add({ type: 'text', text: city.zineText, font: 'pen', color: K, shadow: false, size: 90 });
       if (act === 'done') { sel = null; draw(); }
       if (act === 'front' && it) { it.z = maxZ() + 1; draw(); save(); }
       if (act === 'dup' && it) add(Object.assign(JSON.parse(JSON.stringify(it)), { x: it.x + 40, y: it.y + 40 }));
