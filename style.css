@@ -222,3 +222,9 @@ button { cursor: pointer; }
 
 .arr.hl { outline: 4px solid var(--yellow); outline-offset: 2px; }
 .arr .look { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; background: var(--yellow); border: 1.5px solid var(--ink); border-radius: 12px; }
+
+/* real photos */
+.piece img.photo { width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: multiply; pointer-events: none; }
+.piece[aria-pressed="true"] img.photo { filter: drop-shadow(3px 3px 0 var(--pink)); }
+.cover-photo { object-fit: cover; object-position: center bottom; }
+.cover-tint { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(62,74,140,.72) 0%, rgba(122,78,152,.35) 34%, rgba(242,69,124,.08) 58%, rgba(20,18,16,.28) 100%); }

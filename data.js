@@ -11,6 +11,7 @@ window.CITIES = {
     tz: 'America/Los_Angeles',
     currency: 'USD',
     tagline: '해 질 녘이 제일 예쁜 도시',
+    cover: 'img/la/cover.webp',
     coverLines: ['FASHION', 'BEAUTY', 'FOOD', 'DAY COURSE'],
     // Downtown LA climate normals (°C, daily high / low by month) — fallback when no live forecast.
     normals: [[20, 9], [20, 10], [21, 11], [23, 13], [24, 14], [26, 16], [29, 18], [29, 19], [28, 18], [26, 15], [23, 12], [20, 9]],
@@ -46,22 +47,22 @@ window.CITIES = {
       mild: {
         name: 'SUNSET CASUAL', ko: '선셋 캐주얼', tip: '해 지면 기온이 뚝 — 가디건이나 재킷 하나 꼭',
         her: [
-          { slot: 'outer', icon: 'cardigan', c: '#E3D3B8', a: '#B89A72', name: '니트 가디건', note: '해 진 뒤용' },
-          { slot: 'top', icon: 'shirt', c: '#FFFFFF', name: '리넨 셔츠', note: '오버핏 화이트' },
-          { slot: 'belt', icon: 'belt', c: '#8A5A3B', name: '가죽 벨트', note: '브라운' },
-          { slot: 'bottom', icon: 'jeans', c: '#9DBBD8', name: '와이드 데님', note: '라이트 워싱' },
-          { slot: 'acc', icon: 'sunglasses', c: '#5B3A26', name: '캣아이 선글라스', note: '톨토이즈' },
-          { slot: 'bag', icon: 'tote', c: '#F3EAD8', a: '#141210', name: '캔버스 토트', note: '크림' },
-          { slot: 'shoes', icon: 'sandals', c: '#C9A27A', name: '플랫 샌들', note: '탄 스트랩' }
+          { slot: 'outer', img: 'img/la/her-cardigan.webp', icon: 'cardigan', c: '#E3D3B8', a: '#B89A72', name: '니트 가디건', note: '해 진 뒤용' },
+          { slot: 'top', img: 'img/la/her-shirt.webp', icon: 'shirt', c: '#FFFFFF', name: '리넨 셔츠', note: '오버핏 화이트' },
+          { slot: 'belt', img: 'img/la/her-belt.webp', icon: 'belt', c: '#8A5A3B', name: '가죽 벨트', note: '브라운' },
+          { slot: 'bottom', img: 'img/la/her-jeans.webp', icon: 'jeans', c: '#9DBBD8', name: '와이드 데님', note: '라이트 워싱' },
+          { slot: 'acc', img: 'img/la/her-sunglasses.webp', icon: 'sunglasses', c: '#5B3A26', name: '캣아이 선글라스', note: '톨토이즈' },
+          { slot: 'bag', img: 'img/la/her-tote.webp', icon: 'tote', c: '#F3EAD8', a: '#141210', name: '캔버스 토트', note: '크림' },
+          { slot: 'shoes', img: 'img/la/her-sandals.webp', icon: 'sandals', c: '#C9A27A', name: '플랫 샌들', note: '탄 스트랩' }
         ],
         him: [
-          { slot: 'outer', icon: 'jacket', c: '#6E8FB8', a: '#5A7AA3', name: '데님 셔츠재킷', note: '해 진 뒤용' },
-          { slot: 'top', icon: 'tee', c: '#FFFFFF', name: '화이트 티', note: '두툼한 코튼' },
-          { slot: 'belt', icon: 'belt', c: '#D9C3A0', a: '#8A8077', name: '캔버스 벨트', note: '베이지' },
-          { slot: 'bottom', icon: 'jeans', c: '#9DBBD8', name: '배기 데님', note: '라이트 워싱' },
-          { slot: 'acc', icon: 'cap', c: '#2E4F86', name: '볼캡', note: '네이비' },
-          { slot: 'bag', icon: 'crossbody', c: '#141210', a: '#F3EAD8', name: '나일론 크로스백', note: '블랙' },
-          { slot: 'shoes', icon: 'sneakers', c: '#FFFFFF', a: '#E3DED6', name: '캔버스 스니커즈', note: '화이트' }
+          { slot: 'outer', img: 'img/la/him-jacket.webp', icon: 'jacket', c: '#6E8FB8', a: '#5A7AA3', name: '데님 셔츠재킷', note: '해 진 뒤용' },
+          { slot: 'top', img: 'img/la/him-tee.webp', icon: 'tee', c: '#FFFFFF', name: '화이트 티', note: '두툼한 코튼' },
+          { slot: 'belt', img: 'img/la/him-belt.webp', icon: 'belt', c: '#D9C3A0', a: '#8A8077', name: '캔버스 벨트', note: '베이지' },
+          { slot: 'bottom', img: 'img/la/him-jeans.webp', icon: 'jeans', c: '#9DBBD8', name: '배기 데님', note: '라이트 워싱' },
+          { slot: 'acc', img: 'img/la/him-cap.webp', icon: 'cap', c: '#2E4F86', name: '볼캡', note: '네이비' },
+          { slot: 'bag', img: 'img/la/him-crossbody.webp', icon: 'crossbody', c: '#141210', a: '#F3EAD8', name: '나일론 크로스백', note: '블랙' },
+          { slot: 'shoes', img: 'img/la/him-sneakers.webp', icon: 'sneakers', c: '#FFFFFF', a: '#E3DED6', name: '캔버스 스니커즈', note: '화이트' }
         ]
       },
       cool: {
@@ -85,11 +86,11 @@ window.CITIES = {
       }
     },
     beauty: [
-      { icon: 'tube', c: '#F7F4EE', a: '#FFD23F', name: 'SPF 50+ 선크림', why: '낮엔 2~3시간마다 덧바르기', pos: [48, 4, 16, 38] },
-      { icon: 'mist', c: '#CFE3F0', name: '수분 미스트', why: '건조한 공기에 수시로', pos: [65, 6, 18, 34] },
-      { icon: 'balm', c: '#F2A7B8', a: '#E0245E', name: 'SPF 립밤', why: '입술도 햇빛에 타요', pos: [84, 10, 13, 28] },
-      { icon: 'compact', c: '#F28C6B', name: '코럴 크림 블러셔', why: '골든아워 사진에 생기', pos: [44, 47, 32, 30] },
-      { icon: 'jar', c: '#EFE6D8', a: '#C2185B', name: '리치 수분 크림', why: '일교차 큰 밤 보습', pos: [72, 66, 26, 26] }
+      { img: 'img/la/sunscreen.webp', icon: 'tube', c: '#F7F4EE', a: '#FFD23F', name: 'SPF 50+ 선크림', why: '낮엔 2~3시간마다 덧바르기', pos: [48, 4, 16, 38] },
+      { img: 'img/la/mist.webp', icon: 'mist', c: '#CFE3F0', name: '수분 미스트', why: '건조한 공기에 수시로', pos: [65, 6, 18, 34] },
+      { img: 'img/la/balm.webp', icon: 'balm', c: '#F2A7B8', a: '#E0245E', name: 'SPF 립밤', why: '입술도 햇빛에 타요', pos: [84, 10, 13, 28] },
+      { img: 'img/la/blush.webp', icon: 'compact', c: '#F28C6B', name: '코럴 크림 블러셔', why: '골든아워 사진에 생기', pos: [44, 47, 32, 30] },
+      { img: 'img/la/jar.webp', icon: 'jar', c: '#EFE6D8', a: '#C2185B', name: '리치 수분 크림', why: '일교차 큰 밤 보습', pos: [72, 66, 26, 26] }
     ],
     day: [
       { time: '09:30', place: '레퍼블리크', area: '미드시티', what: '브런치 & 베이커리로 하루 시작', look: '셔츠에 가디건 걸치고 출발', q: 'Republique Los Angeles', icon: 'fork', c: '#FFD23F' },

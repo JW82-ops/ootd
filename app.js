@@ -67,6 +67,7 @@
   /* ---------- helpers ---------- */
   const esc = (s) => String(s).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
   const svgIcon = (name, c, a) => (IC[name] ? IC[name](c, a) : '');
+  const art = (it) => (it.img ? `<img class="photo" src="${it.img}" alt="" draggable="false">` : svgIcon(it.icon, it.c, it.a));
   const burst = (style, big, small, bigSize, smallSize) => `<div class="burst" style="${style}"><svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="${STAR}" fill="#FFD23F" stroke="#141210" stroke-width="3"/></svg><span style="font-size:${bigSize}">${big}</span>${small ? `<span style="font-size:${smallSize};letter-spacing:1px">${small}</span>` : ''}</div>`;
   const chev = (dir, color) => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${color || 'currentColor'}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${dir === 'left' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7'}"/></svg>`;
   const mapsUrl = (q) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
@@ -496,9 +497,9 @@
   function pCover(city) {
     const palm = (x, base, s, flip) => `<g transform="translate(${x} ${base}) scale(${flip ? -s : s} ${s})"><path d="M0 0 C 4 -80, 8 -160, 22 -238" stroke="#141210" stroke-width="9" fill="none" stroke-linecap="round"/><g fill="#141210"><path d="M22 -238 C 0 -262 -40 -262 -72 -232 C -40 -248 -10 -246 22 -234 Z"/><path d="M22 -238 C 6 -276 -26 -292 -56 -286 C -26 -280 -2 -264 22 -234 Z"/><path d="M22 -238 C 30 -280 52 -300 80 -298 C 54 -288 36 -268 24 -234 Z"/><path d="M22 -238 C 50 -258 86 -256 112 -228 C 84 -244 54 -244 24 -232 Z"/><path d="M22 -238 C 44 -232 70 -214 80 -186 C 64 -210 44 -222 22 -232 Z"/><path d="M22 -238 C 0 -230 -24 -212 -32 -184 C -18 -208 0 -222 22 -232 Z"/></g></g>`;
     const lines = city.coverLines.map((l, i) => `<span class="anton" style="display:inline-block;background:#141210;color:${i % 2 ? '#FFD23F' : '#F3EAD8'};font-size:22px;line-height:1;padding:3px 6px 2px">${esc(l)}</span>`).join('');
-    return `
-<section class="cover">
-  <svg class="cover-scene" viewBox="0 0 390 844" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    const scene = city.cover
+      ? `<img class="cover-scene cover-photo" src="${city.cover}" alt=""><div class="cover-tint"></div>`
+      : `  <svg class="cover-scene" viewBox="0 0 390 844" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
     <defs>
       <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3E4A8C"/><stop offset="0.36" stop-color="#7A4E98"/><stop offset="0.55" stop-color="#F2457C"/><stop offset="0.68" stop-color="#FF8A3D"/><stop offset="0.76" stop-color="#FFD23F"/></linearGradient>
       <clipPath id="sunClip"><circle cx="195" cy="600" r="118"/></clipPath>
@@ -512,7 +513,10 @@
     <path d="M195 690 V700 M195 716 V732 M195 752 V778 M195 800 V844" stroke="#FFD23F" stroke-width="4"/>
     ${palm(28, 860, 1.55)}${palm(110, 772, 1.0)}${palm(152, 716, 0.66)}${palm(171, 690, 0.42)}
     ${palm(362, 860, 1.55, true)}${palm(280, 772, 1.0, true)}${palm(238, 716, 0.66, true)}${palm(219, 690, 0.42, true)}
-  </svg>
+  </svg>`;
+    return `
+<section class="cover">
+${scene}
 
   <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;height:44px;background:#141210;padding:calc(env(safe-area-inset-top)) 6px 0 4px">
     <a href="#home" style="height:44px;display:flex;align-items:center;gap:2px;padding:0 6px;font-size:11px;font-weight:700;letter-spacing:2px;color:#F3EAD8">${chev('left', '#F3EAD8')} MAP</a>
@@ -651,7 +655,7 @@ ${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
   function pieces(items) {
     return items.filter((it) => it.slot).map((it, i) => {
       const p = SLOTS[it.slot];
-      return `<button class="piece" type="button" data-pick="${i}" aria-pressed="${state.pick === i}" aria-label="${i + 1}. ${esc(it.name)}" style="left:${p[0]}%;top:${p[1]}%;width:${p[2]}%;height:${p[3]}%">${svgIcon(it.icon, it.c, it.a)}<span class="num">${i + 1}</span></button>`;
+      return `<button class="piece" type="button" data-pick="${i}" aria-pressed="${state.pick === i}" aria-label="${i + 1}. ${esc(it.name)}" style="left:${p[0]}%;top:${p[1]}%;width:${p[2]}%;height:${p[3]}%">${art(it)}<span class="num">${i + 1}</span></button>`;
     }).join('');
   }
 
@@ -682,7 +686,7 @@ ${head(3, 'BEAUTY KIT', 'LA 파우치에 꼭 넣을 것')}
 ${wxLine(city, { extra: () => esc(note) })}
 <div class="board short" style="container-type:inline-size">
   <div class="word" style="left:4%;top:5%;font-size:14cqw"><div>GLOW</div><div style="padding-left:9%;color:#F2457C">IN</div><div style="padding-left:3%">L.A.</div></div>
-  ${city.beauty.map((b, i) => `<button class="piece" type="button" data-pick="${i}" aria-pressed="${state.pick === i}" aria-label="${i + 1}. ${esc(b.name)}" style="left:${b.pos[0]}%;top:${b.pos[1]}%;width:${b.pos[2]}%;height:${b.pos[3]}%">${svgIcon(b.icon, b.c, b.a)}<span class="num">${i + 1}</span></button>`).join('')}
+  ${city.beauty.map((b, i) => `<button class="piece" type="button" data-pick="${i}" aria-pressed="${state.pick === i}" aria-label="${i + 1}. ${esc(b.name)}" style="left:${b.pos[0]}%;top:${b.pos[1]}%;width:${b.pos[2]}%;height:${b.pos[3]}%">${art(b)}<span class="num">${i + 1}</span></button>`).join('')}
   <div style="position:absolute;left:24%;top:80%;width:18%;height:13%;transform:rotate(-10deg)">${svgIcon('clip', '#FFD23F')}</div>
   ${burst('left:80%;top:40%;width:17cqw;height:17cqw;transform:rotate(12deg)', '5', 'ITEMS', '5cqw', '2.5cqw')}
   <div class="pen" style="position:absolute;left:4%;top:60%;font-size:6.2cqw;line-height:1.05;color:#C2185B;transform:rotate(-4deg)">햇빛 강하고<br>공기는 건조!</div>
@@ -895,7 +899,8 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     for (let i = 0; i < board.length; i++) {
       const it = board[i];
       const r = P(SLOTS[it.slot]);
-      await fit(IC[it.icon](it.c, it.a), r);
+      if (it.img) { const ph = await loadImg(it.img); if (ph) { const k = Math.min(r[2] / ph.width, r[3] / ph.height); g.globalCompositeOperation = 'multiply'; g.drawImage(ph, r[0] + (r[2] - ph.width * k) / 2, r[1] + (r[3] - ph.height * k) / 2, ph.width * k, ph.height * k); g.globalCompositeOperation = 'source-over'; } }
+      else await fit(IC[it.icon](it.c, it.a), r);
       g.fillStyle = INK; g.beginPath(); g.arc(r[0] + 8, r[1] + 8, 17, 0, Math.PI * 2); g.fill();
       g.fillStyle = '#F3EAD8'; g.font = "400 20px 'Anton', sans-serif"; g.textAlign = 'center'; g.fillText(String(i + 1), r[0] + 8, r[1] + 15); g.textAlign = 'left';
     }
