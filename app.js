@@ -502,7 +502,7 @@ ${store.get('seen', false) ? '' : introHtml()}`;
     const page = PAGES[r.idx];
     curIdx = r.idx;
     const body = ({ cover: pCover, notes: pNotes, arrive: pArrive, look: pLook, hoods: pHoods, beauty: pBeauty, day: pDay, eat: pEat, read: pRead, tools: pTools, pack: pPack, zine: pZine, next: pNext })[page.id](city, r);
-    if (page.id === 'cover') return `<main class="view cover-view ${dir}" data-swipe style="touch-action:pan-y">${body}</main>`;
+    if (page.id === 'cover') return `<main class="view cover-view ${dir}" data-swipe style="touch-action:pan-y">${body}</main>${tocHtml(city, 0)}`;
     const prev = r.idx > 0 ? hashFor(r.city, r.idx - 1) : null;
     const next = r.idx < PAGES.length - 1 ? hashFor(r.city, r.idx + 1) : null;
     const dots = PAGES.map((p, i) => `<i class="${i === r.idx ? 'on' : ''}"></i>`).join('');
@@ -510,16 +510,26 @@ ${store.get('seen', false) ? '' : introHtml()}`;
 <main class="view ${dir}" data-swipe style="touch-action:pan-y">
   <div class="mag-top">
     <a href="#home" class="btn ghost" style="min-height:40px;padding:0 12px;font-size:12px">${chev('left')} MAP</a>
-    <span class="small-caps">OOTD · ${esc(city.en)} · P.${r.idx}</span>
+    <button type="button" class="btn ghost" data-toc style="min-height:40px;padding:0 12px;font-size:12px">목차 · P.${r.idx}</button>
     <a href="#${r.city}" aria-label="커버로" class="icon-btn" style="width:40px;height:40px;background:#F2457C"><span class="anton" style="font-size:11px">OOTD</span></a>
   </div>
   ${body}
 </main>
+${tocHtml(city, r.idx)}
 <nav class="mag-bar" aria-label="페이지 이동">
   <a class="btn ghost" href="#${prev}" aria-label="이전 페이지" style="padding:0 12px">${chev('left')}</a>
   <div class="dots" aria-label="${r.idx + 1} / ${PAGES.length}">${dots}</div>
   ${next ? `<a class="btn" href="#${next}">${esc((city.labels && city.labels[PAGES[r.idx + 1].id]) || PAGES[r.idx + 1].label)} ${chev('right')}</a>` : `<a class="btn yellow" href="#home">지도로 ${chev('right')}</a>`}
 </nav>`;
+  }
+
+  function tocHtml(city, cur) {
+    const lab = (p) => (city.labels && city.labels[p.id]) || p.label;
+    return `<div class="zine-overlay" id="toc" hidden role="dialog" aria-label="목차"><div class="card" style="width:100%;max-width:360px;max-height:86dvh;overflow:auto;padding:16px;background:#F3EAD8">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span class="anton" style="font-size:24px">CONTENTS</span><button type="button" class="btn ghost" data-toc-close style="min-height:40px;padding:0 12px;font-size:12px">닫기</button></div>
+      <div class="muted" style="font-size:12px;margin-top:2px">${esc(city.en)}</div>
+      <div style="display:flex;flex-direction:column;margin-top:8px">${PAGES.map((p, i) => `<a href="#${hashFor(city.id, i)}" data-toc-link ${i === cur ? 'aria-current="page"' : ''} style="display:flex;align-items:center;gap:12px;min-height:44px;border-bottom:1.5px dashed #141210;${i === cur ? 'background:#FFD23F;' : ''}padding:0 6px"><span class="anton" style="width:28px;font-size:18px;color:#C2185B">${String(i).padStart(2, '0')}</span><span class="anton" style="font-size:17px;letter-spacing:.5px">${esc(lab(p))}</span></a>`).join('')}</div>
+    </div></div>`;
   }
 
   function head(n, title, sub, right) {
@@ -564,6 +574,7 @@ ${scene}
 
   <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;height:44px;background:#141210;padding:calc(env(safe-area-inset-top)) 6px 0 4px">
     <a href="#home" style="height:44px;display:flex;align-items:center;gap:2px;padding:0 6px;font-size:11px;font-weight:700;letter-spacing:2px;color:#F3EAD8">${chev('left', '#F3EAD8')} MAP</a>
+    <button type="button" data-toc style="height:36px;padding:0 12px;border:1.5px solid #F3EAD8;border-radius:18px;background:transparent;color:#F3EAD8;font-size:12px;font-weight:700">목차</button>
     <span class="anton" style="font-size:13px;letter-spacing:1px;color:#FFD23F;padding-right:6px">VOL.01 · ${esc(city.en)}</span>
   </div>
   <div class="anton" style="position:relative;padding:4px 12px 0;font-size:11px;letter-spacing:3px">THE CITY ISSUE — WHERE STYLE TRAVELS</div>
@@ -613,7 +624,8 @@ ${head(1, 'CITY NOTES', '도시·나라 노트')}
 <p class="section" style="margin:16px 0 0;font-size:15px;line-height:1.6">${esc(city.intro)}</p>
 <div class="notes-grid">${cards.map((c, i) => `<div class="note" style="transform:rotate(${rot[i % rot.length]}deg)"><div class="k">${c.k}</div><div class="v">${c.v}</div><div class="d">${c.d}</div></div>`).join('')}</div>
 ${goldenCard(city)}
-<div class="band"><span class="anton" style="font-size:20px;flex:none">${esc(city.bandLabel)}</span><span class="pen" style="font-size:22px;line-height:1.15">${esc(city.countryTip)}</span></div>`;
+<div class="band"><span class="anton" style="font-size:20px;flex:none">${esc(city.bandLabel)}</span><span class="pen" style="font-size:22px;line-height:1.15">${esc(city.countryTip)}</span></div>
+<p class="section muted" style="font-size:11px;margin:10px 0 0">이 잡지의 정보는 ${esc(city.checked)}에 확인했어요. 요금·운영 시간은 바뀔 수 있어요.</p>`;
   }
 
   function goldenCard(city) {
@@ -714,9 +726,11 @@ ${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
 ${head(2, 'THE LOOK', esc(L.look.ko), `<div class="seg" role="group" aria-label="룩 선택"><button type="button" data-who="her" aria-pressed="${state.who === 'her'}">HER</button><button type="button" data-who="him" aria-pressed="${state.who === 'him'}">HIM</button></div>`)}
 ${wxLine(city, { extra: () => `이 날씨엔 <b>${esc(L.look.name)}</b> — ${esc(L.look.tip)}` })}
 <div class="board" style="container-type:inline-size">
-  <div style="position:absolute;left:3%;top:2%;width:44%;height:25%;background:#F3E6CF;display:flex;align-items:center;justify-content:center">${svgIcon(city.boardArt)}</div>
+  ${L.items.some((it) => it.img)
+    ? `<div style="position:absolute;left:4%;top:3%;width:42%;height:22%;background:#141210;color:#F3EAD8;transform:rotate(-3deg);display:flex;flex-direction:column;justify-content:center;padding:0 5%"><span class="anton" style="font-size:3.4cqw;letter-spacing:.5cqw;color:#FFD23F">TODAY'S LOOK</span><span class="anton" style="font-size:7cqw;line-height:1.02">${esc(L.look.name)}</span><span class="pen" style="font-size:5.4cqw;line-height:1.1">${esc(fmtDate(L.w.date))} · ${L.w.max}° / ${L.w.min}°</span></div><div class="tape" style="left:16%;top:.5%;width:18%;height:3.6%;transform:rotate(-8deg)"></div>`
+    : `<div style="position:absolute;left:3%;top:2%;width:44%;height:25%;background:#F3E6CF;display:flex;align-items:center;justify-content:center">${svgIcon(city.boardArt)}</div>`}
   <div class="word" style="left:4%;top:29%;font-size:15cqw"><div>${esc(city.word[0])}</div><div style="padding-left:7%"><span style="color:#F2457C">${esc(city.word[1][0])}</span>${esc(city.word[1].slice(1))}</div><div style="padding-left:2%">${esc(city.word[2])}</div></div>
-  <div style="position:absolute;left:36%;top:20%;width:17%;height:11%;transform:rotate(-8deg)">${svgIcon('camera', '#D6D2CC', '#3A3F5C')}</div>
+  ${L.items.some((it) => it.img) ? '' : `<div style="position:absolute;left:36%;top:20%;width:17%;height:11%;transform:rotate(-8deg)">${svgIcon('camera', '#D6D2CC', '#3A3F5C')}</div>`}
   ${pieces(L.items)}
   ${burst('left:79%;top:84%;width:19cqw;height:19cqw;transform:rotate(-12deg)', String(boardItems.length), 'ITEMS', '5.5cqw', '2.8cqw')}
 </div>
@@ -767,16 +781,20 @@ ${wxLine(city, { extra: () => `오늘의 룩: <b>${esc(L.look.name)}</b> · 골�
   }
 
   function pEat(city) {
-    const pola = (icon) => (p, i) => `<a class="pola" href="${mapsUrl(p.q)}" target="_blank" rel="noopener" style="transform:rotate(${[-3, 2, -1.5][i % 3]}deg)${i === 1 ? ';margin-top:8px' : ''}"><div class="ph" style="background:${p.c}">${svgIcon(icon, '#FFFFFF')}</div><div class="n">${esc(p.name)}</div><div class="w">${esc(p.what)} ↗</div></a>`;
+    const row = (kind) => (p, i) => `<a class="place" href="${mapsUrl(p.q)}" target="_blank" rel="noopener" style="transform:rotate(${[-0.8, 0.6, -0.4][i % 3]}deg)">
+      <span class="place-n" style="background:${p.c}">${i + 1}</span>
+      <span class="place-b"><span class="place-k">${kind} · ${esc(p.what)}</span><span class="place-t">${esc(p.name)}</span>${p.tip ? `<span class="place-tip">${esc(p.tip)}</span>` : ''}</span>
+      <span class="place-go">지도 ↗</span>
+    </a>`;
     return `
 ${head(5, 'EAT &amp; GO', '맛집 &amp; 꼭 가볼 곳')}
 <div class="section">
   <div class="rule"><span>EAT</span><i></i></div>
-  <div class="polas">${city.eat.map(pola('fork')).join('')}</div>
+  <div class="places">${city.eat.map(row('EAT')).join('')}</div>
   <div class="rule" style="margin-top:28px"><span>GO</span><i></i></div>
-  <div class="polas">${city.go.map(pola('pin')).join('')}</div>
+  <div class="places">${city.go.map(row('GO')).join('')}</div>
   <div class="card" style="margin-top:24px;padding:12px 14px;box-shadow:none;border-style:dashed;transform:rotate(-1deg)"><span class="pen" style="font-size:21px;line-height:1.15">${esc(city.goTip)}</span></div>
-  <p class="muted" style="font-size:11px;margin:10px 0 0">카드를 누르면 구글 지도로 열려요.</p>
+  <p class="muted" style="font-size:11px;margin:10px 0 0">카드를 누르면 구글 지도에서 사진·후기·영업시간을 볼 수 있어요.</p>
 </div>`;
   }
 
@@ -958,9 +976,22 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     g.lineWidth = 4; g.strokeRect(bx, by, bw, bh);
     const P = (p) => [bx + bw * p[0] / 100, by + bh * p[1] / 100, bw * p[2] / 100, bh * p[3] / 100];
     const fit = async (svg, r) => { const im = await loadImg(svgData(svg)); if (!im) return; const s = Math.min(r[2], r[3]); g.drawImage(im, r[0] + (r[2] - s) / 2, r[1] + (r[3] - s) / 2, s, s); };
-    g.fillStyle = '#F3E6CF'; const hr = P([3, 2, 44, 25]); g.fillRect(hr[0], hr[1], hr[2], hr[3]);
-    await fit(IC[city.boardArt](), hr);
-    await fit(IC.camera('#D6D2CC', '#3A3F5C'), P([36, 20, 17, 11]));
+    if (L.items.some((it) => it.img)) {
+      const tr = P([4, 3, 42, 22]);
+      g.save(); g.translate(tr[0] + tr[2] / 2, tr[1] + tr[3] / 2); g.rotate(-0.052);
+      g.fillStyle = INK; g.fillRect(-tr[2] / 2, -tr[3] / 2, tr[2], tr[3]);
+      g.fillStyle = '#FFD23F'; g.font = "400 20px 'Anton', sans-serif"; g.fillText("TODAY'S LOOK", -tr[2] / 2 + 26, -tr[3] / 2 + 44);
+      g.fillStyle = '#F3EAD8'; g.font = "400 44px 'Anton', sans-serif";
+      const words = L.look.name.split(' '); const lines = [];
+      words.forEach((wd) => { const last = lines[lines.length - 1]; if (last && g.measureText(last + ' ' + wd).width <= tr[2] - 52) lines[lines.length - 1] = last + ' ' + wd; else lines.push(wd); });
+      lines.slice(0, 2).forEach((ln, k) => g.fillText(ln, -tr[2] / 2 + 26, -tr[3] / 2 + 92 + k * 46));
+      g.font = "400 32px 'Nanum Pen Script', cursive"; g.fillText(fmtDate(L.w.date) + ' · ' + L.w.max + '° / ' + L.w.min + '°', -tr[2] / 2 + 26, -tr[3] / 2 + 92 + Math.min(lines.length, 2) * 46 - 6);
+      g.restore();
+    } else {
+      g.fillStyle = '#F3E6CF'; const hr = P([3, 2, 44, 25]); g.fillRect(hr[0], hr[1], hr[2], hr[3]);
+      await fit(IC[city.boardArt](), hr);
+      await fit(IC.camera('#D6D2CC', '#3A3F5C'), P([36, 20, 17, 11]));
+    }
     g.font = "900 96px 'Bodoni Moda', serif";
     const wx = bx + bw * 0.04, wy = by + bh * 0.29 + 86;
     g.fillStyle = INK; g.fillText(city.word[0], wx, wy);
@@ -999,6 +1030,13 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     const city = C[r.city];
     const page = PAGES[r.idx];
     const view = $app.querySelector('[data-swipe]');
+
+    const toc = document.getElementById('toc');
+    if (toc) {
+      const close = () => { toc.hidden = true; };
+      $app.querySelectorAll('[data-toc]').forEach((b) => b.addEventListener('click', () => { toc.hidden = false; const c = toc.querySelector('[data-toc-close]'); if (c) c.focus(); }));
+      toc.addEventListener('click', (e) => { if (e.target === toc || e.target.closest('[data-toc-close]')) close(); if (e.target.closest('[aria-current="page"]')) close(); });
+    }
 
     // swipe between pages
     let sx = 0, sy = 0, st = 0, ok = false;
@@ -1166,7 +1204,16 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
 
   try {
     if ('serviceWorker' in navigator && location.protocol === 'https:' && location.hostname.endsWith('github.io')) {
+      const hadController = !!navigator.serviceWorker.controller;
       navigator.serviceWorker.register('sw.js').catch(() => {});
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!hadController || document.getElementById('upd')) return;
+        const bar = document.createElement('button');
+        bar.id = 'upd'; bar.type = 'button'; bar.className = 'update-bar';
+        bar.textContent = '새 버전이 준비됐어요 — 눌러서 새로고침';
+        bar.addEventListener('click', () => location.reload());
+        document.body.appendChild(bar);
+      });
     }
   } catch (e) { /* not available in this viewer */ }
 })();

@@ -12,7 +12,7 @@ window.CITIES = {
     currency: 'USD',
     tagline: '해 질 녘이 제일 예쁜 도시',
     cover: 'img/la/cover.webp',
-    nick: 'LA', short: 'L.A.', word: ['LOS', 'ANGE', 'LES'], glow: ['GLOW', 'IN', 'L.A.'], coverHead: ['GOLDEN HOUR', 'IN LOS ANGELES.'],
+    checked: '2026년 11월', nick: 'LA', short: 'L.A.', word: ['LOS', 'ANGE', 'LES'], glow: ['GLOW', 'IN', 'L.A.'], coverHead: ['GOLDEN HOUR', 'IN LOS ANGELES.'],
     bandLabel: 'USA', money: 'usd', tools: 'us', boardArt: 'house',
     beautySub: 'LA 파우치에 꼭 넣을 것', beautyNote: 'LA는 겨울에도 햇살이 강하고 공기가 건조해요', beautyScribble: ['햇빛 강하고', '공기는 건조!'],
     arriveTitle: 'ARRIVAL', arriveSub: 'LAX에서 시내로 · 그날의 행사', arriveHead: 'LAX → CITY', arrivePick: '내 숙소는…', eventsQuery: 'Los Angeles events',
@@ -106,14 +106,14 @@ window.CITIES = {
     ],
     dayAlt: '다운타운 코스도 좋아요: 그랜드 센트럴 마켓 → 그리피스 천문대 야경',
     eat: [
-      { name: '그랜드 센트럴 마켓', what: '다운타운 푸드홀', q: 'Grand Central Market Los Angeles', c: '#FFD23F' },
-      { name: '인앤아웃 버거', what: '캘리포니아 대표 버거', q: 'In-N-Out Burger Los Angeles', c: '#F2A7B8' },
-      { name: '레퍼블리크', what: '브런치 & 베이커리', q: 'Republique Los Angeles', c: '#CFE3F0' }
+      { name: '그랜드 센트럴 마켓', tip: '100년 넘은 시장 — 여러 가게를 조금씩 맛보기', what: '다운타운 푸드홀', q: 'Grand Central Market Los Angeles', c: '#FFD23F' },
+      { name: '인앤아웃 버거', tip: '줄이 길어도 금방 줄어요', what: '캘리포니아 대표 버거', q: 'In-N-Out Burger Los Angeles', c: '#F2A7B8' },
+      { name: '레퍼블리크', tip: '오전에 가야 빵이 남아 있어요', what: '브런치 & 베이커리', q: 'Republique Los Angeles', c: '#CFE3F0' }
     ],
     go: [
-      { name: '그리피스 천문대', what: '선셋 & 도시 야경', q: 'Griffith Observatory', c: '#BFC9D3' },
-      { name: '게티 센터', what: '미술관 & 정원', q: 'Getty Center Los Angeles', c: '#E3DED6' },
-      { name: '베니스 비치', what: '보드워크 산책', q: 'Venice Beach Los Angeles', c: '#A9C6DE' }
+      { name: '그리피스 천문대', tip: '해 지기 1시간 전에 도착하기', what: '선셋 & 도시 야경', q: 'Griffith Observatory', c: '#BFC9D3' },
+      { name: '게티 센터', tip: '입장 예약 여부를 미리 확인하기', what: '미술관 & 정원', q: 'Getty Center Los Angeles', c: '#E3DED6' },
+      { name: '베니스 비치', tip: '보드워크에서 운하까지 걸어 보기', what: '보드워크 산책', q: 'Venice Beach Los Angeles', c: '#A9C6DE' }
     ],
     goTip: '천문대는 해 지기 1시간 전 도착 — 운영 시간은 가기 전에 공식 사이트에서 확인!',
     read: [
@@ -175,7 +175,7 @@ window.CITIES = {
     mapX: 786, mapY: 103, lat: 37.57, lon: 126.98, tz: 'Asia/Seoul', currency: 'KRW',
     tagline: '아는 도시를 여행자처럼',
     cover: 'img/sel/cover.webp',
-    nick: '서울', short: 'SEOUL', word: ['SEO', 'UL', 'CITY'], glow: ['K-', 'GLOW', 'KIT'], coverHead: ['SEOUL,', 'LIKE A TRAVELER.'],
+    checked: '2026년 11월', nick: '서울', short: 'SEOUL', word: ['SEO', 'UL', 'CITY'], glow: ['K-', 'GLOW', 'KIT'], coverHead: ['SEOUL,', 'LIKE A TRAVELER.'],
     bandLabel: 'SEOUL', money: 'krw', tools: 'kr', boardArt: 'hanok',
     beautySub: '서울 하루 파우치', beautyNote: '실내는 건조하고 밖은 자외선 — 수정 화장템 위주로 가볍게', beautyScribble: ['실내는 건조', '밖은 자외선!'],
     arriveTitle: 'GETTING AROUND', arriveSub: '서울 안에서 움직이기 · 그날의 행사', arriveHead: 'MOVE IN SEOUL', arrivePick: '오늘 어디 가요?', eventsQuery: '서울 행사', eventsKo: true,
@@ -289,14 +289,14 @@ window.CITIES = {
     ],
     dayAlt: '서쪽 코스도 좋아요: 망원시장 → 경의선숲길 → 망원한강공원 노을',
     eat: [
-      { name: '광장시장', what: '빈대떡 · 시장 먹거리', q: '광장시장', c: '#FFD23F' },
-      { name: '망원시장', what: '시장 간식 투어', q: '망원시장', c: '#F2A7B8' },
-      { name: '을지로 골목', what: '노포와 숨은 바', q: '을지로3가역 맛집', c: '#CFE3F0' }
+      { name: '광장시장', tip: '빈대떡 골목부터 한 바퀴', what: '빈대떡 · 시장 먹거리', q: '광장시장', c: '#FFD23F' },
+      { name: '망원시장', tip: '간식 사서 한강으로 가기', what: '시장 간식 투어', q: '망원시장', c: '#F2A7B8' },
+      { name: '을지로 골목', tip: '간판 작은 가게를 찾는 재미', what: '노포와 숨은 바', q: '을지로3가역 맛집', c: '#CFE3F0' }
     ],
     go: [
-      { name: '경복궁', what: '궁궐 산책', q: '경복궁', c: '#BFC9D3' },
-      { name: '서울숲', what: '성수 옆 큰 공원', q: '서울숲', c: '#E3DED6' },
-      { name: '반포한강공원', what: '한강 야경', q: '반포한강공원', c: '#A9C6DE' }
+      { name: '경복궁', tip: '화요일은 쉬어요', what: '궁궐 산책', q: '경복궁', c: '#BFC9D3' },
+      { name: '서울숲', tip: '성수 구경 앞뒤로 산책하기', what: '성수 옆 큰 공원', q: '서울숲', c: '#E3DED6' },
+      { name: '반포한강공원', tip: '해 진 뒤 야경이 좋아요', what: '한강 야경', q: '반포한강공원', c: '#A9C6DE' }
     ],
     goTip: '경복궁은 화요일에 쉬어요. 북촌 일부 골목은 방문 시간이 정해져 있으니 가기 전에 확인!',
     arrive: {

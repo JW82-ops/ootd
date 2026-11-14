@@ -228,3 +228,14 @@ button { cursor: pointer; }
 .piece[aria-pressed="true"] img.photo { filter: drop-shadow(3px 3px 0 var(--pink)); }
 .cover-photo { object-fit: cover; object-position: center bottom; }
 .cover-tint { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(62,74,140,.72) 0%, rgba(122,78,152,.35) 34%, rgba(242,69,124,.08) 58%, rgba(20,18,16,.28) 100%); }
+
+/* eat & go rows */
+.places { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+.place { display: flex; align-items: stretch; background: var(--white); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); min-height: 76px; }
+.place-n { flex: none; width: 56px; display: flex; align-items: center; justify-content: center; font-family: var(--anton); font-size: 34px; border-right: 2px solid var(--ink); }
+.place-b { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 10px 12px; }
+.place-k { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: var(--pink-text); }
+.place-t { font-size: 18px; font-weight: 700; line-height: 1.2; }
+.place-tip { font-family: var(--pen); font-size: 20px; line-height: 1.1; }
+.place-go { flex: none; display: flex; align-items: center; padding: 0 12px; font-size: 12px; font-weight: 700; color: #1F4FBF; }
+.update-bar { position: fixed; left: 50%; top: calc(10px + env(safe-area-inset-top)); transform: translateX(-50%); z-index: 90; min-height: 44px; padding: 0 16px; border: 2px solid var(--ink); border-radius: 22px; background: var(--yellow); font-family: var(--sans); font-size: 13px; font-weight: 700; box-shadow: 3px 3px 0 var(--ink); white-space: nowrap; }
