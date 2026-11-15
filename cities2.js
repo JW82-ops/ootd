@@ -35,6 +35,7 @@
   const TRAVEL_ESS = ['항공권·숙소 예약 확인||Flight and hotel confirmations', '해외 결제 카드||Card that works abroad', '보조배터리||Power bank'];
 
   Object.assign(C.ny, base, {
+    cover: 'img/ny/cover.webp',
     name: '뉴욕||New York', country: 'USA · NEW YORK', lat: 40.71, lon: -74.01, tz: 'America/New_York', currency: 'USD',
     tagline: '걷는 만큼 보이는 도시||The city that rewards walking', nick: '뉴욕||NYC', short: 'NYC', word: ['NEW', 'YO', 'RK'], glow: ['CITY', 'PROOF', 'KIT'], coverHead: ['WALK IT', 'IN NEW YORK.'],
     bandLabel: 'USA', money: 'usd', tools: 'us', sky: ['#22306B', '#5A4A9A', '#F2457C', '#FF8A3D', '#FFD23F'], scene: 'towers',
@@ -125,6 +126,7 @@
   });
 
   Object.assign(C.lis, base, {
+    cover: 'img/lis/cover.webp',
     name: '리스본||Lisbon', country: 'PORTUGAL · LISBON', lat: 38.72, lon: -9.14, tz: 'Europe/Lisbon', currency: 'EUR', cur: { code: 'EUR', sym: '€', unit: 1 },
     tagline: '언덕과 타일의 도시||The city of hills and tiles', nick: '리스본||Lisbon', short: 'LISBON', word: ['LIS', 'BO', 'A'], glow: ['SUN', 'TILE', 'KIT'], coverHead: ['SEVEN HILLS', 'OF LISBON.'],
     bandLabel: 'PORTUGAL', money: 'intl', tools: 'intl', sky: ['#2D5BFF', '#7FB2E5', '#F9C6A0', '#FF8A3D', '#FFD23F'], scene: 'roofs',
@@ -211,6 +213,7 @@
   });
 
   Object.assign(C.par, base, {
+    cover: 'img/par/cover.webp',
     name: '파리||Paris', country: 'FRANCE · PARIS', lat: 48.86, lon: 2.35, tz: 'Europe/Paris', currency: 'EUR', cur: { code: 'EUR', sym: '€', unit: 1 },
     tagline: '덜어낼수록 멋있는 도시||Where less is always more', nick: '파리||Paris', short: 'PARIS', word: ['PA', 'RI', 'S'], glow: ['PARIS', 'CHIC', 'KIT'], coverHead: ['LESS IS MORE', 'IN PARIS.'],
     bandLabel: 'FRANCE', money: 'intl', tools: 'intl', sky: ['#3E4A8C', '#8E7BB5', '#F2A7B8', '#F9C6A0', '#FFE7A8'], scene: 'roofs',
@@ -298,8 +301,9 @@
   });
 
   Object.assign(C.bkk, base, {
+    cover: 'img/bkk/cover.webp',
     name: '방콕||Bangkok', country: 'THAILAND · BANGKOK', lat: 13.75, lon: 100.5, tz: 'Asia/Bangkok', currency: 'THB', cur: { code: 'THB', sym: '฿', unit: 1 },
-    tagline: '일 년 내내 여름인 도시||Summer all year round', nick: '방콕||Bangkok', short: 'BANGKOK', word: ['BANG', 'KOK', 'CITY'], glow: ['HEAT', 'PROOF', 'KIT'], coverHead: ['ENDLESS SUMMER', 'IN BANGKOK.'],
+    tagline: '일 년 내내 여름인 도시||Summer all year round', nick: '방콕||Bangkok', short: 'BANGKOK', word: ['BANG', 'KOK', 'CITY'], glow: ['HEAT', 'PROOF', 'KIT'], coverHead: ['HEAT WAVE', 'IN BANGKOK.'],
     bandLabel: 'THAILAND', money: 'intl', tools: 'intl', sky: ['#5A2A82', '#C2185B', '#F2457C', '#FF8A3D', '#FFD23F'], scene: 'towers',
     beautySub: '방콕 파우치에 넣을 것||What goes in the Bangkok pouch', beautyNote: '덥고 습해요 — 무너지지 않는 것 위주로||Hot and humid — pack what stays put', beautyScribble: ['덥고 습해요||Hot and humid', '밖은 뜨겁고 안은 추워요!||hot outside, cold inside!'],
     arriveSub: '수완나품에서 시내로 · 그날의 행사||Suvarnabhumi to the city · what\'s on', arriveHead: 'BKK → CITY', eventsQuery: 'Bangkok events',
@@ -384,6 +388,7 @@
   });
 
   Object.assign(C.tyo, base, {
+    cover: 'img/tyo/cover.webp',
     name: '도쿄||Tokyo', country: 'JAPAN · TOKYO', lat: 35.68, lon: 139.76, tz: 'Asia/Tokyo', currency: 'JPY', cur: { code: 'JPY', sym: '¥', unit: 100 },
     tagline: '동네마다 장르가 다른 도시||Every neighbourhood is its own genre', nick: '도쿄||Tokyo', short: 'TOKYO', word: ['TO', 'KYO', 'CITY'], glow: ['TOKYO', 'DRUG', 'STORE'], coverHead: ['LAYER UP', 'IN TOKYO.'],
     bandLabel: 'JAPAN', money: 'intl', tools: 'intl', sky: ['#1E2A6B', '#3E4A8C', '#C2185B', '#F2457C', '#FFD23F'], scene: 'towers',
@@ -472,6 +477,7 @@
   });
 
   Object.assign(C.syd, base, {
+    cover: 'img/syd/cover.webp',
     name: '시드니||Sydney', country: 'AUSTRALIA · SYDNEY', lat: -33.87, lon: 151.21, tz: 'Australia/Sydney', currency: 'AUD', cur: { code: 'AUD', sym: 'A$', unit: 1 },
     tagline: '계절이 반대인 바다의 도시||The harbour city where seasons flip', nick: '시드니||Sydney', short: 'SYDNEY', word: ['SYD', 'NEY', 'CITY'], glow: ['SUN', 'SMART', 'KIT'], coverHead: ['SALT & SUN', 'IN SYDNEY.'],
     bandLabel: 'AUSTRALIA', money: 'intl', tools: 'intl', sky: ['#2D5BFF', '#69B7E8', '#BFE3F0', '#FFE7A8', '#FFD23F'], scene: 'waves',
