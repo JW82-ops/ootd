@@ -876,7 +876,9 @@ window.OOTD_CITY("la", {
    ],
    "q": "Third Street Promenade Santa Monica",
    "x": 70,
-   "y": 152
+   "y": 152,
+   "img": "img/la/h0.webp",
+   "wearImg": "img/la/w0.webp"
   },
   {
    "name": "베니스||Venice",
@@ -900,7 +902,9 @@ window.OOTD_CITY("la", {
    ],
    "q": "Venice Canals Los Angeles",
    "x": 92,
-   "y": 188
+   "y": 188,
+   "img": "img/la/h1.webp",
+   "wearImg": "img/la/w1.webp"
   },
   {
    "name": "비벌리힐스||Beverly Hills",
@@ -923,7 +927,9 @@ window.OOTD_CITY("la", {
    ],
    "q": "Rodeo Drive Beverly Hills",
    "x": 160,
-   "y": 122
+   "y": 122,
+   "img": "img/la/h2.webp",
+   "wearImg": "img/la/w2.webp"
   },
   {
    "name": "웨스트할리우드 & 멜로즈||West Hollywood & Melrose",
@@ -947,7 +953,9 @@ window.OOTD_CITY("la", {
    ],
    "q": "Melrose Avenue Los Angeles",
    "x": 206,
-   "y": 104
+   "y": 104,
+   "img": "img/la/h3.webp",
+   "wearImg": "img/la/w3.webp"
   },
   {
    "name": "실버레이크 & 로스펠리즈||Silver Lake & Los Feliz",
@@ -971,7 +979,9 @@ window.OOTD_CITY("la", {
    ],
    "q": "Sunset Junction Silver Lake",
    "x": 282,
-   "y": 76
+   "y": 76,
+   "img": "img/la/h4.webp",
+   "wearImg": "img/la/w4.webp"
   },
   {
    "name": "다운타운 & 아트 디스트릭트||Downtown & Arts District",
@@ -996,7 +1006,9 @@ window.OOTD_CITY("la", {
    ],
    "q": "Arts District Los Angeles",
    "x": 302,
-   "y": 146
+   "y": 146,
+   "img": "img/la/h5.webp",
+   "wearImg": "img/la/w5.webp"
   }
  ],
  "tipNote": "카운터에서 주문하는 곳(인앤아웃 등)은 팁이 꼭 필요하진 않아요.||Tipping is optional where you order at a counter (In-N-Out, for example).",
@@ -1008,5 +1020,9 @@ window.OOTD_CITY("la", {
   "국제운전면허증 (렌터카 시)||International driving permit (if renting a car)",
   "A타입 플러그 어댑터||Type A plug adapter",
   "보조배터리||Power bank"
- ]
+ ],
+ "art": {
+  "arrive": "img/la/arrive.webp",
+  "notes": "img/la/notes.webp"
+ }
 });

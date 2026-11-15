@@ -902,7 +902,9 @@ window.OOTD_CITY("ny", {
    ],
    "q": "SoHo New York",
    "x": 150,
-   "y": 150
+   "y": 150,
+   "img": "img/ny/h0.webp",
+   "wearImg": "img/ny/w0.webp"
   },
   {
    "name": "웨스트 빌리지||West Village",
@@ -925,7 +927,9 @@ window.OOTD_CITY("ny", {
    ],
    "q": "West Village New York",
    "x": 116,
-   "y": 104
+   "y": 104,
+   "img": "img/ny/h1.webp",
+   "wearImg": "img/ny/w1.webp"
   },
   {
    "name": "로어 이스트 사이드||Lower East Side",
@@ -948,7 +952,9 @@ window.OOTD_CITY("ny", {
    ],
    "q": "Lower East Side New York",
    "x": 196,
-   "y": 176
+   "y": 176,
+   "img": "img/ny/h2.webp",
+   "wearImg": "img/ny/w2.webp"
   },
   {
    "name": "윌리엄스버그||Williamsburg",
@@ -971,7 +977,9 @@ window.OOTD_CITY("ny", {
    ],
    "q": "Williamsburg Brooklyn",
    "x": 322,
-   "y": 120
+   "y": 120,
+   "img": "img/ny/h3.webp",
+   "wearImg": "img/ny/w3.webp"
   }
  ],
  "read": [
@@ -1031,5 +1039,9 @@ window.OOTD_CITY("ny", {
   "보조배터리||Power bank",
   "A타입 플러그 어댑터||Type A plug adapter",
   "편한 신발||Comfortable shoes"
- ]
+ ],
+ "art": {
+  "arrive": "img/ny/arrive.webp",
+  "notes": "img/ny/notes.webp"
+ }
 });

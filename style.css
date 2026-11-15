@@ -278,3 +278,21 @@ img.cut { object-fit: contain; filter: drop-shadow(3px 3px 0 rgba(20,18,16,.9));
 .place-n.pic img { width: 104px; height: 92px; margin: -8px -6px; }
 .place-n.pic b { position: absolute; left: 4px; top: 4px; width: 22px; height: 22px; border-radius: 11px; background: var(--ink); color: var(--paper); font-family: var(--anton); font-weight: 400; font-size: 13px; display: flex; align-items: center; justify-content: center; }
 .place { overflow: visible; }
+
+/* page-title stickers, neighbourhood art, home thumbnails, zine city stickers */
+.head-art { flex: none; width: 84px; height: 84px; margin: -8px -4px -6px 0; transform: rotate(6deg); }
+.hood-pin img { position: absolute; left: 50%; bottom: calc(100% - 14px); width: 58px; height: 46px; transform: translateX(-50%); pointer-events: none; }
+.hood-pin { z-index: 1; }
+.hood-pin[aria-pressed="true"] { z-index: 2; }
+.hood-pin[aria-pressed="true"] img { transform: translateX(-50%) scale(1.15); }
+.hood { position: relative; }
+.hood-art { float: right; width: 124px; height: 108px; margin: 2px -6px 0 8px; }
+.hood-wear { display: block; width: 100%; max-width: 280px; max-height: 190px; margin: 8px 0 2px; clear: both; }
+.city-thumb { flex: none; align-self: center; width: 44px; height: 44px; object-fit: cover; border: 2px solid var(--ink); border-radius: 8px; margin-right: 8px; transform: rotate(-3deg); }
+.zine-cut { padding: 4px; }
+.zine-cut img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.zf-plain img { filter: drop-shadow(2px 3px 0 rgba(20,18,16,.6)); }
+
+.page-title.long { font-size: 20px; letter-spacing: 0; }
+.page-sub { word-break: keep-all; }
+.page-head > div:first-child > div { flex: 1; }

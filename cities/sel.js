@@ -898,7 +898,9 @@ window.OOTD_CITY("sel", {
    ],
    "q": "북촌한옥마을",
    "x": 150,
-   "y": 50
+   "y": 50,
+   "img": "img/sel/h0.webp",
+   "wearImg": "img/sel/w0.webp"
   },
   {
    "name": "을지로||Euljiro",
@@ -921,7 +923,9 @@ window.OOTD_CITY("sel", {
    ],
    "q": "을지로3가역",
    "x": 222,
-   "y": 92
+   "y": 92,
+   "img": "img/sel/h1.webp",
+   "wearImg": "img/sel/w1.webp"
   },
   {
    "name": "연남 · 망원||Yeonnam · Mangwon",
@@ -945,7 +949,9 @@ window.OOTD_CITY("sel", {
    ],
    "q": "경의선숲길",
    "x": 70,
-   "y": 96
+   "y": 96,
+   "img": "img/sel/h2.webp",
+   "wearImg": "img/sel/w2.webp"
   },
   {
    "name": "한남 · 이태원||Hannam · Itaewon",
@@ -968,7 +974,9 @@ window.OOTD_CITY("sel", {
    ],
    "q": "한남동 카페거리",
    "x": 214,
-   "y": 140
+   "y": 140,
+   "img": "img/sel/h3.webp",
+   "wearImg": "img/sel/w3.webp"
   },
   {
    "name": "성수||Seongsu",
@@ -991,7 +999,9 @@ window.OOTD_CITY("sel", {
    ],
    "q": "성수동 연무장길",
    "x": 300,
-   "y": 118
+   "y": 118,
+   "img": "img/sel/h4.webp",
+   "wearImg": "img/sel/w4.webp"
   },
   {
    "name": "압구정 · 도산||Apgujeong · Dosan",
@@ -1014,7 +1024,9 @@ window.OOTD_CITY("sel", {
    ],
    "q": "도산공원",
    "x": 280,
-   "y": 208
+   "y": 208,
+   "img": "img/sel/h5.webp",
+   "wearImg": "img/sel/w5.webp"
   }
  ],
  "read": [
@@ -1092,5 +1104,9 @@ window.OOTD_CITY("sel", {
   "접이식 우산||Folding umbrella",
   "에코백 (쇼핑·시장용)||Tote bag (for shopping and markets)",
   "핫팩 또는 손선풍기 (계절 따라)||Hand warmers or a handheld fan (by season)"
- ]
+ ],
+ "art": {
+  "arrive": "img/sel/arrive.webp",
+  "notes": "img/sel/notes.webp"
+ }
 });

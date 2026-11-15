@@ -4,6 +4,7 @@
 (function () {
   const EN = (window.EN = Object.assign(window.EN || {}, {
 "접이식 우산": "Folding umbrella",
+"도시 스티커 추가": "Add city sticker",
 "이름을 누르면 잡지가 열려요": "Tap a name to open its magazine",
 "도시 검색": "Search cities",
 "지역": "Region",

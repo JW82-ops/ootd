@@ -779,7 +779,9 @@ window.OOTD_CITY("bkk", {
    ],
    "q": "Siam Bangkok",
    "x": 214,
-   "y": 100
+   "y": 100,
+   "img": "img/bkk/h0.webp",
+   "wearImg": "img/bkk/w0.webp"
   },
   {
    "name": "아리||Ari",
@@ -802,7 +804,9 @@ window.OOTD_CITY("bkk", {
    ],
    "q": "Ari Bangkok",
    "x": 222,
-   "y": 32
+   "y": 32,
+   "img": "img/bkk/h1.webp",
+   "wearImg": "img/bkk/w1.webp"
   },
   {
    "name": "탈랏노이 · 야오와랏||Talat Noi · Yaowarat",
@@ -825,7 +829,9 @@ window.OOTD_CITY("bkk", {
    ],
    "q": "Talat Noi Bangkok",
    "x": 150,
-   "y": 170
+   "y": 170,
+   "img": "img/bkk/h2.webp",
+   "wearImg": "img/bkk/w2.webp"
   },
   {
    "name": "통로 · 에까마이||Thonglor · Ekkamai",
@@ -848,7 +854,9 @@ window.OOTD_CITY("bkk", {
    ],
    "q": "Thonglor Bangkok",
    "x": 318,
-   "y": 130
+   "y": 130,
+   "img": "img/bkk/h3.webp",
+   "wearImg": "img/bkk/w3.webp"
   }
  ],
  "read": [
@@ -905,5 +913,9 @@ window.OOTD_CITY("bkk", {
   "보조배터리||Power bank",
   "모기 기피제||Mosquito repellent",
   "얇은 긴팔 셔츠 (사원·냉방)||Thin long-sleeve shirt (temples, air-con)"
- ]
+ ],
+ "art": {
+  "arrive": "img/bkk/arrive.webp",
+  "notes": "img/bkk/notes.webp"
+ }
 });

@@ -778,7 +778,9 @@ window.OOTD_CITY("lis", {
    ],
    "q": "Alfama Lisbon",
    "x": 286,
-   "y": 140
+   "y": 140,
+   "img": "img/lis/h0.webp",
+   "wearImg": "img/lis/w0.webp"
   },
   {
    "name": "시아두 · 바이후 알투||Chiado · Bairro Alto",
@@ -801,7 +803,9 @@ window.OOTD_CITY("lis", {
    ],
    "q": "Chiado Lisbon",
    "x": 196,
-   "y": 136
+   "y": 136,
+   "img": "img/lis/h1.webp",
+   "wearImg": "img/lis/w1.webp"
   },
   {
    "name": "프린시프 헤알||Príncipe Real",
@@ -824,7 +828,9 @@ window.OOTD_CITY("lis", {
    ],
    "q": "Principe Real Lisbon",
    "x": 150,
-   "y": 92
+   "y": 92,
+   "img": "img/lis/h2.webp",
+   "wearImg": "img/lis/w2.webp"
   },
   {
    "name": "벨렝||Belém",
@@ -847,7 +853,9 @@ window.OOTD_CITY("lis", {
    ],
    "q": "Belem Lisbon",
    "x": 44,
-   "y": 160
+   "y": 160,
+   "img": "img/lis/h3.webp",
+   "wearImg": "img/lis/w3.webp"
   }
  ],
  "read": [
@@ -904,5 +912,9 @@ window.OOTD_CITY("lis", {
   "보조배터리||Power bank",
   "밑창 좋은 신발||Shoes with grip",
   "선글라스||Sunglasses"
- ]
+ ],
+ "art": {
+  "arrive": "img/lis/arrive.webp",
+  "notes": "img/lis/notes.webp"
+ }
 });

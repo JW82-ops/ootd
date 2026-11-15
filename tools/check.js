@@ -113,6 +113,7 @@ function checkCity(meta) {
   arr('notes', 4).forEach((n) => ['k', 'v', 'd'].forEach((f) => { if (!n[f]) err('note missing ' + f); }));
   arr('hoods', 4).forEach((h) => {
     ['name', 'en', 'vibe', 'what', 'q'].forEach((f) => { if (!h[f]) err('neighbourhood "' + h.en + '" missing ' + f); });
+    ['img', 'wearImg'].forEach((f) => { if (h[f] && !exists(h[f])) err('photo not found: ' + h[f]); });
     if (!(h.x >= 10 && h.x <= 350 && h.y >= 10 && h.y <= 230)) err('neighbourhood "' + h.en + '" pin is off the map');
     if (!Array.isArray(h.pal) || h.pal.length !== 3) err('neighbourhood "' + h.en + '" needs 3 palette colours');
     if (!Array.isArray(h.wear) || h.wear.length < 2 || !Array.isArray(h.spots) || !h.spots.length) err('neighbourhood "' + h.en + '" needs wear and spots');

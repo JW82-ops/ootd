@@ -333,6 +333,7 @@
     const list = state.more || q ? all : all.slice(0, LIST_MAX);
     return `<ul class="city-list">${list.map((id) => { const c = C[id], on = fav.includes(id); return `<li class="${state.sel === id ? 'sel' : ''}">
       <button type="button" class="city-pin" data-fly="${id}" aria-label="${esc(c.name)} 지도에서 보기"><svg width="16" height="20" viewBox="0 0 16 20" aria-hidden="true"><path d="M8 1 C 4 1 1 4 1 8 C 1 13 8 19 8 19 C 8 19 15 13 15 8 C 15 4 12 1 8 1 Z" fill="${c.open ? '#F2457C' : '#D6D2CC'}" stroke="#141210" stroke-width="1.6"/><circle cx="8" cy="8" r="2.6" fill="#F3EAD8" stroke="#141210" stroke-width="1.4"/></svg></button>
+      ${c.open ? `<img class="city-thumb" src="img/${id}/thumb.webp" alt="" loading="lazy">` : ''}
       ${c.open ? `<a class="city-go" href="#${id}">` : `<span class="city-go" style="opacity:.55">`}<span class="anton" style="font-size:20px;line-height:1.05">${esc(c.en)}</span><span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700"><span>${esc(c.name)}</span>${c.isNew && c.open ? '<span class="city-badge">NEW</span>' : ''}${c.open ? '' : '<span class="city-badge" style="background:#FFFFFF">SOON</span>'}</span>${c.open ? '</a>' : '</span>'}
       <button type="button" class="city-fav" data-fav="${id}" aria-pressed="${on}" aria-label="${esc(c.name)} 즐겨찾기">${on ? '★' : '☆'}</button>
     </li>`; }).join('')}</ul>${all.length > list.length ? `<button type="button" class="btn ghost" data-more style="width:100%;margin-top:10px">도시 더 보기 (${all.length - list.length})</button>` : ''}`;
@@ -610,6 +611,9 @@ ${store.get('seen', false) ? '' : introHtml()}`;
     loadFx();
     const page = PAGES[r.idx];
     curIdx = r.idx;
+    const gold = (city.day || []).filter((s) => s.at === 'golden')[0];
+    headArt = ({ notes: city.art && city.art.notes, arrive: city.art && city.art.arrive, hoods: city.hoods[0] && city.hoods[0].img, day: gold && gold.img, eat: city.eat[0] && city.eat[0].img,
+      read: 'img/page/read.webp', tools: 'img/page/tools.webp', pack: 'img/page/pack.webp', zine: 'img/page/zine.webp', next: 'img/page/next.webp' })[page.id] || null;
     const body = ({ cover: pCover, notes: pNotes, arrive: pArrive, look: pLook, hoods: pHoods, beauty: pBeauty, day: pDay, eat: pEat, read: pRead, tools: pTools, pack: pPack, zine: pZine, next: pNext })[page.id](city, r);
     if (page.id === 'cover') return `<main class="view cover-view ${dir}" data-swipe style="touch-action:pan-y">${body}</main>${tocHtml(city, 0)}`;
     const prev = r.idx > 0 ? hashFor(r.city, r.idx - 1) : null;
@@ -641,8 +645,10 @@ ${tocHtml(city, r.idx)}
     </div></div>`;
   }
 
+  let headArt = null;   // cut-out sticker shown beside the page title (set per page in viewMag)
   function head(n, title, sub, right) {
-    return `<div class="page-head"><div style="display:flex;align-items:flex-end;gap:10px;flex:1;min-width:0"><span class="page-num">${String(curIdx).padStart(2, '0')}</span><div><h2 class="page-title" style="margin:0">${title}</h2><div class="page-sub">${sub}</div></div></div>${right || ''}</div>`;
+    if (!right && headArt) right = `<img class="cut head-art" src="${headArt}" alt="">`;
+    return `<div class="page-head"><div style="display:flex;align-items:flex-end;gap:10px;flex:1;min-width:0"><span class="page-num">${String(curIdx).padStart(2, '0')}</span><div><h2 class="page-title${String(title).replace(/&amp;/g, '&').length > 10 ? ' long' : ''}" style="margin:0">${title}</h2><div class="page-sub">${sub}</div></div></div>${right || ''}</div>`;
   }
 
   function wxLine(city, opts) {
@@ -835,12 +841,12 @@ ${head(0, esc(city.arriveTitle), esc(city.arriveSub))}
   }
 
   function pHoods(city) {
-    const pins = city.hoods.map((h, i) => `<button type="button" class="hood-pin" data-hood="${i}" aria-label="${i + 1}. ${esc(h.name)}" style="left:${(h.x / 360 * 100).toFixed(2)}%;top:${(h.y / 240 * 100).toFixed(2)}%"><span>${i + 1}</span><small>${esc(h.en)}</small></button>`).join('');
+    const pins = city.hoods.map((h, i) => `<button type="button" class="hood-pin" data-hood="${i}" aria-label="${i + 1}. ${esc(h.name)}" style="left:${(h.x / 360 * 100).toFixed(2)}%;top:${(h.y / 240 * 100).toFixed(2)}%">${h.img ? `<img class="cut" src="${h.img}" alt="" loading="lazy">` : ''}<span>${i + 1}</span><small>${esc(h.en)}</small></button>`).join('');
     return `
 ${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
 <div class="hood-map card" style="margin:14px 12px 0">
   <svg viewBox="0 0 360 240" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%">
-    <rect width="360" height="240" fill="#F3EAD8"/>
+    <rect width="360" height="240" fill="#FDE9C8"/>
     ${city.hoodSvg || ''}
   </svg>
   ${pins}
@@ -853,7 +859,9 @@ ${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
     </div>
     <div class="muted" style="font-size:13px;margin-top:4px">${esc(h.what)}</div>
     <div style="display:flex;gap:6px;margin-top:8px" aria-hidden="true">${h.pal.map((p) => `<span style="width:28px;height:28px;border-radius:14px;background:${p};border:2px solid #141210"></span>`).join('')}</div>
+    ${h.img ? `<img class="cut hood-art" src="${h.img}" alt="" loading="lazy" style="transform:rotate(${i % 2 ? -3 : 3}deg)">` : ''}
     <div style="font-size:13px;margin-top:8px"><b>입을 것</b> · ${h.wear.map(esc).join(', ')}</div>
+    ${h.wearImg ? `<img class="cut hood-wear" src="${h.wearImg}" alt="" loading="lazy">` : ''}
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px"><span style="font-size:13px"><b>갈 곳</b> · ${h.spots.map(esc).join(', ')}</span><a href="${mapsUrl(h.q)}" target="_blank" rel="noopener" style="flex:none;font-size:12px;font-weight:700;color:#1F4FBF;min-height:32px;display:inline-flex;align-items:center">지도 ↗</a></div>
     <button type="button" class="chip" data-savehood="${i}" aria-pressed="${inCloset(city.id + '|hood|' + i)}" style="margin-top:8px;min-height:36px;font-size:12px">${inCloset(city.id + '|hood|' + i) ? '옷장에 담김 ✓' : '옷장에 담기'}</button>
   </article>`).join('')}

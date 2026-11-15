@@ -97,6 +97,9 @@
     let warnedQuota = false;
     let clearArmed = false;
 
+    // The city's own cut-outs (sights, food, neighbourhoods) double as stickers for the page.
+    const cityCuts = [];
+    [].concat(city.go || [], city.eat || [], city.hoods || []).forEach((p) => { if (p.img && cityCuts.indexOf(p.img) < 0 && cityCuts.length < 10) cityCuts.push(p.img); });
     root.innerHTML = `
 <div class="zine-wrap">
   <div class="zine-page" id="zpage" aria-label="내 zine 페이지 — 요소를 끌어서 옮기고 두 손가락으로 크기와 각도를 바꿔요"></div>
@@ -109,6 +112,8 @@
     </div>
     <div class="zine-row-label">스티커</div>
     <div class="zine-stickers">${Object.keys(STICKERS).map((k) => `<button type="button" class="zine-st" data-st="${k}" aria-label="${esc(STICKERS[k].name)} 추가">${STICKERS[k].svg}</button>`).join('')}</div>
+    ${cityCuts.length ? `<div class="zine-row-label">${esc(city.en)}</div>
+    <div class="zine-stickers">${cityCuts.map((src, i) => `<button type="button" class="zine-st zine-cut" data-cut="${i}" aria-label="도시 스티커 추가"><img src="${src}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}
     <div class="zine-row-label">테이프</div>
     <div class="zine-tapes">${TAPES.map((c, i) => `<button type="button" class="zine-tape" data-tape="${i}" aria-label="테이프 ${i + 1} 추가" style="background:${c}"></button>`).join('')}</div>
     <div class="zine-actions">
@@ -332,6 +337,11 @@
     root.querySelectorAll('[data-st]').forEach((b) => b.addEventListener('click', () => {
       const k = b.getAttribute('data-st');
       add(Object.assign({ type: 'sticker', key: k, w: k === 'burst' || k === 'stamp' ? 220 : 170 }, k === 'stamp' ? { label: city.zineStamp } : {}));
+    }));
+    root.querySelectorAll('[data-cut]').forEach((b) => b.addEventListener('click', async () => {
+      const src = cityCuts[+b.getAttribute('data-cut')];
+      const img = await loadImg(src);
+      if (img) add({ type: 'photo', src, ar: img.width / img.height, w: 320, frame: 'plain' });
     }));
     root.querySelectorAll('[data-tape]').forEach((b) => b.addEventListener('click', () => add({ type: 'tape', color: TAPES[+b.getAttribute('data-tape')], w: 280 })));
 

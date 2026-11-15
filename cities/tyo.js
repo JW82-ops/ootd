@@ -908,7 +908,9 @@ window.OOTD_CITY("tyo", {
    ],
    "q": "Shimokitazawa Tokyo",
    "x": 40,
-   "y": 150
+   "y": 150,
+   "img": "img/tyo/h0.webp",
+   "wearImg": "img/tyo/w0.webp"
   },
   {
    "name": "하라주쿠 · 오모테산도||Harajuku · Omotesando",
@@ -931,7 +933,9 @@ window.OOTD_CITY("tyo", {
    ],
    "q": "Harajuku Tokyo",
    "x": 112,
-   "y": 110
+   "y": 110,
+   "img": "img/tyo/h1.webp",
+   "wearImg": "img/tyo/w1.webp"
   },
   {
    "name": "다이칸야마 · 나카메구로||Daikanyama · Nakameguro",
@@ -954,7 +958,9 @@ window.OOTD_CITY("tyo", {
    ],
    "q": "Daikanyama Tokyo",
    "x": 106,
-   "y": 176
+   "y": 176,
+   "img": "img/tyo/h2.webp",
+   "wearImg": "img/tyo/w2.webp"
   },
   {
    "name": "기요스미시라카와 · 구라마에||Kiyosumi · Kuramae",
@@ -977,7 +983,9 @@ window.OOTD_CITY("tyo", {
    ],
    "q": "Kiyosumi-Shirakawa Tokyo",
    "x": 298,
-   "y": 96
+   "y": 96,
+   "img": "img/tyo/h3.webp",
+   "wearImg": "img/tyo/w3.webp"
   }
  ],
  "read": [
@@ -1034,5 +1042,9 @@ window.OOTD_CITY("tyo", {
   "보조배터리||Power bank",
   "A타입 플러그 어댑터||Type A plug adapter",
   "동전 지갑||Coin purse"
- ]
+ ],
+ "art": {
+  "arrive": "img/tyo/arrive.webp",
+  "notes": "img/tyo/notes.webp"
+ }
 });

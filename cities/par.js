@@ -892,7 +892,9 @@ window.OOTD_CITY("par", {
    ],
    "q": "Le Marais Paris",
    "x": 236,
-   "y": 96
+   "y": 96,
+   "img": "img/par/h0.webp",
+   "wearImg": "img/par/w0.webp"
   },
   {
    "name": "생제르맹||Saint-Germain",
@@ -915,7 +917,9 @@ window.OOTD_CITY("par", {
    ],
    "q": "Saint-Germain-des-Pres Paris",
    "x": 168,
-   "y": 190
+   "y": 190,
+   "img": "img/par/h1.webp",
+   "wearImg": "img/par/w1.webp"
   },
   {
    "name": "몽마르트르||Montmartre",
@@ -938,7 +942,9 @@ window.OOTD_CITY("par", {
    ],
    "q": "Montmartre Paris",
    "x": 176,
-   "y": 36
+   "y": 36,
+   "img": "img/par/h2.webp",
+   "wearImg": "img/par/w2.webp"
   },
   {
    "name": "생마르탱 운하||Canal Saint-Martin",
@@ -961,7 +967,9 @@ window.OOTD_CITY("par", {
    ],
    "q": "Canal Saint-Martin Paris",
    "x": 280,
-   "y": 60
+   "y": 60,
+   "img": "img/par/h3.webp",
+   "wearImg": "img/par/w3.webp"
   }
  ],
  "read": [
@@ -1018,5 +1026,9 @@ window.OOTD_CITY("par", {
   "보조배터리||Power bank",
   "접이식 우산||Folding umbrella",
   "스카프||Scarf"
- ]
+ ],
+ "art": {
+  "arrive": "img/par/arrive.webp",
+  "notes": "img/par/notes.webp"
+ }
 });

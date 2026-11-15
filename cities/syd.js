@@ -779,7 +779,9 @@ window.OOTD_CITY("syd", {
    ],
    "q": "Surry Hills Sydney",
    "x": 150,
-   "y": 150
+   "y": 150,
+   "img": "img/syd/h0.webp",
+   "wearImg": "img/syd/w0.webp"
   },
   {
    "name": "패딩턴||Paddington",
@@ -802,7 +804,9 @@ window.OOTD_CITY("syd", {
    ],
    "q": "Paddington Sydney",
    "x": 214,
-   "y": 136
+   "y": 136,
+   "img": "img/syd/h1.webp",
+   "wearImg": "img/syd/w1.webp"
   },
   {
    "name": "뉴타운||Newtown",
@@ -825,7 +829,9 @@ window.OOTD_CITY("syd", {
    ],
    "q": "Newtown Sydney",
    "x": 60,
-   "y": 180
+   "y": 180,
+   "img": "img/syd/h2.webp",
+   "wearImg": "img/syd/w2.webp"
   },
   {
    "name": "본다이||Bondi",
@@ -848,7 +854,9 @@ window.OOTD_CITY("syd", {
    ],
    "q": "Bondi Beach",
    "x": 268,
-   "y": 160
+   "y": 160,
+   "img": "img/syd/h3.webp",
+   "wearImg": "img/syd/w3.webp"
   }
  ],
  "read": [
@@ -906,5 +914,9 @@ window.OOTD_CITY("syd", {
   "I타입 플러그 어댑터||Type I plug adapter",
   "수영복||Swimwear",
   "모자||Hat"
- ]
+ ],
+ "art": {
+  "arrive": "img/syd/arrive.webp",
+  "notes": "img/syd/notes.webp"
+ }
 });
