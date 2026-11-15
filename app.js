@@ -41,6 +41,7 @@
   };
 
   const state = {
+    lang: store.get('lang', null) || ((navigator.language || 'ko').toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en'),
     who: store.get('who', 'her'),
     date: store.get('date', null),
     trip: store.get('trip', 'la'),
@@ -67,12 +68,16 @@
 
   /* ---------- helpers ---------- */
   const esc = (s) => String(s).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  const I18N = window.I18N || { tr: (s) => s, set() {}, apply() {} };
+  const TR = (s) => I18N.tr(s);
   const svgIcon = (name, c, a) => (IC[name] ? IC[name](c, a) : '');
   const art = (it) => (it.img ? `<img class="photo" src="${it.img}" alt="" draggable="false">` : svgIcon(it.icon, it.c, it.a));
   const burst = (style, big, small, bigSize, smallSize) => `<div class="burst" style="${style}"><svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="${STAR}" fill="#FFD23F" stroke="#141210" stroke-width="3"/></svg><span style="font-size:${bigSize}">${big}</span>${small ? `<span style="font-size:${smallSize};letter-spacing:1px">${small}</span>` : ''}</div>`;
   const chev = (dir, color) => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${color || 'currentColor'}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${dir === 'left' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7'}"/></svg>`;
   const mapsUrl = (q) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
   const fmtUSD = (n) => '$' + n.toFixed(2);
+  // KRW for one unit of a city's currency (null until live rates arrive).
+  const krwPer = (city) => (city.cur && state.rates && state.rates[city.cur.code] ? state.rates.KRW / state.rates[city.cur.code] : null);
   const fmtKRW = (n) => '₩' + Math.round(n).toLocaleString('ko-KR');
 
   function todayIn(tz) {
@@ -88,7 +93,7 @@
     return new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date());
   }
   function localDay(tz) {
-    return new Intl.DateTimeFormat('ko-KR', { timeZone: tz, month: 'numeric', day: 'numeric', weekday: 'short' }).format(new Date());
+    return new Intl.DateTimeFormat(state.lang === 'en' ? 'en-US' : 'ko-KR', state.lang === 'en' ? { timeZone: tz, month: 'short', day: 'numeric', weekday: 'short' } : { timeZone: tz, month: 'numeric', day: 'numeric', weekday: 'short' }).format(new Date());
   }
   function hoursBehindSeoul(tz) {
     const now = new Date();
@@ -96,7 +101,7 @@
   }
   function fmtDate(d) {
     const [y, m, dd] = d.split('-').map(Number);
-    return `${m}월 ${dd}일`;
+    return state.lang === 'en' ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][m - 1] + ' ' + dd : `${m}월 ${dd}일`;
   }
 
   function dday(city) {
@@ -164,7 +169,7 @@
     if (state.fxReq) return;
     state.fxReq = true;
     fetch('https://open.er-api.com/v6/latest/USD').then((r) => { if (!r.ok) throw new Error('fx'); return r.json(); })
-      .then((j) => { if (j && j.rates && j.rates.KRW) { state.fx = j.rates.KRW; refresh(); } })
+      .then((j) => { if (j && j.rates && j.rates.KRW) { state.fx = j.rates.KRW; state.rates = j.rates; refresh(); } })
       .catch(() => { state.fx = null; });
   }
 
@@ -262,7 +267,7 @@
   <header class="home-head">
     <div style="display:flex;align-items:center;justify-content:space-between">
       <span class="small-caps">OUT OF TOWN DAY</span>
-      <span class="marker" style="font-size:14px">travel × style</span>
+      <span style="display:flex;align-items:center;gap:10px"><span class="marker" style="font-size:14px">travel × style</span><div class="seg" role="group" aria-label="Language" style="flex:none"><button type="button" data-lang="ko" aria-pressed="${state.lang === 'ko'}" style="min-width:38px;min-height:32px;font-size:12px">한</button><button type="button" data-lang="en" aria-pressed="${state.lang === 'en'}" style="min-width:38px;min-height:32px;font-size:12px">EN</button></div></span>
     </div>
     <div style="display:flex;align-items:flex-end;gap:10px">
       <h1 class="mast" style="font-size:112px">OOTD</h1>
@@ -308,10 +313,10 @@
     <div class="hscroll">${chips}</div>
   </section>
 
-  ${ids.filter((id) => C[id].open).sort((a, b) => (C[b].isNew ? 1 : 0) - (C[a].isNew ? 1 : 0)).map((id, i) => `<a href="#${id}" class="card" style="display:flex;align-items:center;justify-content:space-between;margin:${i ? 12 : 22}px 20px 0;padding:12px 16px;background:${C[id].isNew ? '#F2457C' : '#FFD23F'}">
-    <div style="display:flex;flex-direction:column"><span class="anton" style="font-size:11px;letter-spacing:2px">${C[id].isNew ? 'NEW CITY' : 'NOW OPEN'}</span><span class="anton" style="font-size:26px;line-height:1.1">${esc(C[id].en)}</span></div>
-    <span style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700">잡지 펼치기 ${chev('right')}</span>
-  </a>`).join('')}
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px 20px 0">${ids.filter((id) => C[id].open).map((id, i) => `<a href="#${id}" class="card" style="display:flex;flex-direction:column;gap:2px;padding:10px 12px;background:${['#FFD23F', '#F2457C', '#FFFFFF', '#BFD9E6'][i % 4]}">
+    <span class="anton" style="font-size:10px;letter-spacing:2px">${C[id].isNew ? 'NEW CITY' : 'NOW OPEN'}</span><span class="anton" style="font-size:${C[id].en.length > 9 ? 18 : 22}px;line-height:1.1">${esc(C[id].en)}</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700">${esc(C[id].name)} ${chev('right')}</span>
+  </a>`).join('')}</div>
   ${tripCard()}
   ${closetHtml()}
 </main>
@@ -367,6 +372,7 @@ ${store.get('seen', false) ? '' : introHtml()}`;
   }
 
   function bindHome() {
+    $app.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => { state.lang = b.getAttribute('data-lang'); store.set('lang', state.lang); I18N.set(state.lang); refresh(); }));
     const card = document.getElementById('map');
     const inner = document.getElementById('mapInner');
     const thumb = document.getElementById('thumb');
@@ -548,12 +554,58 @@ ${tocHtml(city, r.idx)}
     </div>`;
   }
 
+  // Illustrated cover for cities without a photo: sky gradient, halftone sun and a simple silhouette.
+  function skyScene(city) {
+    const s = city.sky;
+    let seed = city.id.charCodeAt(0) * 31 + city.id.charCodeAt(1) * 7 + city.id.length;
+    const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    let fg = '';
+    if (city.scene === 'towers') {
+      let x = -6;
+      while (x < 390) {
+        const w = 22 + Math.floor(rnd() * 34), h = 90 + Math.floor(rnd() * 250);
+        fg += `<rect x="${x}" y="${844 - h}" width="${w}" height="${h}" fill="${rnd() > 0.5 ? '#141210' : '#2B2350'}"/>`;
+        for (let wy = 844 - h + 12; wy < 830; wy += 22) for (let wx = x + 5; wx < x + w - 6; wx += 10) if (rnd() > 0.55) fg += `<rect x="${wx}" y="${wy}" width="4" height="8" fill="#FFD23F"/>`;
+        x += w + 2;
+      }
+    } else if (city.scene === 'roofs') {
+      let x = -10, row = 0;
+      for (row = 0; row < 3; row++) {
+        x = -10 - row * 14; const base = 700 + row * 52, col = ['#C4553A', '#A8432E', '#2B2622'][row];
+        while (x < 390) {
+          const w = 46 + Math.floor(rnd() * 40), h = 36 + Math.floor(rnd() * 46);
+          fg += `<path d="M${x} ${base} L${x + w / 2} ${base - h} L${x + w} ${base} V844 H${x} Z" fill="${col}" stroke="#141210" stroke-width="2"/>`;
+          if (rnd() > 0.5) fg += `<rect x="${x + w * 0.62}" y="${base - h * 0.9}" width="9" height="${h * 0.5}" fill="#141210"/>`;
+          x += w - 4;
+        }
+      }
+    } else {
+      ['#2D5BFF', '#1F4FBF', '#16357F'].forEach((col, k) => {
+        const y = 690 + k * 50; let d = `M0 ${y}`;
+        for (let x = 0; x < 390; x += 60) d += ` q 15 ${-18 + k * 3} 30 0 t 30 0`;
+        fg += `<path d="${d} V844 H0 Z" fill="${col}" stroke="#141210" stroke-width="2"/>`;
+      });
+      fg += '<path d="M0 844 L0 800 C 80 780 130 800 200 820 L260 844 Z" fill="#F3E0B0" stroke="#141210" stroke-width="2"/>';
+    }
+    return `<svg class="cover-scene" viewBox="0 0 390 844" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">${s.map((c, i) => `<stop offset="${[0, 0.36, 0.56, 0.7, 0.8][i]}" stop-color="${c}"/>`).join('')}</linearGradient>
+      <clipPath id="sunClip"><circle cx="195" cy="600" r="118"/></clipPath>
+      <pattern id="dotsC" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="2.2" fill="#141210"/></pattern>
+    </defs>
+    <rect width="390" height="844" fill="url(#sky)"/>
+    <g clip-path="url(#sunClip)"><rect x="60" y="470" width="270" height="260" fill="#FFE37A"/><rect x="60" y="600" width="270" height="8" fill="#FF8A3D"/><rect x="60" y="622" width="270" height="12" fill="#FF8A3D"/><rect x="60" y="650" width="270" height="18" fill="#FF8A3D"/></g>
+    <path d="M330 120 L390 120 L390 240 Z" fill="url(#dotsC)" opacity="0.5"/>
+    ${fg}
+  </svg>`;
+  }
+
   function pCover(city) {
     const palm = (x, base, s, flip) => `<g transform="translate(${x} ${base}) scale(${flip ? -s : s} ${s})"><path d="M0 0 C 4 -80, 8 -160, 22 -238" stroke="#141210" stroke-width="9" fill="none" stroke-linecap="round"/><g fill="#141210"><path d="M22 -238 C 0 -262 -40 -262 -72 -232 C -40 -248 -10 -246 22 -234 Z"/><path d="M22 -238 C 6 -276 -26 -292 -56 -286 C -26 -280 -2 -264 22 -234 Z"/><path d="M22 -238 C 30 -280 52 -300 80 -298 C 54 -288 36 -268 24 -234 Z"/><path d="M22 -238 C 50 -258 86 -256 112 -228 C 84 -244 54 -244 24 -232 Z"/><path d="M22 -238 C 44 -232 70 -214 80 -186 C 64 -210 44 -222 22 -232 Z"/><path d="M22 -238 C 0 -230 -24 -212 -32 -184 C -18 -208 0 -222 22 -232 Z"/></g></g>`;
     const lines = city.coverLines.map((l, i) => `<span class="anton" style="display:inline-block;background:#141210;color:${i % 2 ? '#FFD23F' : '#F3EAD8'};font-size:22px;line-height:1;padding:3px 6px 2px">${esc(l)}</span>`).join('');
     const scene = city.cover
       ? `<img class="cover-scene cover-photo" src="${city.cover}" alt=""><div class="cover-tint"></div>`
-      : `  <svg class="cover-scene" viewBox="0 0 390 844" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      : city.sky ? skyScene(city) : `  <svg class="cover-scene" viewBox="0 0 390 844" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
     <defs>
       <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3E4A8C"/><stop offset="0.36" stop-color="#7A4E98"/><stop offset="0.55" stop-color="#F2457C"/><stop offset="0.68" stop-color="#FF8A3D"/><stop offset="0.76" stop-color="#FFD23F"/></linearGradient>
       <clipPath id="sunClip"><circle cx="195" cy="600" r="118"/></clipPath>
@@ -610,8 +662,9 @@ ${scene}
     if (w && w.ok && w.current) { wxV = Math.round(w.current.temperature_2m) + '°C'; wxD = '지금 ' + city.name + ' 기온 (실시간)'; }
     else if (w && !w.ok) { const m = +todayIn(city.tz).slice(5, 7) - 1; wxV = city.normals[m][0] + '° / ' + city.normals[m][1] + '°'; wxD = '이번 달 평년 낮·밤 기온'; }
     const kr = city.money === 'krw';
-    const fxV = kr ? '₩ KRW' : state.fx ? '₩' + Math.round(state.fx).toLocaleString('ko-KR') : 'USD $';
-    const fxD = kr ? '팁 없음 · 가격에 부가세 포함' : state.fx ? '1달러 기준 (실시간 환율)' : '식당 팁 18~20%가 보통';
+    const intl = city.money === 'intl', per = krwPer(city);
+    const fxV = kr ? '₩ KRW' : intl ? (per ? fmtKRW(per * city.cur.unit) : city.cur.code + ' ' + city.cur.sym) : state.fx ? '₩' + Math.round(state.fx).toLocaleString('ko-KR') : 'USD $';
+    const fxD = kr ? '팁 없음 · 가격에 부가세 포함' : intl ? (per ? city.cur.sym + city.cur.unit + ' 기준 (실시간 환율)' : '현지 통화 · ' + city.cur.code) : state.fx ? '1달러 기준 (실시간 환율)' : '식당 팁 18~20%가 보통';
     const live = [
       { k: 'LOCAL TIME', v: `<span data-clock>${esc(localTime(city.tz))}</span>`, d: `${esc(localDay(city.tz))} · ${diff === 0 ? '한국 시간 그대로예요' : diff > 0 ? '한국보다 ' + diff + '시간 느려요' : '한국보다 ' + (-diff) + '시간 빨라요'}` },
       { k: 'WEATHER', v: wxV, d: wxD },
@@ -728,7 +781,7 @@ ${wxLine(city, { extra: () => `이 날씨엔 <b>${esc(L.look.name)}</b> — ${es
 <div class="board" style="container-type:inline-size">
   ${L.items.some((it) => it.img)
     ? `<div style="position:absolute;left:4%;top:3%;width:42%;height:22%;background:#141210;color:#F3EAD8;transform:rotate(-3deg);display:flex;flex-direction:column;justify-content:center;padding:0 5%"><span class="anton" style="font-size:3.4cqw;letter-spacing:.5cqw;color:#FFD23F">TODAY'S LOOK</span><span class="anton" style="font-size:7cqw;line-height:1.02">${esc(L.look.name)}</span><span class="pen" style="font-size:5.4cqw;line-height:1.1">${esc(fmtDate(L.w.date))} · ${L.w.max}° / ${L.w.min}°</span></div><div class="tape" style="left:16%;top:.5%;width:18%;height:3.6%;transform:rotate(-8deg)"></div>`
-    : `<div style="position:absolute;left:3%;top:2%;width:44%;height:25%;background:#F3E6CF;display:flex;align-items:center;justify-content:center">${svgIcon(city.boardArt)}</div>`}
+    : `<div style="position:absolute;left:3%;top:2%;width:44%;height:25%;background:#F3E6CF;display:flex;align-items:center;justify-content:center">${svgIcon(city.boardArt, '#F2457C')}</div>`}
   <div class="word" style="left:4%;top:29%;font-size:15cqw"><div>${esc(city.word[0])}</div><div style="padding-left:7%"><span style="color:#F2457C">${esc(city.word[1][0])}</span>${esc(city.word[1].slice(1))}</div><div style="padding-left:2%">${esc(city.word[2])}</div></div>
   ${L.items.some((it) => it.img) ? '' : `<div style="position:absolute;left:36%;top:20%;width:17%;height:11%;transform:rotate(-8deg)">${svgIcon('camera', '#D6D2CC', '#3A3F5C')}</div>`}
   ${pieces(L.items)}
@@ -844,7 +897,7 @@ ${city.read.map((g) => `<div class="section"><div class="rule"><span>${g.k}</spa
     return `<div class="result"><div><small>세금 ${r}%</small><b>${fmtUSD(tax)}</b></div><div><small>결제 금액</small><b>${fmtUSD(total)}</b></div>${krw}</div>`;
   }
 
-  function splitHtml() {
+  function splitHtmlKr() {
     const amt = parseFloat(String(state.bill).replace(/,/g, ''));
     if (!(amt > 0)) return '<p class="muted" style="font-size:13px;margin:12px 0 0">금액을 넣으면 1인당 금액이 나와요.</p>';
     return `<div class="result" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div><small>합계</small><b>${fmtKRW(amt)}</b></div><div><small>1인당 (${state.split}명)</small><b>${fmtKRW(Math.ceil(amt / state.split / 100) * 100)}</b></div></div><p class="muted" style="font-size:12px;margin:8px 0 0">1인당 금액은 100원 단위로 올림했어요.</p>`;
@@ -856,7 +909,7 @@ ${head(7, 'TOOLS', '같이 간 사람과 깔끔하게')}
   <div style="display:flex;align-items:center;justify-content:space-between"><h3 class="anton" style="margin:0;font-size:20px;font-weight:400">SPLIT THE BILL</h3><span class="pen" style="font-size:19px">N분의 1!</span></div>
   <label class="field" style="margin-top:10px"><span class="anton" style="font-size:24px">₩</span><input data-kbill inputmode="numeric" placeholder="계산 금액" value="${esc(state.bill)}" aria-label="계산 금액 (원)"></label>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px"><span style="font-size:13px;font-weight:700">나눠 낼 사람</span><div class="stepper"><button type="button" data-ksplit="-1" aria-label="한 명 빼기">−</button><output data-ksplitout>${state.split}</output><button type="button" data-ksplit="1" aria-label="한 명 더하기">+</button></div></div>
-  <div data-kout>${splitHtml()}</div>
+  <div data-kout>${splitHtmlKr()}</div>
 </section>
 <section class="card tool" aria-label="서울 팁">
   <h3 class="anton" style="margin:0;font-size:20px;font-weight:400">GOOD TO KNOW</h3>
@@ -868,8 +921,32 @@ ${head(7, 'TOOLS', '같이 간 사람과 깔끔하게')}
 </section>`;
   }
 
+  function fxHtml(city) {
+    const amt = parseFloat(String(state.bill).replace(/,/g, ''));
+    const per = krwPer(city);
+    if (!(amt > 0)) return '<p class="muted" style="font-size:13px;margin:12px 0 0">금액을 넣으면 원화와 1인당 금액이 나와요.</p>';
+    const each = amt / state.split;
+    const fmtL = (n) => city.cur.sym + (city.cur.code === 'JPY' ? Math.round(n).toLocaleString('en-US') : n.toFixed(2));
+    return `<div class="result"><div><small>원화 (실시간)</small><b>${per ? fmtKRW(amt * per) : '—'}</b></div><div><small>1인당 (${state.split}명)</small><b>${fmtL(each)}</b></div><div><small>1인당 원화</small><b>${per ? fmtKRW(each * per) : '—'}</b></div></div>${per ? '' : '<p class="muted" style="font-size:12px;margin:8px 0 0">환율을 불러오지 못했어요. 연결되면 원화가 표시돼요.</p>'}`;
+  }
+  function pToolsIntl(city) {
+    return `
+${head(7, 'TOOLS', '현지에서 바로 쓰는 계산기')}
+<section class="card tool" aria-label="환율 계산기">
+  <div style="display:flex;align-items:center;justify-content:space-between"><h3 class="anton" style="margin:0;font-size:20px;font-weight:400">${esc(city.cur.code)} → KRW</h3><span class="pen" style="font-size:19px">얼마지? 바로 계산!</span></div>
+  <label class="field" style="margin-top:10px"><span class="anton" style="font-size:24px">${esc(city.cur.sym)}</span><input data-kbill inputmode="decimal" placeholder="현지 금액" value="${esc(state.bill)}" aria-label="현지 금액"></label>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px"><span style="font-size:13px;font-weight:700">나눠 낼 사람</span><div class="stepper"><button type="button" data-ksplit="-1" aria-label="한 명 빼기">−</button><output data-ksplitout>${state.split}</output><button type="button" data-ksplit="1" aria-label="한 명 더하기">+</button></div></div>
+  <div data-kout>${fxHtml(city)}</div>
+</section>
+<section class="card tool" aria-label="알아 두면 좋은 것">
+  <h3 class="anton" style="margin:0;font-size:20px;font-weight:400">GOOD TO KNOW</h3>
+  <ul style="margin:10px 0 0;padding-left:18px;font-size:14px;line-height:1.7">${city.know.map((k) => `<li>${esc(k)}</li>`).join('')}</ul>
+</section>`;
+  }
+
   function pTools(city) {
     if (city.tools === 'kr') return pToolsKr(city);
+    if (city.tools === 'intl') return pToolsIntl(city);
     const g = state.sizeG, t = state.sizeT;
     const rows = SIZES[g][t];
     const table = t === 'clothes'
@@ -937,9 +1014,10 @@ ${groups.map((g) => `<fieldset class="check-group" style="border:0;padding:0;min
   function pNext(city) {
     const soon = Object.keys(C).filter((id) => !C[id].open);
     return `
-${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
+${head(10, 'NEXT STOP', soon.length ? '다음 도시를 준비 중이에요' : '다음엔 어느 도시로 갈까요?')}
 <div class="section" style="margin-top:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
-  ${soon.map((id, i) => `<div class="card" style="padding:14px;transform:rotate(${i % 2 ? 2 : -2}deg);background:${['#F2457C', '#FFD23F', '#BFD9E6', '#FFFFFF'][i % 4]}"><div class="anton" style="font-size:26px;line-height:1">${esc(C[id].en)}</div><div style="font-size:12px;font-weight:700;margin-top:4px">${esc(C[id].name)} · SOON</div></div>`).join('')}
+  ${soon.length ? soon.map((id, i) => `<div class="card" style="padding:14px;transform:rotate(${i % 2 ? 2 : -2}deg);background:${['#F2457C', '#FFD23F', '#BFD9E6', '#FFFFFF'][i % 4]}"><div class="anton" style="font-size:26px;line-height:1">${esc(C[id].en)}</div><div style="font-size:12px;font-weight:700;margin-top:4px">${esc(C[id].name)} · SOON</div></div>`).join('')
+    : Object.keys(C).filter((id) => id !== city.id).map((id, i) => `<a href="#${id}" class="card" style="padding:14px;transform:rotate(${i % 2 ? 2 : -2}deg);background:${['#F2457C', '#FFD23F', '#BFD9E6', '#FFFFFF'][i % 4]}"><div class="anton" style="font-size:${C[id].en.length > 9 ? 20 : 26}px;line-height:1">${esc(C[id].en)}</div><div style="font-size:12px;font-weight:700;margin-top:4px">${esc(C[id].name)} · OPEN</div></a>`).join('')}
 </div>
 <div class="section" style="margin-top:24px;display:flex;flex-direction:column;gap:10px">
   <a class="btn" href="#home">지도로 돌아가기</a>
@@ -969,7 +1047,7 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     g.font = "400 64px 'Anton', sans-serif"; g.fillText(L.look.name, 360, 168);
     const w = L.w;
     g.font = "400 40px 'Nanum Pen Script', 'Noto Sans KR', cursive";
-    g.fillText(fmtDate(w.date) + ' · ' + w.max + '° / ' + w.min + '° · ' + L.look.ko, 64, 240);
+    g.fillText(fmtDate(w.date) + ' · ' + w.max + '° / ' + w.min + '° · ' + TR(L.look.ko), 64, 240);
     const bx = 60, by = 276, bw = 640, bh = 924;
     g.fillStyle = '#FFFFFF'; g.fillRect(bx, by, bw, bh);
     g.fillStyle = INK; g.fillRect(bx + 10, by + bh, bw, 10); g.fillRect(bx + bw, by + 10, 10, bh);
@@ -989,7 +1067,7 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
       g.restore();
     } else {
       g.fillStyle = '#F3E6CF'; const hr = P([3, 2, 44, 25]); g.fillRect(hr[0], hr[1], hr[2], hr[3]);
-      await fit(IC[city.boardArt](), hr);
+      await fit(IC[city.boardArt]('#F2457C'), hr);
       await fit(IC.camera('#D6D2CC', '#3A3F5C'), P([36, 20, 17, 11]));
     }
     g.font = "900 96px 'Bodoni Moda', serif";
@@ -1011,8 +1089,8 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     list.forEach((it, i) => {
       g.fillStyle = INK; g.beginPath(); g.arc(752, ly - 10, 17, 0, Math.PI * 2); g.fill();
       g.fillStyle = '#F3EAD8'; g.font = "400 20px 'Anton', sans-serif"; g.textAlign = 'center'; g.fillText(String(i + 1), 752, ly - 3); g.textAlign = 'left';
-      g.fillStyle = INK; g.font = "700 27px 'Noto Sans KR', sans-serif"; g.fillText(it.name, 780, ly);
-      g.fillStyle = '#4A433C'; g.font = "400 22px 'Noto Sans KR', sans-serif"; g.fillText(it.note, 780, ly + 32);
+      g.fillStyle = INK; g.font = "700 27px 'Noto Sans KR', sans-serif"; g.fillText(TR(it.name), 780, ly);
+      g.fillStyle = '#4A433C'; g.font = "400 22px 'Noto Sans KR', sans-serif"; g.fillText(TR(it.note), 780, ly + 32);
       ly += 104;
     });
     g.fillStyle = '#FFD23F'; g.strokeStyle = INK; g.lineWidth = 3;
@@ -1020,7 +1098,7 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
     g.beginPath(); STAR.split(' ').forEach((p, i) => { const q = p.split(','); const x = (+q[0] - 50) * 1.5, y = (+q[1] - 50) * 1.5; if (i) g.lineTo(x, y); else g.moveTo(x, y); }); g.closePath(); g.fill(); g.stroke();
     g.fillStyle = INK; g.textAlign = 'center'; g.font = "400 40px 'Anton', sans-serif"; g.fillText(String(board.length), 0, 4); g.font = "400 18px 'Anton', sans-serif"; g.fillText('ITEMS', 0, 28);
     g.restore();
-    g.textAlign = 'left'; g.fillStyle = INK; g.font = "400 34px 'Nanum Pen Script', cursive"; g.fillText(L.look.tip, 64, 1262);
+    g.textAlign = 'left'; g.fillStyle = INK; g.font = "400 34px 'Nanum Pen Script', cursive"; g.fillText(TR(L.look.tip), 64, 1262);
     g.globalAlpha = 0.7; g.textAlign = 'right'; g.font = "400 26px 'Anton', sans-serif"; g.fillText('OOTD · OUT OF TOWN DAY', W - 44, H - 40); g.globalAlpha = 1;
     return c;
   }
@@ -1128,7 +1206,8 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
       timers.push(setInterval(() => { const el = $app.querySelector('[data-clock]'); if (el) el.textContent = localTime(city.tz); }, 20000));
     }
 
-    if (page.id === 'tools' && city.tools === 'kr') {
+    if (page.id === 'tools' && (city.tools === 'kr' || city.tools === 'intl')) {
+      const splitHtml = city.tools === 'intl' ? () => fxHtml(city) : splitHtmlKr;
       const out = $app.querySelector('[data-kout]');
       const bill = $app.querySelector('[data-kbill]');
       bill.addEventListener('input', () => { state.bill = bill.value; out.innerHTML = splitHtml(); });
@@ -1139,7 +1218,7 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
       }));
     }
 
-    if (page.id === 'tools' && city.tools !== 'kr') {
+    if (page.id === 'tools' && city.tools === 'us') {
       const out = $app.querySelector('[data-tipout]');
       const bill = $app.querySelector('[data-bill]');
       bill.addEventListener('input', () => { state.bill = bill.value; out.innerHTML = tipHtml(); });
@@ -1184,7 +1263,7 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
       }));
       $app.querySelector('[data-copy]').addEventListener('click', () => {
         const s = packState(city);
-        const text = 'OOTD · ' + city.en + ' 짐 리스트\n' + packGroups(city).map((g) => '\n[' + g.title + ']\n' + g.items.map((n) => (s[g.id + '|' + n] ? '✓ ' : '☐ ') + n).join('\n')).join('\n');
+        const text = 'OOTD · ' + city.en + (state.lang === 'en' ? ' packing list\n' : ' 짐 리스트\n') + packGroups(city).map((g) => '\n[' + g.title + ']\n' + g.items.map((n) => (s[g.id + '|' + n] ? '✓ ' : '☐ ') + TR(n)).join('\n')).join('\n');
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(text).then(() => toast('목록을 복사했어요'), () => toast('복사가 막혀 있어요 — 길게 눌러 직접 복사해 주세요'));
         } else {
@@ -1200,6 +1279,7 @@ ${head(10, 'NEXT STOP', '다음 도시를 준비 중이에요')}
   }
 
   window.addEventListener('hashchange', () => { state.pick = -1; render(); });
+  I18N.set(state.lang);
   render();
 
   try {

@@ -36,6 +36,30 @@
 
   function storeGet(key) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
   function storeSet(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); return true; } catch (e) { return false; } }
+  // Photos are large, so the zine lives in IndexedDB (far more room than localStorage); localStorage is only the fallback.
+  let dbp = null;
+  function db() {
+    if (dbp) return dbp;
+    dbp = new Promise((res) => {
+      try {
+        const rq = indexedDB.open('ootd', 1);
+        rq.onupgradeneeded = () => rq.result.createObjectStore('kv');
+        rq.onsuccess = () => res(rq.result);
+        rq.onerror = () => res(null);
+      } catch (e) { res(null); }
+    });
+    return dbp;
+  }
+  async function idbGet(key) {
+    const d = await db();
+    if (!d) return null;
+    return new Promise((res) => { try { const rq = d.transaction('kv').objectStore('kv').get(key); rq.onsuccess = () => res(rq.result || null); rq.onerror = () => res(null); } catch (e) { res(null); } });
+  }
+  async function idbSet(key, v) {
+    const d = await db();
+    if (!d) return false;
+    return new Promise((res) => { try { const tx = d.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, key); tx.oncomplete = () => res(true); tx.onerror = () => res(false); tx.onabort = () => res(false); } catch (e) { res(false); } });
+  }
 
   function template(city) {
     const d = new Intl.DateTimeFormat('en-CA', { timeZone: city.tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()).replace(/-/g, '.');
@@ -65,7 +89,10 @@
 
   function mount(root, city, api) {
     const KEY = 'ootd:zine:' + city.id;
-    let items = storeGet(KEY) || template(city);
+    const legacy = storeGet(KEY);
+    let items = legacy || template(city);
+    let alive = true;
+    let saveT = 0;
     let sel = null;
     let warnedQuota = false;
     let clearArmed = false;
@@ -101,9 +128,16 @@
     const byId = (id) => items.find((i) => i.id === id);
     const maxZ = () => items.reduce((m, i) => Math.max(m, i.z || 0), 0);
 
+    async function flush() {
+      const snap = JSON.parse(JSON.stringify(items));
+      let ok = await idbSet(KEY, snap);
+      if (ok) { try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ } }
+      else ok = storeSet(KEY, snap);
+      if (!ok && !warnedQuota) { warnedQuota = true; api.toast('저장 공간이 부족해요 — 이미지로 저장해 두세요'); }
+    }
     function save() {
-      const ok = storeSet(KEY, items);
-      if (!ok && !warnedQuota) { warnedQuota = true; api.toast('사진이 많아서 자동 저장이 안 될 수 있어요'); }
+      clearTimeout(saveT);
+      saveT = setTimeout(flush, 250);
     }
 
     function itemStyle(it, s) {
@@ -306,7 +340,7 @@
       if (!b) return;
       const act = b.getAttribute('data-z');
       const it = sel && byId(sel);
-      if (act === 'text') add({ type: 'text', text: city.zineText, font: 'pen', color: K, shadow: false, size: 90 });
+      if (act === 'text') add({ type: 'text', text: window.I18N ? window.I18N.tr(city.zineText) : city.zineText, font: 'pen', color: K, shadow: false, size: 90 });
       if (act === 'done') { sel = null; draw(); }
       if (act === 'front' && it) { it.z = maxZ() + 1; draw(); save(); }
       if (act === 'dup' && it) add(Object.assign(JSON.parse(JSON.stringify(it)), { x: it.x + 40, y: it.y + 40 }));
@@ -415,7 +449,12 @@
     const onResize = () => draw();
     window.addEventListener('resize', onResize);
     draw();
-    return () => { window.removeEventListener('resize', onResize); save(); };
+    idbGet(KEY).then((saved) => {
+      if (!alive) return;
+      if (saved && Array.isArray(saved)) { items = saved; sel = null; draw(); }
+      else if (legacy) flush();
+    });
+    return () => { alive = false; window.removeEventListener('resize', onResize); clearTimeout(saveT); flush(); };
   }
 
   window.Zine = { mount, share: shareCanvas };

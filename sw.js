@@ -1,6 +1,6 @@
 // OOTD 홈 화면 앱용 서비스 워커: 네트워크를 먼저 쓰고, 오프라인일 때만 마지막으로 받은 파일·날씨·환율·글꼴을 보여준다.
-const CACHE = 'ootd-v4';
-const SHELL = ['./', 'index.html', 'style.css', 'map.js', 'icons.js', 'data.js', 'zine.js', 'app.js', 'icon-192.png'];
+const CACHE = 'ootd-v5';
+const SHELL = ['./', 'index.html', 'style.css', 'map.js', 'icons.js', 'data.js', 'cities2.js', 'en.js', 'zine.js', 'app.js', 'icon-192.png'];
 const HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'api.open-meteo.com', 'open.er-api.com'];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).catch(() => null).then(() => self.skipWaiting()));

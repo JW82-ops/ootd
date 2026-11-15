@@ -4,7 +4,7 @@
 
 - 날씨 맞춤 룩 (Open-Meteo 예보 · 평년 기온)
 - 뷰티 키트, 하루 코스, 맛집 & 꼭 가볼 곳
-- 팁 계산기(실시간 환율), 한국↔미국 사이즈표
+- 팁·환율 계산기(실시간 환율), 한국↔미국 사이즈표
 - 룩 + 뷰티로 만드는 짐 체크리스트
 
-도시: Los Angeles, Seoul. 정적 파일만으로 동작해서 GitHub Pages에서 바로 열려요.
+도시: Los Angeles, Seoul, New York, Lisbon, Paris, Bangkok, Tokyo, Sydney. 한국어 / English 전환 지원. 정적 파일만으로 동작해서 GitHub Pages에서 바로 열려요.
