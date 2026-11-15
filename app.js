@@ -22,10 +22,6 @@
     { id: 'next', label: 'NEXT STOP' }
   ];
 
-  const TAGS = {
-    la: [60, 122, -4], ny: [192, 62, 3], lis: [312, 108, -3], par: [420, 40, 4],
-    bkk: [714, 178, -3], sel: [716, 70, -4], tyo: [830, 116, 3], syd: [790, 322, -2]
-  };
 
   const SLOTS = {
     outer: [55, 2, 43, 32], top: [60, 33, 38, 24], belt: [3, 59, 40, 8], bottom: [44, 55, 36, 43],
@@ -45,8 +41,11 @@
     who: store.get('who', 'her'),
     date: store.get('date', null),
     trip: store.get('trip', 'la'),
-    sel: 'la',
+    sel: store.get('trip', 'la'),
     mapX: 0,
+    q: '',
+    region: 'all',
+    more: false,
     wx: {},
     wxReq: {},
     fx: null,
@@ -280,6 +279,7 @@
       lastRoute = null;
       return;
     }
+    if (r.view === 'mag') { const rec = recents().filter((x) => x !== r.city); rec.unshift(r.city); store.set('recent', rec.slice(0, 6)); }
     const html = r.view === 'home' ? viewHome() : viewMag(r, dir);
     $app.innerHTML = html + grainSvg() + '<div id="toast" class="toast" role="status" aria-live="polite"></div>';
     if (keepScroll) {
@@ -302,19 +302,46 @@
   const grainSvg = () => '<svg class="grain" width="100%" height="100%" aria-hidden="true"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#grain)"/></svg>';
 
   /* ---------- HOME ---------- */
+  const REGIONS = [['all', '전체'], ['fav', '★ 즐겨찾기'], ['asia', '아시아'], ['europe', '유럽'], ['americas', '아메리카'], ['oceania', '오세아니아'], ['mideast', '중동'], ['africa', '아프리카']];
+  const favs = () => store.get('fav', []);
+  const recents = () => store.get('recent', []);
+  const inRegion = (id) => state.region === 'all' || (state.region === 'fav' ? favs().includes(id) : C[id].region === state.region);
+  function regionChips() {
+    const have = {};
+    Object.keys(C).forEach((id) => { have[C[id].region] = 1; });
+    return REGIONS.filter((g) => g[0] === 'all' || g[0] === 'fav' || have[g[0]]).map((g) => `<button class="chip" type="button" data-region="${g[0]}" aria-pressed="${state.region === g[0]}">${g[1]}</button>`).join('');
+  }
+  // The label on the map belongs to the selected city only, so any number of cities can share the map.
+  function mapTag() {
+    const c = C[state.sel];
+    if (!c) return '';
+    const x = Math.max(86, Math.min(MAP_W - 86, c.mapX));
+    const above = c.mapY > 84;
+    const pos = `left:${x}px;top:${above ? c.mapY - 14 : c.mapY + 14}px;transform:translate(-50%,${above ? '-100%' : '0'}) rotate(${c.mapX % 2 ? 2 : -2}deg)`;
+    return c.open
+      ? `<a class="tag open" href="#${c.id}" style="${pos}"><b>${esc(c.en)}</b><small>잡지 열기 →</small></a>${c.isNew ? `<span class="tag" style="left:${x + 46}px;top:${above ? c.mapY - 76 : c.mapY + 2}px;padding:2px 8px;background:#F2457C;border-width:2px;transform:rotate(10deg)"><b style="font-size:12px">NEW!</b></span>` : ''}`
+      : `<span class="tag" style="${pos}"><b>${esc(c.en)}</b><small>SOON</small></span>`;
+  }
+  const LIST_MAX = 8;
+  function cityListHtml() {
+    const q = state.q.trim().toLowerCase();
+    const fav = favs(), rec = recents();
+    const rank = (id) => (fav.includes(id) ? 0 : rec.includes(id) ? 1 + rec.indexOf(id) / 100 : C[id].isNew ? 2 : 3);
+    const match = (id) => !q || C[id].name.toLowerCase().indexOf(q) >= 0 || C[id].en.toLowerCase().indexOf(q) >= 0 || TR(C[id].name).toLowerCase().indexOf(q) >= 0 || String(C[id].nick).toLowerCase().indexOf(q) >= 0;
+    const all = Object.keys(C).filter((id) => inRegion(id) && match(id)).sort((x, y) => rank(x) - rank(y) || C[x].en.localeCompare(C[y].en));
+    if (!all.length) return `<div class="card" style="padding:14px;border-style:dashed;box-shadow:none"><span class="pen" style="font-size:21px;line-height:1.15">${state.region === 'fav' && !q ? '즐겨찾기한 도시가 없어요 — ☆를 눌러 담아요' : '아직 없는 도시예요 — 도시는 계속 늘어나요'}</span></div>`;
+    const list = state.more || q ? all : all.slice(0, LIST_MAX);
+    return `<ul class="city-list">${list.map((id) => { const c = C[id], on = fav.includes(id); return `<li class="${state.sel === id ? 'sel' : ''}">
+      <button type="button" class="city-pin" data-fly="${id}" aria-label="${esc(c.name)} 지도에서 보기"><svg width="16" height="20" viewBox="0 0 16 20" aria-hidden="true"><path d="M8 1 C 4 1 1 4 1 8 C 1 13 8 19 8 19 C 8 19 15 13 15 8 C 15 4 12 1 8 1 Z" fill="${c.open ? '#F2457C' : '#D6D2CC'}" stroke="#141210" stroke-width="1.6"/><circle cx="8" cy="8" r="2.6" fill="#F3EAD8" stroke="#141210" stroke-width="1.4"/></svg></button>
+      ${c.open ? `<a class="city-go" href="#${id}">` : `<span class="city-go" style="opacity:.55">`}<span class="anton" style="font-size:20px;line-height:1.05">${esc(c.en)}</span><span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700"><span>${esc(c.name)}</span>${c.isNew && c.open ? '<span class="city-badge">NEW</span>' : ''}${c.open ? '' : '<span class="city-badge" style="background:#FFFFFF">SOON</span>'}</span>${c.open ? '</a>' : '</span>'}
+      <button type="button" class="city-fav" data-fav="${id}" aria-pressed="${on}" aria-label="${esc(c.name)} 즐겨찾기">${on ? '★' : '☆'}</button>
+    </li>`; }).join('')}</ul>${all.length > list.length ? `<button type="button" class="btn ghost" data-more style="width:100%;margin-top:10px">도시 더 보기 (${all.length - list.length})</button>` : ''}`;
+  }
+
   function viewHome() {
     const ids = Object.keys(C);
-    const pins = ids.map((id) => {
-      const c = C[id];
-      const t = TAGS[id];
-      const dot = `<span class="dot${c.open ? ' open' : ''}" style="left:${c.mapX}px;top:${c.mapY}px"></span>`;
-      const tag = c.open
-        ? `<a class="tag open" href="#${id}" style="left:${t[0]}px;top:${t[1]}px;transform:rotate(${t[2]}deg)"><b>${esc(c.en)}</b><small>잡지 열기 →</small></a>
-           ${c.isNew ? `<span class="tag" style="left:${t[0] + 50}px;top:${t[1] - 22}px;padding:2px 8px;background:#F2457C;border-width:2px;transform:rotate(10deg)"><b style="font-size:12px">NEW!</b></span>` : ''}`
-        : `<button class="tag" type="button" data-soon="${id}" style="left:${t[0]}px;top:${t[1]}px;transform:rotate(${t[2]}deg);text-align:left"><b>${esc(c.en)}</b><small>SOON</small></button>`;
-      return dot + tag;
-    }).join('');
-    const chips = ids.map((id) => `<button class="chip" type="button" data-fly="${id}" aria-pressed="${state.sel === id}">${esc(C[id].name)}</button>`).join('');
+    if (!C[state.sel]) state.sel = ids[0];
+    const pins = ids.map((id) => `<button type="button" class="dot${C[id].open ? ' open' : ''}" data-dot="${id}" aria-label="${esc(C[id].name)}" aria-pressed="${state.sel === id}" style="left:${C[id].mapX}px;top:${C[id].mapY}px"></button>`).join('') + `<div id="mapTag">${mapTag()}</div>`;
     const land = window.LAND_PATH;
     return `
 <main class="view">
@@ -356,21 +383,15 @@
 
   <div style="display:flex;align-items:center;justify-content:space-between;margin:12px 20px 0;font-size:12px;font-weight:500">
     <span style="display:flex;align-items:center;gap:10px"><span class="marker" style="font-size:15px">drag me</span><span class="scrub" aria-hidden="true"><i id="thumb"></i></span></span>
-    <span style="display:flex;align-items:center;gap:12px">
-      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:5px;background:#F2457C;border:1.5px solid #141210"></span>발행</span>
-      <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:4px;background:#141210"></span>준비 중</span>
-    </span>
+    <span class="anton" style="font-size:13px;letter-spacing:1px">${ids.filter((id) => C[id].open).length} CITIES</span>
   </div>
 
   <section style="margin-top:22px">
-    <div style="display:flex;align-items:baseline;gap:8px;padding:0 20px"><span class="anton" style="font-size:20px;letter-spacing:1px">CITIES</span><span class="muted" style="font-size:12px">누르면 지도가 그 도시로 이동해요</span></div>
-    <div class="hscroll">${chips}</div>
+    <div style="display:flex;align-items:baseline;gap:8px;padding:0 20px"><span class="anton" style="font-size:20px;letter-spacing:1px">CITIES</span><span class="muted" style="font-size:12px">이름을 누르면 잡지가 열려요</span></div>
+    <label class="field" style="margin:10px 20px 0"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" style="flex:none"><circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke="#141210" stroke-width="2"/><path d="M12 12 L16.5 16.5" stroke="#141210" stroke-width="2" stroke-linecap="round"/></svg><input type="search" data-q placeholder="도시 검색" aria-label="도시 검색" value="${esc(state.q)}" autocomplete="off" enterkeyhint="search"></label>
+    <div class="hscroll" role="group" aria-label="지역">${regionChips()}</div>
+    <div id="cityList" style="margin:6px 20px 0">${cityListHtml()}</div>
   </section>
-
-  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px 20px 0">${ids.filter((id) => C[id].open).map((id, i) => `<a href="#${id}" class="card" style="display:flex;flex-direction:column;gap:2px;padding:10px 12px;background:${['#FFD23F', '#F2457C', '#FFFFFF', '#BFD9E6'][i % 4]}">
-    <span class="anton" style="font-size:10px;letter-spacing:2px">${C[id].isNew ? 'NEW CITY' : 'NOW OPEN'}</span><span class="anton" style="font-size:${C[id].en.length > 9 ? 18 : 22}px;line-height:1.1">${esc(C[id].en)}</span>
-    <span style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700">${esc(C[id].name)} ${chev('right')}</span>
-  </a>`).join('')}</div>
   ${tripCard()}
   ${closetHtml()}
 </main>
@@ -387,7 +408,7 @@ ${store.get('seen', false) ? '' : introHtml()}`;
     return `<section class="card" aria-label="내 여행" style="display:flex;align-items:center;gap:14px;margin:14px 20px 0;padding:12px 14px;background:#FFFFFF">
       <div style="flex:none;min-width:96px;text-align:center"><div class="anton" style="font-size:11px;letter-spacing:2px">MY TRIP</div><div class="anton" style="font-size:38px;line-height:1;color:#F2457C;text-shadow:2px 2px 0 #141210">${big}</div></div>
       <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700">${sub}</span>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">${open.map((id) => `<button type="button" class="chip" data-trip="${id}" aria-pressed="${city.id === id}" style="min-height:32px;padding:0 10px;font-size:12px">${esc(C[id].nick)}</button>`).join('')}</div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700">여행 도시<select data-trip style="flex:1;min-width:0;min-height:36px;border:2px solid #141210;border-radius:8px;background:#F3EAD8;padding:0 6px;font-size:13px;font-weight:700">${open.slice().sort((x, y) => C[x].en.localeCompare(C[y].en)).map((id) => `<option value="${id}"${city.id === id ? ' selected' : ''}>${esc(TR(C[id].name))}</option>`).join('')}</select></label>
         <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700">가는 날<input type="date" data-date value="${state.date || ''}" style="min-height:36px;border:2px solid #141210;border-radius:8px;background:#F3EAD8;padding:0 6px;font-size:13px"></label></div>
     </section>`;
   }
@@ -451,6 +472,7 @@ ${store.get('seen', false) ? '' : introHtml()}`;
       thumb.style.width = tw + 'px';
       thumb.style.left = Math.round(pos * (87 - tw)) + 'px';
     }
+    if (!state.mapInit) { state.mapInit = true; state.mapX = -(C[state.sel].mapX - VIEW() / 2); }   // open on the trip city
     paint(clamp(state.mapX));
 
     function coast(v0) {
@@ -533,12 +555,38 @@ ${store.get('seen', false) ? '' : introHtml()}`;
     });
     card.tabIndex = 0;
 
-    $app.querySelectorAll('[data-fly]').forEach((b) => b.addEventListener('click', () => {
-      const id = b.getAttribute('data-fly');
+    const listEl = document.getElementById('cityList');
+    const dim = () => $app.querySelectorAll('[data-dot]').forEach((dEl) => { const id = dEl.getAttribute('data-dot'); dEl.classList.toggle('dim', !inRegion(id)); dEl.setAttribute('aria-pressed', String(state.sel === id)); });
+    function select(id, fly) {
       state.sel = id;
-      $app.querySelectorAll('[data-fly]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      flyTo(-(C[id].mapX - VIEW() / 2));
-      if (!C[id].open) toast(C[id].name + '은(는) 준비 중이에요');
+      document.getElementById('mapTag').innerHTML = mapTag();
+      dim();
+      listEl.querySelectorAll('li').forEach((li) => li.classList.toggle('sel', !!li.querySelector('[data-fly="' + id + '"]')));
+      if (fly) flyTo(-(C[id].mapX - VIEW() / 2));
+    }
+    function drawList() { listEl.innerHTML = cityListHtml(); }
+    dim();
+    $app.querySelectorAll('[data-dot]').forEach((b) => b.addEventListener('click', () => select(b.getAttribute('data-dot'), true)));
+    listEl.addEventListener('click', (e) => {
+      const fly = e.target.closest('[data-fly]'), fav = e.target.closest('[data-fav]'), more = e.target.closest('[data-more]');
+      if (fly) { select(fly.getAttribute('data-fly'), true); card.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+      if (fav) {
+        const id = fav.getAttribute('data-fav'); const list = favs(); const k = list.indexOf(id);
+        if (k >= 0) list.splice(k, 1); else list.unshift(id);
+        store.set('fav', list); drawList();
+        toast(k >= 0 ? '즐겨찾기에서 뺐어요' : '즐겨찾기에 담았어요');
+      }
+      if (more) { state.more = true; drawList(); }
+    });
+    const qEl = $app.querySelector('[data-q]');
+    qEl.addEventListener('input', () => { state.q = qEl.value; drawList(); });
+    $app.querySelectorAll('[data-region]').forEach((b) => b.addEventListener('click', () => {
+      state.region = b.getAttribute('data-region'); state.more = false;
+      $app.querySelectorAll('[data-region]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      drawList(); dim();
+      // Swing the map to the middle of the chosen region.
+      const ids = Object.keys(C).filter(inRegion);
+      if (ids.length && state.region !== 'all') flyTo(-(ids.reduce((s, id) => s + C[id].mapX, 0) / ids.length - VIEW() / 2));
     }));
     $app.querySelectorAll('[data-date]').forEach((inp) => inp.addEventListener('change', () => {
       state.date = inp.value || null;
@@ -546,13 +594,10 @@ ${store.get('seen', false) ? '' : introHtml()}`;
       render({ keepScroll: true });
       toast(state.date ? 'D-day를 맞췄어요' : '날짜를 지웠어요');
     }));
-    $app.querySelectorAll('[data-trip]').forEach((b) => b.addEventListener('click', () => { state.trip = b.getAttribute('data-trip'); store.set('trip', state.trip); render({ keepScroll: true }); }));
+    $app.querySelectorAll('[data-trip]').forEach((b) => b.addEventListener('change', () => { state.trip = b.value; store.set('trip', state.trip); render({ keepScroll: true }); }));
     $app.querySelectorAll('[data-unsave]').forEach((b) => b.addEventListener('click', () => { toggleCloset({ id: b.getAttribute('data-unsave') }); render({ keepScroll: true }); toast('옷장에서 뺐어요'); }));
     const introBtn = $app.querySelector('[data-intro-close]');
     if (introBtn) { introBtn.addEventListener('click', () => { store.set('seen', true); const el = document.getElementById('intro'); if (el) el.remove(); }); introBtn.focus(); }
-    $app.querySelectorAll('[data-soon]').forEach((b) => b.addEventListener('click', () => {
-      toast(C[b.getAttribute('data-soon')].name + '은(는) 준비 중이에요');
-    }));
     const onResize = () => paint(clamp(state.mapX));
     window.addEventListener('resize', onResize);
     cleanups.push(() => { cancelAnimationFrame(raf); window.removeEventListener('resize', onResize); });

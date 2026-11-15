@@ -145,14 +145,14 @@ function checkCity(meta) {
 
 // --- index ---
 const seen = {};
-const app = read('app.js');
-const tags = (app.match(/const TAGS = \{([\s\S]*?)\};/) || [])[1] || '';
+const REGIONS = new Set(['asia', 'europe', 'americas', 'oceania', 'mideast', 'africa']);
 INDEX.forEach((m) => {
   if (seen[m.id]) errors.push(m.id + ': listed twice in cities/index.js');
   seen[m.id] = 1;
   ['name', 'en', 'nick', 'region', 'tz'].forEach((k) => { if (!m[k]) errors.push(m.id + ': index entry missing ' + k); });
   if (!(m.mapX >= 0 && m.mapX <= 915 && m.mapY >= 0 && m.mapY <= 360)) errors.push(m.id + ': map position is off the map');
-  if (!new RegExp('\\b' + m.id + ':').test(tags)) errors.push(m.id + ': no map label position (TAGS in app.js)');
+  if (!REGIONS.has(m.region)) errors.push(m.id + ': unknown region ' + m.region);
+  INDEX.forEach((o) => { if (o.id < m.id && Math.abs(o.mapX - m.mapX) < 12 && Math.abs(o.mapY - m.mapY) < 12) warnings.push(m.id + ' and ' + o.id + ' sit on top of each other on the map'); });
   if (m.open) checkCity(m);
 });
 fs.readdirSync(path.join(root, 'cities')).forEach((f) => { const id = f.replace(/\.js$/, ''); if (f !== 'index.js' && !seen[id]) warnings.push(f + ' is not listed in cities/index.js'); });
