@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   const $app = document.getElementById('app');
-  const C = window.CITIES;
+  const C = {};   // filled from cities/index.js below; full content arrives per city via window.OOTD_CITY
   const IC = window.ICONS;
   const SIZES = window.SIZES;
   const MAP_W = 915;
@@ -70,6 +70,47 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
   const I18N = window.I18N || { tr: (s) => s, set() {}, apply() {} };
   const TR = (s) => I18N.tr(s);
+
+  /* ---------- cities: light index up front, full issue on demand ---------- */
+  // City text is written 'ko||en'. Korean stays in the data; English goes to that city's dictionary.
+  const NO_SPLIT = { q: 1, eventsQuery: 1, cover: 1, img: 1, url: 1, hoodSvg: 1 };
+  function splitText(o, map) {
+    Object.keys(o).forEach((k) => {
+      const v = o[k];
+      if (typeof v === 'string') {
+        const i = NO_SPLIT[k] ? -1 : v.indexOf('||');
+        if (i > 0) { o[k] = v.slice(0, i); map[o[k]] = v.slice(i + 2); }
+      } else if (v && typeof v === 'object') splitText(v, map);
+    });
+    return map;
+  }
+  (window.CITY_INDEX || []).forEach((m) => { C[m.id] = Object.assign({}, m); });
+  I18N.add('index', splitText(C, {}));
+  const cityReq = {};
+  window.OOTD_CITY = (id, data) => {
+    if (!C[id]) return;
+    const keep = { open: C[id].open, isNew: C[id].isNew, region: C[id].region };
+    I18N.add(id, splitText(data, {}));
+    Object.assign(C[id], data, keep, { loaded: true });
+  };
+  function loadCity(id) {
+    if (C[id].loaded) return Promise.resolve();
+    if (!cityReq[id]) {
+      cityReq[id] = new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'cities/' + id + '.js';
+        s.onload = () => (C[id].loaded ? res() : rej(new Error('city')));
+        s.onerror = () => { delete cityReq[id]; s.remove(); rej(new Error('city')); };
+        document.head.appendChild(s);
+      });
+    }
+    return cityReq[id];
+  }
+  const waitHtml = (city, failed) => `<main class="view" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center">
+    <div class="mast" style="font-size:96px">OOTD</div>
+    <div class="anton" style="font-size:26px;letter-spacing:1px">${esc(city.en)}</div>
+    ${failed ? `<p style="margin:0;font-size:15px;font-weight:700">이 잡지를 불러오지 못했어요</p><p class="muted" style="margin:0;font-size:13px">연결을 확인하고 다시 눌러 주세요</p><button type="button" class="btn" data-retry>다시 시도</button><a class="btn ghost" href="#home">지도로 돌아가기</a>` : `<p class="pen" style="margin:0;font-size:24px">잡지 펼치는 중…</p>`}
+  </main>`;
   const svgIcon = (name, c, a) => (IC[name] ? IC[name](c, a) : '');
   const art = (it) => (it.img ? `<img class="photo" src="${it.img}" alt="" draggable="false">` : svgIcon(it.icon, it.c, it.a));
   const burst = (style, big, small, bigSize, smallSize) => `<div class="burst" style="${style}"><svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="${STAR}" fill="#FFD23F" stroke="#141210" stroke-width="3"/></svg><span style="font-size:${bigSize}">${big}</span>${small ? `<span style="font-size:${smallSize};letter-spacing:1px">${small}</span>` : ''}</div>`;
@@ -226,6 +267,19 @@
     if (!keepScroll && lastRoute && lastRoute.view === 'mag' && r.view === 'mag' && lastRoute.city === r.city) {
       dir = r.idx > lastRoute.idx ? 'from-right' : r.idx < lastRoute.idx ? 'from-left' : '';
     }
+    I18N.scope(r.view === 'mag' ? r.city : null);
+    if (r.view === 'mag' && !C[r.city].loaded) {
+      const city = C[r.city], at = location.hash;
+      const show = (failed) => {
+        $app.innerHTML = waitHtml(city, failed) + grainSvg() + '<div id="toast" class="toast" role="status" aria-live="polite"></div>';
+        const b = $app.querySelector('[data-retry]'); if (b) b.addEventListener('click', () => render());
+        window.scrollTo(0, 0);
+      };
+      show(false);
+      loadCity(r.city).then(() => { if (location.hash === at) render(opts); }, () => { if (location.hash === at) show(true); });
+      lastRoute = null;
+      return;
+    }
     const html = r.view === 'home' ? viewHome() : viewMag(r, dir);
     $app.innerHTML = html + grainSvg() + '<div id="toast" class="toast" role="status" aria-live="polite"></div>';
     if (keepScroll) {
@@ -341,6 +395,8 @@ ${store.get('seen', false) ? '' : introHtml()}`;
   /* ---------- closet ---------- */
   const closet = () => store.get('closet', []);
   const inCloset = (id) => closet().some((e) => e.id === id);
+  // Saved entries carry their English text too, so the closet reads right before that city is loaded again.
+  const withEn = (city, e) => Object.assign(e, { en: { title: I18N.en(e.title, city.id), sub: I18N.en(e.sub, city.id), items: e.items.map((n) => I18N.en(n, city.id)) } });
   function toggleCloset(entry) {
     const list = closet();
     const k = list.findIndex((e) => e.id === entry.id);
@@ -352,12 +408,12 @@ ${store.get('seen', false) ? '' : introHtml()}`;
     const list = closet();
     if (!list.length) return `<section style="margin:26px 20px 0"><div class="anton" style="font-size:20px;letter-spacing:1px">MY CLOSET</div><div class="card" style="margin-top:10px;padding:14px;border-style:dashed;box-shadow:none"><span class="pen" style="font-size:21px;line-height:1.15">마음에 드는 룩이나 동네 스타일에서 "옷장에 담기"를 누르면 여기에 모여요</span></div></section>`;
     return `<section style="margin:26px 20px 0"><div style="display:flex;align-items:baseline;gap:8px"><span class="anton" style="font-size:20px;letter-spacing:1px">MY CLOSET</span><span class="muted" style="font-size:12px">${list.length}개 담았어요</span></div>
-      <div style="display:flex;flex-direction:column;gap:12px;margin-top:10px">${list.map((e) => `<article class="card" style="padding:12px 14px;box-shadow:3px 3px 0 #141210">
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:10px">${list.map((e0) => { const e = state.lang === 'en' && e0.en ? Object.assign({}, e0, e0.en) : e0; return `<article class="card" style="padding:12px 14px;box-shadow:3px 3px 0 #141210">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px"><div style="min-width:0"><div class="anton" style="font-size:18px;line-height:1.1">${esc(e.title)}</div><div class="muted" style="font-size:12px;margin-top:2px">${esc(e.sub)}</div></div>
           <button type="button" class="chip" data-unsave="${esc(e.id)}" aria-label="${esc(e.title)} 옷장에서 빼기" style="min-height:32px;padding:0 10px;font-size:12px">빼기</button></div>
         <div style="font-size:13px;margin-top:8px;line-height:1.5">${e.items.map(esc).join(' · ')}</div>
         <a href="#${e.href}" style="display:inline-flex;align-items:center;min-height:32px;margin-top:4px;font-size:12px;font-weight:700;color:#1F4FBF">잡지에서 보기 →</a>
-      </article>`).join('')}</div></section>`;
+      </article>`; }).join('')}</div></section>`;
   }
 
   /* ---------- first-visit intro ---------- */
@@ -372,6 +428,8 @@ ${store.get('seen', false) ? '' : introHtml()}`;
   }
 
   function bindHome() {
+    // Warm up the issue the traveller is most likely to open next.
+    timers.push(setTimeout(() => { const t = C[state.trip]; if (t && t.open) loadCity(t.id).catch(() => {}); }, 1200));
     $app.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => { state.lang = b.getAttribute('data-lang'); store.set('lang', state.lang); I18N.set(state.lang); refresh(); }));
     const card = document.getElementById('map');
     const inner = document.getElementById('mapInner');
@@ -718,7 +776,7 @@ ${head(0, esc(city.arriveTitle), esc(city.arriveSub))}
       <p class="muted" style="margin:4px 0 0;font-size:12px">${esc(o.best)}</p>
     </div>
   </article>`).join('')}
-  <p class="muted" style="font-size:11px;margin:0">${esc(A.foot || '요금·시간은 대략이에요. 우버·리프트는 시간대에 따라 더 비싸질 수 있어요. 출발 전 flylax.com에서 한 번 더 확인하세요.')}</p>
+  <p class="muted" style="font-size:11px;margin:0">${esc(A.foot)}</p>
 </div>
 <div class="section">
   <div class="rule"><span>WHAT'S ON · ${esc(fmtDate(d))}</span><i></i></div>
@@ -736,15 +794,7 @@ ${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
 <div class="hood-map card" style="margin:14px 12px 0">
   <svg viewBox="0 0 360 240" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%">
     <rect width="360" height="240" fill="#F3EAD8"/>
-    ${city.hoodSvg || `<path d="M0 0 H40 C 52 60 50 110 60 150 C 72 196 96 214 118 240 H0 Z" fill="#BFD9E6"/>
-    <path d="M40 0 C 52 60 50 110 60 150 C 72 196 96 214 118 240" fill="none" stroke="#141210" stroke-width="2"/>
-    <path d="M120 20 C 170 40 230 30 260 40 C 290 50 320 40 360 52 V0 H120 Z" fill="#D9C3A0" opacity=".7"/>
-    <text x="210" y="24" font-family="Permanent Marker, cursive" font-size="12" fill="#6B6259">hills</text>
-    <path d="M60 162 C 140 150 220 148 360 158" stroke="#141210" stroke-width="2.2" stroke-dasharray="7 5" fill="none"/>
-    <path d="M150 240 C 160 170 170 110 190 40" stroke="#141210" stroke-width="2.2" stroke-dasharray="7 5" fill="none"/>
-    <path d="M230 240 C 260 200 290 150 330 90" stroke="#141210" stroke-width="2.2" stroke-dasharray="7 5" fill="none"/>
-    <text x="16" y="222" font-family="Permanent Marker, cursive" font-size="13" fill="#5D8BA6" transform="rotate(-70 16 222)">Pacific</text>
-    <text x="352" y="232" text-anchor="end" font-family="Anton, sans-serif" font-size="9" letter-spacing="1" fill="#6B6259">NOT TO SCALE</text>`}
+    ${city.hoodSvg || ''}
   </svg>
   ${pins}
 </div>
@@ -1170,7 +1220,7 @@ ${head(10, 'NEXT STOP', soon.length ? '다음 도시를 준비 중이에요' : '
       $app.querySelectorAll('[data-savehood]').forEach((b) => b.addEventListener('click', () => {
         const i = +b.getAttribute('data-savehood');
         const h = city.hoods[i];
-        const on = toggleCloset({ id: city.id + '|hood|' + i, title: h.name + ' · ' + h.vibe, sub: city.name + ' 동네 스타일', items: h.wear, href: city.id + '-hoods' });
+        const on = toggleCloset(withEn(city, { id: city.id + '|hood|' + i, title: h.name + ' · ' + h.vibe, sub: city.name + ' 동네 스타일', items: h.wear, href: city.id + '-hoods' }));
         b.setAttribute('aria-pressed', String(on));
         b.textContent = on ? '옷장에 담김 ✓' : '옷장에 담기';
         toast(on ? '옷장에 담았어요 — 지도 화면 아래에서 볼 수 있어요' : '옷장에서 뺐어요');
@@ -1188,7 +1238,7 @@ ${head(10, 'NEXT STOP', soon.length ? '다음 도시를 준비 중이에요' : '
       const sv = $app.querySelector('[data-savelook]');
       if (sv) sv.addEventListener('click', () => {
         const L = lookFor(city);
-        const on = toggleCloset({ id: city.id + '|' + L.b + '|' + state.who, title: L.look.name, sub: city.name + ' · ' + (state.who === 'her' ? 'HER' : 'HIM') + ' · ' + L.look.ko, items: L.items.map((it) => it.name), href: city.id + '-look' });
+        const on = toggleCloset(withEn(city, { id: city.id + '|' + L.b + '|' + state.who, title: L.look.name, sub: city.name + ' · ' + (state.who === 'her' ? 'HER' : 'HIM') + ' · ' + L.look.ko, items: L.items.map((it) => it.name), href: city.id + '-look' }));
         sv.setAttribute('aria-pressed', String(on));
         sv.textContent = on ? '옷장에 담김 ✓' : '옷장에 담기';
         toast(on ? '옷장에 담았어요 — 지도 화면 아래에서 볼 수 있어요' : '옷장에서 뺐어요');
