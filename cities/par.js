@@ -161,28 +161,32 @@ window.OOTD_CITY("par", {
      "c": "#F3EAD8",
      "a": "#E3D3B8",
      "name": "볼캡||Baseball cap",
-     "note": "햇빛 가리기||Shade from the sun"
+     "note": "햇빛 가리기||Shade from the sun",
+     "img": "img/items/0.webp"
     },
     {
      "slot": "top",
      "icon": "shirt",
      "c": "#FFFFFF",
      "name": "린넨 셔츠||Linen shirt",
-     "note": "화이트||White"
+     "note": "화이트||White",
+     "img": "img/items/65.webp"
     },
     {
      "slot": "bottom",
      "icon": "pants",
      "c": "#E8D9C0",
      "name": "린넨 와이드 슬랙스||Wide linen trousers",
-     "note": "통풍 좋은 소재||Breathable fabric"
+     "note": "통풍 좋은 소재||Breathable fabric",
+     "img": "img/items/34.webp"
     },
     {
      "slot": "belt",
      "icon": "sunglasses",
      "c": "#141210",
      "name": "선글라스||Sunglasses",
-     "note": "슬림한 프레임||Slim frames"
+     "note": "슬림한 프레임||Slim frames",
+     "img": "img/items/3.webp"
     },
     {
      "slot": "bag",
@@ -190,14 +194,16 @@ window.OOTD_CITY("par", {
      "c": "#F2A7B8",
      "a": "#141210",
      "name": "미니 크로스백||Mini crossbody",
-     "note": "양손 자유롭게||Hands-free"
+     "note": "양손 자유롭게||Hands-free",
+     "img": "img/items/4.webp"
     },
     {
      "slot": "shoes",
      "icon": "sandals",
      "c": "#141210",
      "name": "스트랩 샌들||Strappy sandals",
-     "note": "많이 걸어도 편한 것||Comfortable for long walks"
+     "note": "많이 걸어도 편한 것||Comfortable for long walks",
+     "img": "img/items/5.webp"
     }
    ],
    "him": [
@@ -207,28 +213,32 @@ window.OOTD_CITY("par", {
      "c": "#141210",
      "a": "#3A3530",
      "name": "볼캡||Baseball cap",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/6.webp"
     },
     {
      "slot": "top",
      "icon": "tee",
      "c": "#FFFFFF",
      "name": "오버핏 반팔 티||Oversized tee",
-     "note": "두툼한 코튼||Heavyweight cotton"
+     "note": "두툼한 코튼||Heavyweight cotton",
+     "img": "img/items/48.webp"
     },
     {
      "slot": "bottom",
      "icon": "shorts",
      "c": "#9C958C",
      "name": "버뮤다 쇼츠||Bermuda shorts",
-     "note": "무릎 길이||Knee length"
+     "note": "무릎 길이||Knee length",
+     "img": "img/items/8.webp"
     },
     {
      "slot": "belt",
      "icon": "sunglasses",
      "c": "#141210",
      "name": "선글라스||Sunglasses",
-     "note": "자외선 차단||UV protection"
+     "note": "자외선 차단||UV protection",
+     "img": "img/items/3.webp"
     },
     {
      "slot": "bag",
@@ -236,7 +246,8 @@ window.OOTD_CITY("par", {
      "c": "#141210",
      "a": "#F3EAD8",
      "name": "나일론 크로스백||Nylon crossbody",
-     "note": "가볍게||Keep it light"
+     "note": "가볍게||Keep it light",
+     "img": "img/items/9.webp"
     },
     {
      "slot": "shoes",
@@ -244,7 +255,8 @@ window.OOTD_CITY("par", {
      "c": "#FFFFFF",
      "a": "#E3DED6",
      "name": "러닝 스니커즈||Running sneakers",
-     "note": "통풍 좋은 것||A breathable pair"
+     "note": "통풍 좋은 것||A breathable pair",
+     "img": "img/items/10.webp"
     }
    ]
   },
@@ -259,35 +271,40 @@ window.OOTD_CITY("par", {
      "c": "#2E4F86",
      "a": "#243F6B",
      "name": "네이비 블레이저||Navy blazer",
-     "note": "살짝 오버핏||Slightly oversized"
+     "note": "살짝 오버핏||Slightly oversized",
+     "img": "img/items/66.webp"
     },
     {
      "slot": "top",
      "icon": "tee",
      "c": "#FFFFFF",
      "name": "화이트 티||White tee",
-     "note": "기본 핏||Regular fit"
+     "note": "기본 핏||Regular fit",
+     "img": "img/items/12.webp"
     },
     {
      "slot": "belt",
      "icon": "belt",
      "c": "#141210",
      "name": "가죽 벨트||Leather belt",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/13.webp"
     },
     {
      "slot": "bottom",
      "icon": "jeans",
      "c": "#6E8FB8",
      "name": "스트레이트 데님||Straight jeans",
-     "note": "중청||Mid wash"
+     "note": "중청||Mid wash",
+     "img": "img/items/14.webp"
     },
     {
      "slot": "acc",
      "icon": "sunglasses",
      "c": "#141210",
      "name": "선글라스||Sunglasses",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/3.webp"
     },
     {
      "slot": "bag",
@@ -295,7 +312,8 @@ window.OOTD_CITY("par", {
      "c": "#F3EAD8",
      "a": "#141210",
      "name": "에코백||Canvas tote",
-     "note": "팝업 굿즈 담기||For pop-up merch"
+     "note": "팝업 굿즈 담기||For pop-up merch",
+     "img": "img/items/16.webp"
     },
     {
      "slot": "shoes",
@@ -303,7 +321,8 @@ window.OOTD_CITY("par", {
      "c": "#FFFFFF",
      "a": "#E3DED6",
      "name": "스니커즈||Sneakers",
-     "note": "만 보 걸어도 OK||Good for ten thousand steps"
+     "note": "만 보 걸어도 OK||Good for ten thousand steps",
+     "img": "img/items/17.webp"
     }
    ],
    "him": [
@@ -313,21 +332,24 @@ window.OOTD_CITY("par", {
      "c": "#2E4F86",
      "a": "#243F6B",
      "name": "네이비 워크 재킷||Navy chore jacket",
-     "note": "프렌치 워크웨어||French workwear"
+     "note": "프렌치 워크웨어||French workwear",
+     "img": "img/items/67.webp"
     },
     {
      "slot": "top",
      "icon": "tee",
      "c": "#FFFFFF",
      "name": "화이트 티||White tee",
-     "note": "기본 핏||Regular fit"
+     "note": "기본 핏||Regular fit",
+     "img": "img/items/12.webp"
     },
     {
      "slot": "belt",
      "icon": "belt",
      "c": "#141210",
      "name": "가죽 벨트||Leather belt",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/13.webp"
     },
     {
      "slot": "bottom",
@@ -335,7 +357,8 @@ window.OOTD_CITY("par", {
      "c": "#D9C3A0",
      "a": "#8A8077",
      "name": "치노 팬츠||Chinos",
-     "note": "베이지||Beige"
+     "note": "베이지||Beige",
+     "img": "img/items/19.webp"
     },
     {
      "slot": "acc",
@@ -343,7 +366,8 @@ window.OOTD_CITY("par", {
      "c": "#141210",
      "a": "#3A3530",
      "name": "볼캡||Baseball cap",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/6.webp"
     },
     {
      "slot": "bag",
@@ -351,7 +375,8 @@ window.OOTD_CITY("par", {
      "c": "#141210",
      "a": "#F3EAD8",
      "name": "크로스백||Crossbody bag",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/20.webp"
     },
     {
      "slot": "shoes",
@@ -359,7 +384,8 @@ window.OOTD_CITY("par", {
      "c": "#FFFFFF",
      "a": "#E3DED6",
      "name": "스니커즈||Sneakers",
-     "note": "화이트||White"
+     "note": "화이트||White",
+     "img": "img/items/17.webp"
     }
    ]
   },
@@ -374,7 +400,8 @@ window.OOTD_CITY("par", {
      "c": "#D9B98A",
      "a": "#C4A070",
      "name": "트렌치코트||Trench coat",
-     "note": "베이지||Beige"
+     "note": "베이지||Beige",
+     "img": "img/items/21.webp"
     },
     {
      "slot": "top",
@@ -382,7 +409,8 @@ window.OOTD_CITY("par", {
      "c": "#F3EAD8",
      "a": "#B89A72",
      "name": "케이블 니트||Cable knit",
-     "note": "아이보리||Ivory"
+     "note": "아이보리||Ivory",
+     "img": "img/items/22.webp"
     },
     {
      "slot": "bottom",
@@ -390,14 +418,16 @@ window.OOTD_CITY("par", {
      "c": "#3B5B92",
      "a": "#9DB4D6",
      "name": "스트레이트 데님||Straight jeans",
-     "note": "진청||Dark wash"
+     "note": "진청||Dark wash",
+     "img": "img/items/23.webp"
     },
     {
      "slot": "acc",
      "icon": "cap",
      "c": "#8A5A3B",
      "name": "볼캡||Baseball cap",
-     "note": "브라운||Brown"
+     "note": "브라운||Brown",
+     "img": "img/items/24.webp"
     },
     {
      "slot": "bag",
@@ -405,7 +435,8 @@ window.OOTD_CITY("par", {
      "c": "#141210",
      "a": "#141210",
      "name": "가죽 숄더백||Leather shoulder bag",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/25.webp"
     },
     {
      "slot": "shoes",
@@ -413,7 +444,8 @@ window.OOTD_CITY("par", {
      "c": "#141210",
      "a": "#D9B44A",
      "name": "로퍼||Loafers",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/26.webp"
     }
    ],
    "him": [
@@ -423,7 +455,8 @@ window.OOTD_CITY("par", {
      "c": "#2E4F86",
      "a": "#243F6B",
      "name": "블루종||Blouson",
-     "note": "네이비||Navy"
+     "note": "네이비||Navy",
+     "img": "img/items/27.webp"
     },
     {
      "slot": "top",
@@ -431,7 +464,8 @@ window.OOTD_CITY("par", {
      "c": "#9C958C",
      "a": "#6B645C",
      "name": "크루넥 니트||Crew-neck knit",
-     "note": "그레이||Grey"
+     "note": "그레이||Grey",
+     "img": "img/items/28.webp"
     },
     {
      "slot": "bottom",
@@ -439,7 +473,8 @@ window.OOTD_CITY("par", {
      "c": "#141210",
      "a": "#3A3530",
      "name": "와이드 슬랙스||Wide trousers",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/29.webp"
     },
     {
      "slot": "acc",
@@ -447,7 +482,8 @@ window.OOTD_CITY("par", {
      "c": "#141210",
      "a": "#3A3530",
      "name": "볼캡||Baseball cap",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/6.webp"
     },
     {
      "slot": "bag",
@@ -455,7 +491,8 @@ window.OOTD_CITY("par", {
      "c": "#F3EAD8",
      "a": "#141210",
      "name": "캔버스 토트||Canvas tote",
-     "note": "크림||Cream"
+     "note": "크림||Cream",
+     "img": "img/items/30.webp"
     },
     {
      "slot": "shoes",
@@ -463,7 +500,8 @@ window.OOTD_CITY("par", {
      "c": "#5B3A26",
      "a": "#D9B44A",
      "name": "로퍼||Loafers",
-     "note": "브라운||Brown"
+     "note": "브라운||Brown",
+     "img": "img/items/31.webp"
     }
    ]
   },
@@ -478,7 +516,8 @@ window.OOTD_CITY("par", {
      "c": "#3A3F5C",
      "a": "#2B2F47",
      "name": "울 롱코트||Long wool coat",
-     "note": "네이비||Navy"
+     "note": "네이비||Navy",
+     "img": "img/items/68.webp"
     },
     {
      "slot": "top",
@@ -486,7 +525,8 @@ window.OOTD_CITY("par", {
      "c": "#F3EAD8",
      "a": "#B89A72",
      "name": "터틀넥 니트||Turtleneck knit",
-     "note": "아이보리||Ivory"
+     "note": "아이보리||Ivory",
+     "img": "img/items/56.webp"
     },
     {
      "slot": "bottom",
@@ -494,14 +534,16 @@ window.OOTD_CITY("par", {
      "c": "#9C958C",
      "a": "#6B645C",
      "name": "기모 슬랙스||Fleece-lined trousers",
-     "note": "그레이||Grey"
+     "note": "그레이||Grey",
+     "img": "img/items/57.webp"
     },
     {
      "slot": "acc",
      "icon": "cap",
      "c": "#F2457C",
      "name": "비니||Beanie",
-     "note": "포인트 컬러||A pop of colour"
+     "note": "포인트 컬러||A pop of colour",
+     "img": "img/items/58.webp"
     },
     {
      "slot": "bag",
@@ -509,14 +551,16 @@ window.OOTD_CITY("par", {
      "c": "#141210",
      "a": "#F3EAD8",
      "name": "크로스백||Crossbody bag",
-     "note": "패딩 위에 메기||Worn over the puffer"
+     "note": "패딩 위에 메기||Worn over the puffer",
+     "img": "img/items/20.webp"
     },
     {
      "slot": "shoes",
      "icon": "boots",
      "c": "#A9825A",
      "name": "방한 부츠||Winter boots",
-     "note": "미끄럼 주의||Watch for ice"
+     "note": "미끄럼 주의||Watch for ice",
+     "img": "img/items/59.webp"
     }
    ],
    "him": [
@@ -526,7 +570,8 @@ window.OOTD_CITY("par", {
      "c": "#8A5A3B",
      "a": "#6B4530",
      "name": "울 코트||Wool coat",
-     "note": "카멜||Camel"
+     "note": "카멜||Camel",
+     "img": "img/items/69.webp"
     },
     {
      "slot": "top",
@@ -534,7 +579,8 @@ window.OOTD_CITY("par", {
      "c": "#9C958C",
      "a": "#6B645C",
      "name": "기모 맨투맨||Fleece sweatshirt",
-     "note": "그레이||Grey"
+     "note": "그레이||Grey",
+     "img": "img/items/61.webp"
     },
     {
      "slot": "bottom",
@@ -542,7 +588,8 @@ window.OOTD_CITY("par", {
      "c": "#3B5B92",
      "a": "#9DB4D6",
      "name": "기모 데님||Fleece-lined jeans",
-     "note": "진청||Dark wash"
+     "note": "진청||Dark wash",
+     "img": "img/items/23.webp"
     },
     {
      "slot": "acc",
@@ -550,7 +597,8 @@ window.OOTD_CITY("par", {
      "c": "#141210",
      "a": "#3A3530",
      "name": "비니||Beanie",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/63.webp"
     },
     {
      "slot": "bag",
@@ -558,14 +606,16 @@ window.OOTD_CITY("par", {
      "c": "#141210",
      "a": "#F3EAD8",
      "name": "크로스백||Crossbody bag",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/20.webp"
     },
     {
      "slot": "shoes",
      "icon": "boots",
      "c": "#141210",
      "name": "워커||Combat boots",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/64.webp"
     }
    ]
   }
@@ -582,7 +632,8 @@ window.OOTD_CITY("par", {
     47,
     32,
     30
-   ]
+   ],
+   "img": "img/items/109.webp"
   },
   {
    "icon": "tube",
@@ -595,7 +646,8 @@ window.OOTD_CITY("par", {
     10,
     13,
     28
-   ]
+   ],
+   "img": "img/items/108.webp"
   },
   {
    "icon": "mist",
@@ -607,7 +659,8 @@ window.OOTD_CITY("par", {
     4,
     16,
     38
-   ]
+   ],
+   "img": "img/items/103.webp"
   },
   {
    "icon": "compact",
@@ -619,7 +672,8 @@ window.OOTD_CITY("par", {
     8,
     13,
     30
-   ]
+   ],
+   "img": "img/items/102.webp"
   },
   {
    "icon": "jar",
@@ -632,7 +686,8 @@ window.OOTD_CITY("par", {
     66,
     18,
     28
-   ]
+   ],
+   "img": "img/items/110.webp"
   }
  ],
  "day": [

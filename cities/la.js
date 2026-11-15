@@ -148,28 +148,32 @@ window.OOTD_CITY("la", {
      "c": "#E9D8B4",
      "a": "#141210",
      "name": "버킷햇||Bucket hat",
-     "note": "라피아·코튼 소재||Raffia or cotton"
+     "note": "라피아·코튼 소재||Raffia or cotton",
+     "img": "img/items/32.webp"
     },
     {
      "slot": "top",
      "icon": "tank",
      "c": "#FFFFFF",
      "name": "린넨 슬리브리스||Linen sleeveless top",
-     "note": "땀이 덜 붙는 소재||Fabric that doesn't cling"
+     "note": "땀이 덜 붙는 소재||Fabric that doesn't cling",
+     "img": "img/items/33.webp"
     },
     {
      "slot": "bottom",
      "icon": "pants",
      "c": "#E8D9C0",
      "name": "린넨 와이드 팬츠||Wide linen trousers",
-     "note": "바람 잘 통하는 핏||A breezy fit"
+     "note": "바람 잘 통하는 핏||A breezy fit",
+     "img": "img/items/34.webp"
     },
     {
      "slot": "belt",
      "icon": "sunglasses",
      "c": "#5B3A26",
      "name": "캣아이 선글라스||Cat-eye sunglasses",
-     "note": "자외선 차단 렌즈||UV-blocking lenses"
+     "note": "자외선 차단 렌즈||UV-blocking lenses",
+     "img": "img/items/35.webp"
     },
     {
      "slot": "bag",
@@ -177,14 +181,16 @@ window.OOTD_CITY("la", {
      "c": "#D9B98A",
      "a": "#8A5A3B",
      "name": "라탄 토트||Rattan tote",
-     "note": "해변까지 OK||Beach-ready"
+     "note": "해변까지 OK||Beach-ready",
+     "img": "img/items/36.webp"
     },
     {
      "slot": "shoes",
      "icon": "sandals",
      "c": "#C9A27A",
      "name": "플랫 샌들||Flat sandals",
-     "note": "모래 털기 쉬운 것||Easy to shake the sand off"
+     "note": "모래 털기 쉬운 것||Easy to shake the sand off",
+     "img": "img/items/37.webp"
     }
    ],
    "him": [
@@ -193,28 +199,32 @@ window.OOTD_CITY("la", {
      "icon": "cap",
      "c": "#2E4F86",
      "name": "볼캡||Baseball cap",
-     "note": "로고 없는 것도 멋져요||Logo-free looks good too"
+     "note": "로고 없는 것도 멋져요||Logo-free looks good too",
+     "img": "img/items/15.webp"
     },
     {
      "slot": "top",
      "icon": "shirt",
      "c": "#A9D2E8",
      "name": "오픈칼라 반팔 셔츠||Short-sleeve camp-collar shirt",
-     "note": "단독으로 입기||Wear it on its own"
+     "note": "단독으로 입기||Wear it on its own",
+     "img": "img/items/38.webp"
     },
     {
      "slot": "bottom",
      "icon": "shorts",
      "c": "#E8D9C0",
      "name": "린넨 쇼츠||Linen shorts",
-     "note": "무릎 위 길이||Above the knee"
+     "note": "무릎 위 길이||Above the knee",
+     "img": "img/items/39.webp"
     },
     {
      "slot": "belt",
      "icon": "sunglasses",
      "c": "#141210",
      "name": "선글라스||Sunglasses",
-     "note": "자외선 차단 렌즈||UV-blocking lenses"
+     "note": "자외선 차단 렌즈||UV-blocking lenses",
+     "img": "img/items/3.webp"
     },
     {
      "slot": "bag",
@@ -222,7 +232,8 @@ window.OOTD_CITY("la", {
      "c": "#141210",
      "a": "#F3EAD8",
      "name": "나일론 크로스백||Nylon crossbody",
-     "note": "가볍게||Keep it light"
+     "note": "가볍게||Keep it light",
+     "img": "img/items/9.webp"
     },
     {
      "slot": "shoes",
@@ -230,7 +241,8 @@ window.OOTD_CITY("la", {
      "c": "#FFFFFF",
      "a": "#E3DED6",
      "name": "캔버스 스니커즈||Canvas sneakers",
-     "note": "오래 걸어도 편하게||Comfortable for long walks"
+     "note": "오래 걸어도 편하게||Comfortable for long walks",
+     "img": "img/items/40.webp"
     }
    ]
   },
@@ -372,7 +384,8 @@ window.OOTD_CITY("la", {
      "c": "#D9B98A",
      "a": "#C4A070",
      "name": "트렌치코트||Trench coat",
-     "note": "가벼운 면 소재||Light cotton"
+     "note": "가벼운 면 소재||Light cotton",
+     "img": "img/items/21.webp"
     },
     {
      "slot": "top",
@@ -380,7 +393,8 @@ window.OOTD_CITY("la", {
      "c": "#F3EAD8",
      "a": "#B89A72",
      "name": "라운드 니트||Crew-neck knit",
-     "note": "얇은 울||Fine wool"
+     "note": "얇은 울||Fine wool",
+     "img": "img/items/41.webp"
     },
     {
      "slot": "bottom",
@@ -388,14 +402,16 @@ window.OOTD_CITY("la", {
      "c": "#3B5B92",
      "a": "#9DB4D6",
      "name": "스트레이트 데님||Straight jeans",
-     "note": "진청||Dark wash"
+     "note": "진청||Dark wash",
+     "img": "img/items/23.webp"
     },
     {
      "slot": "acc",
      "icon": "sunglasses",
      "c": "#141210",
      "name": "선글라스||Sunglasses",
-     "note": "겨울에도 햇살 강해요||The sun is strong even in winter"
+     "note": "겨울에도 햇살 강해요||The sun is strong even in winter",
+     "img": "img/items/3.webp"
     },
     {
      "slot": "bag",
@@ -403,14 +419,16 @@ window.OOTD_CITY("la", {
      "c": "#8A5A3B",
      "a": "#141210",
      "name": "가죽 숄더백||Leather shoulder bag",
-     "note": "브라운||Brown"
+     "note": "브라운||Brown",
+     "img": "img/items/42.webp"
     },
     {
      "slot": "shoes",
      "icon": "boots",
      "c": "#5B3A26",
      "name": "앵클부츠||Ankle boots",
-     "note": "굽 낮은 것||Low heel"
+     "note": "굽 낮은 것||Low heel",
+     "img": "img/items/43.webp"
     }
    ],
    "him": [
@@ -420,7 +438,8 @@ window.OOTD_CITY("la", {
      "c": "#A9825A",
      "a": "#8A6440",
      "name": "스웨이드 재킷||Suede jacket",
-     "note": "브라운||Brown"
+     "note": "브라운||Brown",
+     "img": "img/items/44.webp"
     },
     {
      "slot": "top",
@@ -428,7 +447,8 @@ window.OOTD_CITY("la", {
      "c": "#2E4F86",
      "a": "#9DB4D6",
      "name": "크루넥 니트||Crew-neck knit",
-     "note": "네이비||Navy"
+     "note": "네이비||Navy",
+     "img": "img/items/45.webp"
     },
     {
      "slot": "bottom",
@@ -436,7 +456,8 @@ window.OOTD_CITY("la", {
      "c": "#D9C3A0",
      "a": "#8A8077",
      "name": "치노 팬츠||Chinos",
-     "note": "베이지||Beige"
+     "note": "베이지||Beige",
+     "img": "img/items/19.webp"
     },
     {
      "slot": "acc",
@@ -444,7 +465,8 @@ window.OOTD_CITY("la", {
      "c": "#141210",
      "a": "#3A3530",
      "name": "볼캡||Baseball cap",
-     "note": "블랙||Black"
+     "note": "블랙||Black",
+     "img": "img/items/6.webp"
     },
     {
      "slot": "bag",
@@ -452,14 +474,16 @@ window.OOTD_CITY("la", {
      "c": "#F3EAD8",
      "a": "#141210",
      "name": "캔버스 토트||Canvas tote",
-     "note": "크림||Cream"
+     "note": "크림||Cream",
+     "img": "img/items/30.webp"
     },
     {
      "slot": "shoes",
      "icon": "loafers",
      "c": "#A9825A",
      "name": "스웨이드 로퍼||Suede loafers",
-     "note": "탄||Tan"
+     "note": "탄||Tan",
+     "img": "img/items/46.webp"
     }
    ]
   }

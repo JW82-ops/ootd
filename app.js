@@ -897,7 +897,7 @@ ${wxLine(city, { extra: () => esc(note) })}
 <div class="board short" style="container-type:inline-size">
   <div class="word" style="left:4%;top:5%;font-size:14cqw"><div>${esc(city.glow[0])}</div><div style="padding-left:9%;color:#F2457C">${esc(city.glow[1])}</div><div style="padding-left:3%">${esc(city.glow[2])}</div></div>
   ${city.beauty.map((b, i) => `<button class="piece" type="button" data-pick="${i}" aria-pressed="${state.pick === i}" aria-label="${i + 1}. ${esc(b.name)}" style="left:${b.pos[0]}%;top:${b.pos[1]}%;width:${b.pos[2]}%;height:${b.pos[3]}%">${art(b)}<span class="num">${i + 1}</span></button>`).join('')}
-  <div style="position:absolute;left:24%;top:80%;width:18%;height:13%;transform:rotate(-10deg)">${svgIcon('clip', '#FFD23F')}</div>
+  ${city.beauty.some((b) => b.img) ? '' : `<div style="position:absolute;left:24%;top:80%;width:18%;height:13%;transform:rotate(-10deg)">${svgIcon('clip', '#FFD23F')}</div>`}
   ${burst('left:80%;top:40%;width:17cqw;height:17cqw;transform:rotate(12deg)', String(city.beauty.length), 'ITEMS', '5cqw', '2.5cqw')}
   <div class="pen" style="position:absolute;left:4%;top:60%;font-size:6.2cqw;line-height:1.05;color:#C2185B;transform:rotate(-4deg)">${esc(city.beautyScribble[0])}<br>${esc(city.beautyScribble[1])}</div>
 </div>
