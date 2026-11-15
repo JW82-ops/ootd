@@ -690,7 +690,8 @@ window.OOTD_CITY("sel", {
    "look": "걷기 편한 신발로 출발||Leave in walkable shoes",
    "q": "통인시장",
    "icon": "fork",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/sel/d0.webp"
   },
   {
    "time": "11:30",
@@ -700,7 +701,8 @@ window.OOTD_CITY("sel", {
    "look": "사진 잘 받는 겉옷 걸치기||Wear a jacket that photographs well",
    "q": "경복궁",
    "icon": "hanok",
-   "c": "#FFFFFF"
+   "c": "#FFFFFF",
+   "img": "img/sel/d1.webp"
   },
   {
    "time": "14:30",
@@ -710,7 +712,8 @@ window.OOTD_CITY("sel", {
    "look": "가방은 가볍게 — 쇼핑백 대비||Keep your bag light — shopping bags are coming",
    "q": "성수동 연무장길",
    "icon": "tote",
-   "c": "#F3EAD8"
+   "c": "#F3EAD8",
+   "img": "img/sel/d2.webp"
   },
   {
    "time": "17:00",
@@ -721,7 +724,8 @@ window.OOTD_CITY("sel", {
    "look": "강바람이 차요 — 겉옷 꼭||The river wind is cold — bring the jacket",
    "q": "뚝섬한강공원",
    "icon": "sun",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/sel/d3.webp"
   },
   {
    "time": "19:30",
@@ -732,7 +736,8 @@ window.OOTD_CITY("sel", {
    "look": "실내외 온도차 — 겹쳐 입기||Warm in, cold out — wear layers",
    "q": "을지로3가역",
    "icon": "moon",
-   "c": "#F2A7B8"
+   "c": "#F2A7B8",
+   "img": "img/sel/e2.webp"
   }
  ],
  "dayAlt": "서쪽 코스도 좋아요: 망원시장 → 경의선숲길 → 망원한강공원 노을||Or go west: Mangwon Market → Gyeongui Line Forest Park → sunset at Mangwon Hangang Park",
@@ -742,21 +747,24 @@ window.OOTD_CITY("sel", {
    "tip": "빈대떡 골목부터 한 바퀴||Start with a lap of the mung-bean pancake alley",
    "what": "빈대떡 · 시장 먹거리||Mung-bean pancakes and market food",
    "q": "광장시장",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/sel/e0.webp"
   },
   {
    "name": "망원시장||Mangwon Market",
    "tip": "간식 사서 한강으로 가기||Buy snacks and head for the river",
    "what": "시장 간식 투어||A market snack crawl",
    "q": "망원시장",
-   "c": "#F2A7B8"
+   "c": "#F2A7B8",
+   "img": "img/sel/e1.webp"
   },
   {
    "name": "을지로 골목||Euljiro backstreets",
    "tip": "간판 작은 가게를 찾는 재미||The fun is finding the places with tiny signs",
    "what": "노포와 숨은 바||Old-school diners and hidden bars",
    "q": "을지로3가역 맛집",
-   "c": "#CFE3F0"
+   "c": "#CFE3F0",
+   "img": "img/sel/e2.webp"
   }
  ],
  "go": [
@@ -765,21 +773,24 @@ window.OOTD_CITY("sel", {
    "tip": "화요일은 쉬어요||Closed on Tuesdays",
    "what": "궁궐 산책||A palace walk",
    "q": "경복궁",
-   "c": "#BFC9D3"
+   "c": "#BFC9D3",
+   "img": "img/sel/g0.webp"
   },
   {
    "name": "서울숲||Seoul Forest",
    "tip": "성수 구경 앞뒤로 산책하기||A walk before or after Seongsu",
    "what": "성수 옆 큰 공원||The big park beside Seongsu",
    "q": "서울숲",
-   "c": "#E3DED6"
+   "c": "#E3DED6",
+   "img": "img/sel/g1.webp"
   },
   {
    "name": "반포한강공원||Banpo Hangang Park",
    "tip": "해 진 뒤 야경이 좋아요||Best after dark",
    "what": "한강 야경||Han River by night",
    "q": "반포한강공원",
-   "c": "#A9C6DE"
+   "c": "#A9C6DE",
+   "img": "img/sel/g2.webp"
   }
  ],
  "goTip": "경복궁은 화요일에 쉬어요. 북촌 일부 골목은 방문 시간이 정해져 있으니 가기 전에 확인!||Gyeongbokgung closes on Tuesdays. Some Bukchon lanes have set visiting hours — check before you go!",

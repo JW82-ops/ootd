@@ -699,7 +699,8 @@ window.OOTD_CITY("par", {
    "look": "걷기 편한 로퍼나 스니커즈||Loafers or sneakers you can walk in",
    "q": "Le Marais Paris",
    "icon": "fork",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/par/d0.webp"
   },
   {
    "time": "11:30",
@@ -709,7 +710,8 @@ window.OOTD_CITY("par", {
    "look": "바람 막을 스카프||A scarf for the breeze",
    "q": "Ile Saint-Louis Paris",
    "icon": "pin",
-   "c": "#FFFFFF"
+   "c": "#FFFFFF",
+   "img": "img/par/d1.webp"
   },
   {
    "time": "14:00",
@@ -719,7 +721,8 @@ window.OOTD_CITY("par", {
    "look": "재킷 하나로 단정하게||A jacket keeps it sharp",
    "q": "Saint-Germain-des-Pres Paris",
    "icon": "tote",
-   "c": "#F3EAD8"
+   "c": "#F3EAD8",
+   "img": "img/par/d2.webp"
   },
   {
    "time": "17:00",
@@ -730,7 +733,8 @@ window.OOTD_CITY("par", {
    "q": "Jardin des Tuileries",
    "icon": "sun",
    "c": "#FFD23F",
-   "at": "golden"
+   "at": "golden",
+   "img": "img/par/d3.webp"
   },
   {
    "time": "20:00",
@@ -741,7 +745,8 @@ window.OOTD_CITY("par", {
    "q": "Canal Saint-Martin Paris",
    "icon": "moon",
    "c": "#F2A7B8",
-   "at": "after"
+   "at": "after",
+   "img": "img/par/d4.webp"
   }
  ],
  "dayAlt": "언덕 코스도 좋아요: Montmartre 골목 → Sacré-Cœur 계단에서 노을||Or take the hill: Montmartre lanes, then sunset from the Sacré-Cœur steps",
@@ -751,21 +756,24 @@ window.OOTD_CITY("par", {
    "tip": "아침엔 줄 선 빵집이 정답||In the morning, follow the queue",
    "what": "크루아상 · 바게트 샌드위치||Croissants and baguette sandwiches",
    "q": "boulangerie Le Marais Paris",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/par/e0.webp"
   },
   {
    "name": "Marché des Enfants Rouges",
    "tip": "쉬는 요일 확인하고 점심에||Check closing days and go for lunch",
    "what": "지붕 있는 시장 먹거리||A covered market with food stalls",
    "q": "Marche des Enfants Rouges",
-   "c": "#F2A7B8"
+   "c": "#F2A7B8",
+   "img": "img/par/e1.webp"
   },
   {
    "name": "Canal Saint-Martin 비스트로||Canal Saint-Martin bistros",
    "tip": "저녁은 예약하고 가기||Reserve for dinner",
    "what": "비스트로와 와인 바||Bistros and wine bars",
    "q": "Canal Saint-Martin restaurants",
-   "c": "#CFE3F0"
+   "c": "#CFE3F0",
+   "img": "img/par/e2.webp"
   }
  ],
  "go": [
@@ -774,21 +782,24 @@ window.OOTD_CITY("par", {
    "tip": "시간 지정 예약이 편해요||A timed ticket saves the queue",
    "what": "기차역을 고친 미술관||A museum in a former railway station",
    "q": "Musee d Orsay",
-   "c": "#BFC9D3"
+   "c": "#BFC9D3",
+   "img": "img/par/g0.webp"
   },
   {
    "name": "Jardin du Luxembourg",
    "tip": "초록 의자는 누구나 앉아도 돼요||The green chairs are for everyone",
    "what": "좌안의 큰 정원||The big garden on the Left Bank",
    "q": "Jardin du Luxembourg",
-   "c": "#E3DED6"
+   "c": "#E3DED6",
+   "img": "img/par/g1.webp"
   },
   {
    "name": "Montmartre",
    "tip": "아침 일찍 가야 한적해요||Go early for quiet streets",
    "what": "언덕 위 골목과 전망||Hilltop lanes and a city view",
    "q": "Montmartre Paris",
-   "c": "#A9C6DE"
+   "c": "#A9C6DE",
+   "img": "img/par/g2.webp"
   }
  ],
  "goTip": "미술관은 쉬는 요일이 서로 달라요. 시간 지정 예약을 미리 해 두면 줄을 안 서요.||Museums close on different days. A timed ticket booked ahead skips the line.",

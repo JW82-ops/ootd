@@ -104,11 +104,12 @@ function checkCity(meta) {
     if (!/^\d\d:\d\d$/.test(s.time || '')) err('day stop "' + s.place + '" needs a time like 09:30');
     ['place', 'area', 'what', 'look', 'q'].forEach((k) => { if (!s[k]) err('day stop "' + s.place + '" missing ' + k); });
     if (!ICONS[s.icon]) err('day: unknown icon ' + s.icon);
+    if (s.img && !exists(s.img)) err('photo not found: ' + s.img);
   });
   if (day.filter((s) => s.at === 'golden').length !== 1) err('day course needs exactly one sunset stop (at: "golden")');
 
   // --- places ---
-  ['eat', 'go'].forEach((k) => arr(k, 3).forEach((p) => ['name', 'tip', 'what', 'q', 'c'].forEach((f) => { if (!p[f]) err(k + ' "' + p.name + '" missing ' + f); })));
+  ['eat', 'go'].forEach((k) => arr(k, 3).forEach((p) => { ['name', 'tip', 'what', 'q', 'c'].forEach((f) => { if (!p[f]) err(k + ' "' + p.name + '" missing ' + f); }); if (p.img && !exists(p.img)) err('photo not found: ' + p.img); }));
   arr('notes', 4).forEach((n) => ['k', 'v', 'd'].forEach((f) => { if (!n[f]) err('note missing ' + f); }));
   arr('hoods', 4).forEach((h) => {
     ['name', 'en', 'vibe', 'what', 'q'].forEach((f) => { if (!h[f]) err('neighbourhood "' + h.en + '" missing ' + f); });

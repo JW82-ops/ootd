@@ -567,7 +567,8 @@ window.OOTD_CITY("la", {
    "look": "셔츠에 가디건 걸치고 출발||Head out in a shirt with a cardigan on top",
    "q": "Republique Los Angeles",
    "icon": "fork",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/la/e2.webp"
   },
   {
    "time": "11:30",
@@ -577,7 +578,8 @@ window.OOTD_CITY("la", {
    "look": "많이 걸어요 — 편한 신발||Lots of walking — comfortable shoes",
    "q": "Getty Center Los Angeles",
    "icon": "house",
-   "c": "#FFFFFF"
+   "c": "#FFFFFF",
+   "img": "img/la/g1.webp"
   },
   {
    "time": "15:00",
@@ -587,7 +589,8 @@ window.OOTD_CITY("la", {
    "look": "가디건은 가방에, 선글라스 장착||Cardigan in the bag, sunglasses on",
    "q": "Abbot Kinney Boulevard Venice",
    "icon": "tote",
-   "c": "#F3EAD8"
+   "c": "#F3EAD8",
+   "img": "img/la/d2.webp"
   },
   {
    "time": "17:00",
@@ -598,7 +601,8 @@ window.OOTD_CITY("la", {
    "look": "블러셔 한 번 더, 선크림 덧바르기||One more touch of blush, reapply sunscreen",
    "q": "Venice Beach Los Angeles",
    "icon": "sun",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/la/d3.webp"
   },
   {
    "time": "19:30",
@@ -609,7 +613,8 @@ window.OOTD_CITY("la", {
    "look": "해 지면 쌀쌀 — 가디건 다시 입기||Chilly after dark — cardigan back on",
    "q": "In-N-Out Burger Los Angeles",
    "icon": "moon",
-   "c": "#F2A7B8"
+   "c": "#F2A7B8",
+   "img": "img/la/e1.webp"
   }
  ],
  "dayAlt": "다운타운 코스도 좋아요: 그랜드 센트럴 마켓 → 그리피스 천문대 야경||Or go downtown: Grand Central Market → Griffith Observatory at night",
@@ -619,21 +624,24 @@ window.OOTD_CITY("la", {
    "tip": "100년 넘은 시장 — 여러 가게를 조금씩 맛보기||A market over 100 years old — graze from several stalls",
    "what": "다운타운 푸드홀||Downtown food hall",
    "q": "Grand Central Market Los Angeles",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/la/e0.webp"
   },
   {
    "name": "인앤아웃 버거||In-N-Out Burger",
    "tip": "줄이 길어도 금방 줄어요||The line is long but moves fast",
    "what": "캘리포니아 대표 버거||California's signature burger",
    "q": "In-N-Out Burger Los Angeles",
-   "c": "#F2A7B8"
+   "c": "#F2A7B8",
+   "img": "img/la/e1.webp"
   },
   {
    "name": "레퍼블리크||République",
    "tip": "오전에 가야 빵이 남아 있어요||Go in the morning before the pastries sell out",
    "what": "브런치 & 베이커리||Brunch & bakery",
    "q": "Republique Los Angeles",
-   "c": "#CFE3F0"
+   "c": "#CFE3F0",
+   "img": "img/la/e2.webp"
   }
  ],
  "go": [
@@ -642,21 +650,24 @@ window.OOTD_CITY("la", {
    "tip": "해 지기 1시간 전에 도착하기||Arrive an hour before sunset",
    "what": "선셋 & 도시 야경||Sunset & city lights",
    "q": "Griffith Observatory",
-   "c": "#BFC9D3"
+   "c": "#BFC9D3",
+   "img": "img/la/g0.webp"
   },
   {
    "name": "게티 센터||Getty Center",
    "tip": "입장 예약 여부를 미리 확인하기||Check ahead whether entry needs a reservation",
    "what": "미술관 & 정원||Museum & gardens",
    "q": "Getty Center Los Angeles",
-   "c": "#E3DED6"
+   "c": "#E3DED6",
+   "img": "img/la/g1.webp"
   },
   {
    "name": "베니스 비치||Venice Beach",
    "tip": "보드워크에서 운하까지 걸어 보기||Walk from the boardwalk to the canals",
    "what": "보드워크 산책||Boardwalk stroll",
    "q": "Venice Beach Los Angeles",
-   "c": "#A9C6DE"
+   "c": "#A9C6DE",
+   "img": "img/la/g2.webp"
   }
  ],
  "goTip": "천문대는 해 지기 1시간 전 도착 — 운영 시간은 가기 전에 공식 사이트에서 확인!||Reach the observatory an hour before sunset — check opening hours on the official site first!",

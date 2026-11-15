@@ -700,7 +700,8 @@ window.OOTD_CITY("tyo", {
    "look": "걷기 편한 신발로 출발||Leave in walkable shoes",
    "q": "Kiyosumi-Shirakawa Tokyo coffee",
    "icon": "fork",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/tyo/d0.webp"
   },
   {
    "time": "12:00",
@@ -710,7 +711,8 @@ window.OOTD_CITY("tyo", {
    "look": "사진 찍히기 좋은 겉옷||A jacket worth being photographed in",
    "q": "Omotesando Tokyo",
    "icon": "tote",
-   "c": "#FFFFFF"
+   "c": "#FFFFFF",
+   "img": "img/tyo/d1.webp"
   },
   {
    "time": "14:30",
@@ -720,7 +722,8 @@ window.OOTD_CITY("tyo", {
    "look": "입어 보기 편한 옷||Wear something easy to try clothes over",
    "q": "Shimokitazawa vintage",
    "icon": "camera",
-   "c": "#F3EAD8"
+   "c": "#F3EAD8",
+   "img": "img/tyo/d2.webp"
   },
   {
    "time": "17:00",
@@ -731,7 +734,8 @@ window.OOTD_CITY("tyo", {
    "q": "Shibuya Sky",
    "icon": "sun",
    "c": "#FFD23F",
-   "at": "golden"
+   "at": "golden",
+   "img": "img/tyo/d3.webp"
   },
   {
    "time": "19:30",
@@ -742,7 +746,8 @@ window.OOTD_CITY("tyo", {
    "q": "Nakameguro restaurants",
    "icon": "moon",
    "c": "#F2A7B8",
-   "at": "after"
+   "at": "after",
+   "img": "img/tyo/e2.webp"
   }
  ],
  "dayAlt": "동쪽 코스도 좋아요: Asakusa 아침 산책 → Kuramae 공방·카페 → 강변 노을||Or head east: morning in Asakusa, crafts and cafés in Kuramae, sunset by the river",
@@ -752,21 +757,24 @@ window.OOTD_CITY("tyo", {
    "tip": "저녁 무렵엔 할인 스티커가 붙어요||Discount stickers appear toward evening",
    "what": "도시락 · 디저트||Bento and sweets",
    "q": "depachika Tokyo",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/tyo/e0.webp"
   },
   {
    "name": "Tsukiji 장외시장||Tsukiji Outer Market",
    "tip": "오전에 가야 가게가 열려 있어요||Go in the morning while stalls are open",
    "what": "해산물 · 계란말이||Seafood and rolled omelette",
    "q": "Tsukiji Outer Market",
-   "c": "#F2A7B8"
+   "c": "#F2A7B8",
+   "img": "img/tyo/e1.webp"
   },
   {
    "name": "Nakameguro 골목||Nakameguro backstreets",
    "tip": "인기 있는 곳은 예약 필수||Popular places need a reservation",
    "what": "이자카야 · 작은 식당||Izakaya and small restaurants",
    "q": "Nakameguro izakaya",
-   "c": "#CFE3F0"
+   "c": "#CFE3F0",
+   "img": "img/tyo/e2.webp"
   }
  ],
  "go": [
@@ -775,21 +783,24 @@ window.OOTD_CITY("tyo", {
    "tip": "아침 일찍 가면 고요해요||Quietest early in the morning",
    "what": "도심 속 숲길 신사||A shrine reached through a city forest",
    "q": "Meiji Jingu",
-   "c": "#BFC9D3"
+   "c": "#BFC9D3",
+   "img": "img/tyo/g0.webp"
   },
   {
    "name": "Daikanyama T-Site",
    "tip": "서점에서 한 시간은 금방 가요||An hour disappears in the bookshop",
    "what": "서점과 카페가 모인 곳||Bookshop, cafés and lounge",
    "q": "Daikanyama T-Site",
-   "c": "#E3DED6"
+   "c": "#E3DED6",
+   "img": "img/tyo/g1.webp"
   },
   {
    "name": "Asakusa · Senso-ji",
    "tip": "저녁엔 조명이 켜져요||Lit up after dark",
    "what": "옛 도쿄 분위기||Old-Tokyo atmosphere",
    "q": "Sensoji Asakusa",
-   "c": "#A9C6DE"
+   "c": "#A9C6DE",
+   "img": "img/tyo/g2.webp"
   }
  ],
  "goTip": "인기 전망대·미술관은 시간 지정 예약제가 많아요. 가기 전에 공식 사이트를 확인하세요.||Popular observation decks and museums often use timed tickets. Check the official site first.",

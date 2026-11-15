@@ -586,7 +586,8 @@ window.OOTD_CITY("syd", {
    "look": "수영복 위에 셔츠 하나||A shirt over your swimwear",
    "q": "Bondi Beach",
    "icon": "sun",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/syd/d0.webp"
   },
   {
    "time": "10:00",
@@ -596,7 +597,8 @@ window.OOTD_CITY("syd", {
    "look": "모자·선크림·물||Hat, sunscreen, water",
    "q": "Bondi to Bronte Coastal Walk",
    "icon": "pin",
-   "c": "#FFFFFF"
+   "c": "#FFFFFF",
+   "img": "img/syd/d1.webp"
   },
   {
    "time": "13:30",
@@ -606,7 +608,8 @@ window.OOTD_CITY("syd", {
    "look": "샌들 대신 스니커즈로 갈아 신기||Swap sandals for sneakers",
    "q": "Paddington Sydney shops",
    "icon": "tote",
-   "c": "#F3EAD8"
+   "c": "#F3EAD8",
+   "img": "img/syd/d2.webp"
   },
   {
    "time": "17:00",
@@ -617,7 +620,8 @@ window.OOTD_CITY("syd", {
    "q": "Mrs Macquaries Chair",
    "icon": "camera",
    "c": "#FFD23F",
-   "at": "golden"
+   "at": "golden",
+   "img": "img/syd/d3.webp"
   },
   {
    "time": "19:30",
@@ -628,7 +632,8 @@ window.OOTD_CITY("syd", {
    "q": "The Rocks Sydney",
    "icon": "moon",
    "c": "#F2A7B8",
-   "at": "after"
+   "at": "after",
+   "img": "img/syd/d4.webp"
   }
  ],
  "dayAlt": "페리 코스도 좋아요: Circular Quay에서 Manly행 페리 → 해변 산책||Or take a ferry: Circular Quay to Manly, then a walk on the beach",
@@ -638,21 +643,24 @@ window.OOTD_CITY("syd", {
    "tip": "점심 전에 가야 덜 붐벼요||Go before lunch to beat the crowd",
    "what": "해산물 시장||Seafood market",
    "q": "Sydney Fish Market",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/syd/e0.webp"
   },
   {
    "name": "Surry Hills 카페||Surry Hills cafés",
    "tip": "카페는 오후 일찍 닫아요||Cafés close early in the afternoon",
    "what": "브런치 · 플랫 화이트||Brunch and flat whites",
    "q": "Surry Hills cafes",
-   "c": "#F2A7B8"
+   "c": "#F2A7B8",
+   "img": "img/syd/e1.webp"
   },
   {
    "name": "Chinatown · Haymarket",
    "tip": "금요일 밤엔 야시장이 열릴 때가 있어요||A night market often runs on Fridays",
    "what": "아시아 음식 골목||Asian food streets",
    "q": "Chinatown Sydney",
-   "c": "#CFE3F0"
+   "c": "#CFE3F0",
+   "img": "img/syd/e2.webp"
   }
  ],
  "go": [
@@ -661,21 +669,24 @@ window.OOTD_CITY("syd", {
    "tip": "안에 안 들어가도 주변 산책이 좋아요||The walk around it is worth it even without a ticket",
    "what": "항구의 상징||The harbour icon",
    "q": "Sydney Opera House",
-   "c": "#BFC9D3"
+   "c": "#BFC9D3",
+   "img": "img/syd/g0.webp"
   },
   {
    "name": "Manly Ferry",
    "tip": "뱃머리 바깥 자리에 앉기||Sit outside at the front",
    "what": "항구를 가로지르는 30분||Thirty minutes across the harbour",
    "q": "Manly Ferry Circular Quay",
-   "c": "#E3DED6"
+   "c": "#E3DED6",
+   "img": "img/syd/g1.webp"
   },
   {
    "name": "Royal Botanic Garden",
    "tip": "오페라하우스 옆 큰 정원||The big garden beside the Opera House",
    "what": "무료 정원 산책||A free garden walk",
    "q": "Royal Botanic Garden Sydney",
-   "c": "#A9C6DE"
+   "c": "#A9C6DE",
+   "img": "img/syd/g2.webp"
   }
  ],
  "goTip": "해안 산책로엔 그늘이 거의 없어요. 오전에 걷고, 물과 모자를 꼭 챙기세요.||The coastal walk has almost no shade. Go in the morning with water and a hat.",

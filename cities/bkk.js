@@ -586,7 +586,8 @@ window.OOTD_CITY("bkk", {
    "look": "어깨·무릎 가리는 옷||Cover shoulders and knees",
    "q": "Wat Pho Bangkok",
    "icon": "pin",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/bkk/d0.webp"
   },
   {
    "time": "11:00",
@@ -596,7 +597,8 @@ window.OOTD_CITY("bkk", {
    "look": "통풍 좋은 린넨||Breathable linen",
    "q": "Talat Noi Bangkok",
    "icon": "camera",
-   "c": "#FFFFFF"
+   "c": "#FFFFFF",
+   "img": "img/bkk/d1.webp"
   },
   {
    "time": "14:00",
@@ -606,7 +608,8 @@ window.OOTD_CITY("bkk", {
    "look": "실내 냉방 — 얇은 셔츠||Cold inside — bring the thin shirt",
    "q": "Siam Bangkok",
    "icon": "tote",
-   "c": "#F3EAD8"
+   "c": "#F3EAD8",
+   "img": "img/bkk/d2.webp"
   },
   {
    "time": "17:30",
@@ -617,7 +620,8 @@ window.OOTD_CITY("bkk", {
    "q": "Wat Arun view point Tha Tien",
    "icon": "sun",
    "c": "#FFD23F",
-   "at": "golden"
+   "at": "golden",
+   "img": "img/bkk/g0.webp"
   },
   {
    "time": "19:30",
@@ -628,7 +632,8 @@ window.OOTD_CITY("bkk", {
    "q": "Yaowarat Road Bangkok",
    "icon": "moon",
    "c": "#F2A7B8",
-   "at": "after"
+   "at": "after",
+   "img": "img/bkk/e0.webp"
   }
  ],
  "dayAlt": "주말이라면: Chatuchak 주말 시장 → Ari 카페 골목||On a weekend: Chatuchak Weekend Market, then the cafés of Ari",
@@ -638,21 +643,24 @@ window.OOTD_CITY("bkk", {
    "tip": "해 진 뒤에 가야 노점이 열려요||Stalls open after dark",
    "what": "차이나타운 길거리 음식||Chinatown street food",
    "q": "Yaowarat Road street food",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/bkk/e0.webp"
   },
   {
    "name": "Or Tor Kor Market",
    "tip": "과일과 반찬을 조금씩 사 먹기||Graze on fruit and small dishes",
    "what": "깔끔한 시장 먹거리||A clean, well-kept food market",
    "q": "Or Tor Kor Market Bangkok",
-   "c": "#F2A7B8"
+   "c": "#F2A7B8",
+   "img": "img/bkk/e1.webp"
   },
   {
    "name": "Ari 카페 골목||Ari cafés",
    "tip": "한낮 더위 피하기 좋아요||A good escape from midday heat",
    "what": "브런치 · 커피||Brunch and coffee",
    "q": "Ari Bangkok cafes",
-   "c": "#CFE3F0"
+   "c": "#CFE3F0",
+   "img": "img/bkk/e2.webp"
   }
  ],
  "go": [
@@ -661,21 +669,24 @@ window.OOTD_CITY("bkk", {
    "tip": "강 건너편에서 보는 노을이 예뻐요||The best sunset view is from across the river",
    "what": "강변의 사원||The riverside temple",
    "q": "Wat Arun Bangkok",
-   "c": "#BFC9D3"
+   "c": "#BFC9D3",
+   "img": "img/bkk/g0.webp"
   },
   {
    "name": "Chatuchak Weekend Market",
    "tip": "주말에만 열려요 — 오전에 가기||Weekends only — go in the morning",
    "what": "거대한 주말 시장||A huge weekend market",
    "q": "Chatuchak Weekend Market",
-   "c": "#E3DED6"
+   "c": "#E3DED6",
+   "img": "img/bkk/g1.webp"
   },
   {
    "name": "Chao Phraya 수상버스||Chao Phraya river boat",
    "tip": "길 막힐 때 제일 빨라요||The fastest way when roads jam",
    "what": "강 위를 달리는 배||Boats that run the river",
    "q": "Chao Phraya Express Boat",
-   "c": "#A9C6DE"
+   "c": "#A9C6DE",
+   "img": "img/bkk/g2.webp"
   }
  ],
  "goTip": "사원은 어깨와 무릎을 가려야 들어갈 수 있어요. 신발을 벗는 곳이 많으니 신고 벗기 편한 신발이 좋아요.||Temples require covered shoulders and knees. You often take shoes off, so wear a pair that slips on and off.",

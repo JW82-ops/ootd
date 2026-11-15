@@ -585,7 +585,8 @@ window.OOTD_CITY("lis", {
    "look": "밑창 좋은 신발 필수||Shoes with grip are a must",
    "q": "Alfama Lisbon",
    "icon": "pin",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/lis/d0.webp"
   },
   {
    "time": "11:30",
@@ -595,7 +596,8 @@ window.OOTD_CITY("lis", {
    "look": "사진 잘 받는 밝은 색||Bright colours photograph well here",
    "q": "Chiado Lisbon",
    "icon": "tote",
-   "c": "#FFFFFF"
+   "c": "#FFFFFF",
+   "img": "img/lis/d1.webp"
   },
   {
    "time": "14:30",
@@ -605,7 +607,8 @@ window.OOTD_CITY("lis", {
    "look": "강바람 막을 겉옷||A layer for the river wind",
    "q": "Belem Lisbon",
    "icon": "fork",
-   "c": "#F3EAD8"
+   "c": "#F3EAD8",
+   "img": "img/lis/d2.webp"
   },
   {
    "time": "17:00",
@@ -616,7 +619,8 @@ window.OOTD_CITY("lis", {
    "q": "Miradouro da Senhora do Monte",
    "icon": "sun",
    "c": "#FFD23F",
-   "at": "golden"
+   "at": "golden",
+   "img": "img/lis/d3.webp"
   },
   {
    "time": "20:00",
@@ -627,7 +631,8 @@ window.OOTD_CITY("lis", {
    "q": "Bairro Alto Lisbon",
    "icon": "moon",
    "c": "#F2A7B8",
-   "at": "after"
+   "at": "after",
+   "img": "img/lis/d4.webp"
   }
  ],
  "dayAlt": "반나절 더 있다면: LX Factory 구경 → 강변 따라 걷기||With an extra half day: LX Factory, then a walk along the river",
@@ -637,21 +642,24 @@ window.OOTD_CITY("lis", {
    "tip": "줄은 포장 줄이 더 빨라요||The takeaway line moves faster",
    "what": "에그타르트||Custard tarts",
    "q": "Pasteis de Belem",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/lis/e0.webp"
   },
   {
    "name": "Time Out Market",
    "tip": "자리 먼저 잡고 주문하기||Grab a seat first, then order",
    "what": "푸드홀||Food hall",
    "q": "Time Out Market Lisboa",
-   "c": "#F2A7B8"
+   "c": "#F2A7B8",
+   "img": "img/lis/e1.webp"
   },
   {
    "name": "Alfama 골목 식당||Alfama taverns",
    "tip": "저녁엔 예약이 안전해요||Book ahead for dinner",
    "what": "정어리 구이 · 작은 접시 요리||Grilled sardines and small plates",
    "q": "Alfama Lisbon restaurants",
-   "c": "#CFE3F0"
+   "c": "#CFE3F0",
+   "img": "img/lis/e2.webp"
   }
  ],
  "go": [
@@ -660,21 +668,24 @@ window.OOTD_CITY("lis", {
    "tip": "아침 일찍 타야 덜 붐벼요 · 소매치기 주의||Ride early to beat the crowds · watch your pockets",
    "what": "언덕을 오르는 노란 트램||The yellow tram that climbs the hills",
    "q": "Tram 28 Lisbon",
-   "c": "#BFC9D3"
+   "c": "#BFC9D3",
+   "img": "img/lis/g0.webp"
   },
   {
    "name": "LX Factory",
    "tip": "주말엔 마켓이 열릴 때가 있어요||There is often a weekend market",
    "what": "공장을 고친 숍과 카페||Shops and cafés in an old factory",
    "q": "LX Factory Lisbon",
-   "c": "#E3DED6"
+   "c": "#E3DED6",
+   "img": "img/lis/g1.webp"
   },
   {
    "name": "Miradouro de Santa Luzia",
    "tip": "타일 벽과 강 전망||Tile panels and a river view",
    "what": "알파마 전망대||Viewpoint over Alfama",
    "q": "Miradouro de Santa Luzia",
-   "c": "#A9C6DE"
+   "c": "#A9C6DE",
+   "img": "img/lis/g2.webp"
   }
  ],
  "goTip": "붐비는 트램과 전망대에선 가방을 앞으로 메세요.||Wear your bag in front on crowded trams and at viewpoints.",

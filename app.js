@@ -938,9 +938,9 @@ ${wxLine(city, { extra: () => esc(note) })}
 ${head(4, 'DAY COURSE', '이 룩 입고 하루 돌기')}
 ${wxLine(city, { extra: () => `오늘의 룩: <b>${esc(L.look.name)}</b> · 골든아워 ${G.golden}–${G.sunset}` })}
 <div class="timeline">
-  ${city.day.map((s0) => { const s = Object.assign({}, s0, s0.at === 'golden' ? { time: G.golden } : s0.at === 'after' ? { time: roundTo10(G.sunsetDate, 40, city.tz) || s0.time } : {}); return `<article class="stop">
+  ${city.day.map((s0, k) => { const s = Object.assign({}, s0, s0.at === 'golden' ? { time: G.golden } : s0.at === 'after' ? { time: roundTo10(G.sunsetDate, 40, city.tz) || s0.time } : {}); return `<article class="stop">
     <div style="display:flex;gap:12px;align-items:flex-start">
-      <div style="flex:none;width:52px;height:52px;border:2px solid #141210;border-radius:12px;background:${s.c};padding:6px">${svgIcon(s.icon, s.c === '#FFFFFF' ? '#F3EAD8' : s.c)}</div>
+      ${s.img ? `<img class="cut" src="${s.img}" alt="" loading="lazy" style="flex:none;width:84px;height:84px;margin:-6px 0 -4px -6px;transform:rotate(${[-4, 3, -2, 4, -3][k % 5]}deg)">` : `<div style="flex:none;width:52px;height:52px;border:2px solid #141210;border-radius:12px;background:${s.c};padding:6px">${svgIcon(s.icon, s.c === '#FFFFFF' ? '#F3EAD8' : s.c)}</div>`}
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:baseline;gap:8px"><span class="t">${s.time}</span><span class="muted" style="font-size:12px">${esc(s.area)}</span></div>
         <div style="font-size:16px;font-weight:700">${esc(s.place)}</div>
@@ -959,7 +959,7 @@ ${wxLine(city, { extra: () => `오늘의 룩: <b>${esc(L.look.name)}</b> · 골�
 
   function pEat(city) {
     const row = (kind) => (p, i) => `<a class="place" href="${mapsUrl(p.q)}" target="_blank" rel="noopener" style="transform:rotate(${[-0.8, 0.6, -0.4][i % 3]}deg)">
-      <span class="place-n" style="background:${p.c}">${i + 1}</span>
+      ${p.img ? `<span class="place-n pic" style="background:${p.c}"><img class="cut" src="${p.img}" alt="" loading="lazy" style="transform:rotate(${[-5, 4, -3][i % 3]}deg)"><b>${i + 1}</b></span>` : `<span class="place-n" style="background:${p.c}">${i + 1}</span>`}
       <span class="place-b"><span class="place-k">${kind} · ${esc(p.what)}</span><span class="place-t">${esc(p.name)}</span>${p.tip ? `<span class="place-tip">${esc(p.tip)}</span>` : ''}</span>
       <span class="place-go">지도 ↗</span>
     </a>`;

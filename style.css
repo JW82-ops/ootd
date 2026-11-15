@@ -271,3 +271,10 @@ input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
 .board.collage .word { text-shadow: 3px 3px 0 #FDE9C8, -2px -2px 0 #FDE9C8, 3px -2px 0 #FDE9C8, -2px 3px 0 #FDE9C8; }
 .page-head > .seg { flex: none; }
 .page-head > div > div { min-width: 0; }
+
+/* cut-out stickers on the day course and eat & go pages */
+img.cut { object-fit: contain; filter: drop-shadow(3px 3px 0 rgba(20,18,16,.9)); }
+.place-n.pic { position: relative; width: 96px; overflow: visible; }
+.place-n.pic img { width: 104px; height: 92px; margin: -8px -6px; }
+.place-n.pic b { position: absolute; left: 4px; top: 4px; width: 22px; height: 22px; border-radius: 11px; background: var(--ink); color: var(--paper); font-family: var(--anton); font-weight: 400; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.place { overflow: visible; }

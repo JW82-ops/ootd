@@ -694,7 +694,8 @@ window.OOTD_CITY("ny", {
    "look": "걷기 편한 신발로 출발||Leave in walkable shoes",
    "q": "West Village New York",
    "icon": "fork",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/ny/d0.webp"
   },
   {
    "time": "11:00",
@@ -704,7 +705,8 @@ window.OOTD_CITY("ny", {
    "look": "바람 막을 겉옷 하나||One layer against the wind",
    "q": "The High Line New York",
    "icon": "pin",
-   "c": "#FFFFFF"
+   "c": "#FFFFFF",
+   "img": "img/ny/d1.webp"
   },
   {
    "time": "14:00",
@@ -714,7 +716,8 @@ window.OOTD_CITY("ny", {
    "look": "쇼핑백 대비 가방은 가볍게||Keep your bag light for shopping bags",
    "q": "SoHo New York",
    "icon": "tote",
-   "c": "#F3EAD8"
+   "c": "#F3EAD8",
+   "img": "img/ny/d2.webp"
   },
   {
    "time": "17:00",
@@ -725,7 +728,8 @@ window.OOTD_CITY("ny", {
    "q": "DUMBO Brooklyn",
    "icon": "sun",
    "c": "#FFD23F",
-   "at": "golden"
+   "at": "golden",
+   "img": "img/ny/d3.webp"
   },
   {
    "time": "19:30",
@@ -736,7 +740,8 @@ window.OOTD_CITY("ny", {
    "q": "Lower East Side New York",
    "icon": "moon",
    "c": "#F2A7B8",
-   "at": "after"
+   "at": "after",
+   "img": "img/ny/d4.webp"
   }
  ],
  "dayAlt": "브루클린 하루도 좋아요: Williamsburg 빈티지 → Domino Park → 강 건너 스카이라인 노을||Or a Brooklyn day: Williamsburg vintage → Domino Park → skyline sunset across the river",
@@ -746,21 +751,24 @@ window.OOTD_CITY("ny", {
    "tip": "점심시간 전에 가면 덜 붐벼요||Go before the lunch rush",
    "what": "실내 푸드홀||Indoor food hall",
    "q": "Chelsea Market New York",
-   "c": "#FFD23F"
+   "c": "#FFD23F",
+   "img": "img/ny/e0.webp"
   },
   {
    "name": "Chinatown",
    "tip": "현금을 조금 챙기세요||Carry a little cash",
    "what": "덤플링 · 딤섬||Dumplings and dim sum",
    "q": "Chinatown Manhattan restaurants",
-   "c": "#F2A7B8"
+   "c": "#F2A7B8",
+   "img": "img/ny/e1.webp"
   },
   {
    "name": "Smorgasburg",
    "tip": "주말·시즌 한정 — 일정 확인||Weekends and seasonal — check the schedule",
    "what": "브루클린 야외 푸드마켓||Brooklyn open-air food market",
    "q": "Smorgasburg Brooklyn",
-   "c": "#CFE3F0"
+   "c": "#CFE3F0",
+   "img": "img/ny/e2.webp"
   }
  ],
  "go": [
@@ -769,21 +777,24 @@ window.OOTD_CITY("ny", {
    "tip": "아래쪽만 봐도 한 시간||The south end alone takes an hour",
    "what": "도심 한가운데 큰 공원||The big park in the middle of it all",
    "q": "Central Park New York",
-   "c": "#BFC9D3"
+   "c": "#BFC9D3",
+   "img": "img/ny/g0.webp"
   },
   {
    "name": "The Met",
    "tip": "쉬는 요일이 있어요 — 미리 확인||Closed some days — check ahead",
    "what": "하루로는 부족한 미술관||A museum too big for one day",
    "q": "The Metropolitan Museum of Art",
-   "c": "#E3DED6"
+   "c": "#E3DED6",
+   "img": "img/ny/g1.webp"
   },
   {
    "name": "Brooklyn Bridge",
    "tip": "브루클린에서 맨해튼 쪽으로 걷기||Walk from Brooklyn toward Manhattan",
    "what": "걸어서 건너는 다리||The bridge you cross on foot",
    "q": "Brooklyn Bridge",
-   "c": "#A9C6DE"
+   "c": "#A9C6DE",
+   "img": "img/ny/g2.webp"
   }
  ],
  "goTip": "미술관·전망대는 쉬는 요일과 예약 여부를 가기 전에 꼭 확인하세요.||Check closing days and booking rules for museums and observation decks before you go.",
