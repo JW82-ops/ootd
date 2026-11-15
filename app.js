@@ -86,10 +86,24 @@
   }
   (window.CITY_INDEX || []).forEach((m) => { C[m.id] = Object.assign({}, m); });
   I18N.add('index', splitText(C, {}));
+  // A city that names a climate wardrobe gets its pieces from wardrobe.js; the city supplies each look's name, caption and tip
+  // and may swap single pieces: looks.mild.swap = { her: { outer: { name, note, img, ... } } }.
+  function dress(data) {
+    const W = data.wardrobe && window.WARDROBE && window.WARDROBE[data.wardrobe];
+    if (!W) return;
+    const out = {};
+    Object.keys(data.looks).forEach((b) => {
+      const mine = data.looks[b], base = JSON.parse(JSON.stringify(W[b] || W.mild));
+      ['her', 'him'].forEach((w) => Object.keys((mine.swap || {})[w] || {}).forEach((slot) => { const it = base[w].find((x) => x.slot === slot); if (it) Object.assign(it, mine.swap[w][slot]); }));
+      out[b] = Object.assign(base, { name: mine.name, ko: mine.ko, tip: mine.tip });
+    });
+    data.looks = out;
+  }
   const cityReq = {};
   window.OOTD_CITY = (id, data) => {
     if (!C[id]) return;
     const keep = { open: C[id].open, isNew: C[id].isNew, region: C[id].region };
+    dress(data);
     I18N.add(id, splitText(data, {}));
     Object.assign(C[id], data, keep, { loaded: true });
   };

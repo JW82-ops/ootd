@@ -10,6 +10,8 @@ const exists = (f) => fs.existsSync(path.join(root, f));
 global.window = {};
 eval(read('icons.js'));
 eval(read('cities/index.js'));
+eval(read('wardrobe.js'));
+const WARDROBE = window.WARDROBE;
 const ICONS = window.ICONS;
 const INDEX = window.CITY_INDEX;
 const HANGUL = /[\uAC00-\uD7A3]/;
@@ -28,6 +30,17 @@ function checkCity(meta) {
   window.OOTD_CITY = (cid, data) => { if (cid !== id) err('file registers "' + cid + '"'); c = data; };
   try { eval(read(file)); } catch (e) { return err('does not parse: ' + e.message); }
   if (!c) return err('file never calls OOTD_CITY');
+  if (c.wardrobe) {   // same resolution the app does
+    const W = WARDROBE[c.wardrobe];
+    if (!W) return err('unknown wardrobe "' + c.wardrobe + '"');
+    Object.keys(c.looks || {}).forEach((b) => {
+      const mine = c.looks[b];
+      if (!W[b]) err('wardrobe "' + c.wardrobe + '" has no "' + b + '" look');
+      const base = JSON.parse(JSON.stringify(W[b] || W.mild));
+      ['her', 'him'].forEach((w) => Object.keys((mine.swap || {})[w] || {}).forEach((slot) => { const it = base[w].find((x) => x.slot === slot); if (!it) err('swap for missing slot ' + slot); else Object.assign(it, mine.swap[w][slot]); }));
+      c.looks[b] = Object.assign(base, { name: mine.name, ko: mine.ko, tip: mine.tip });
+    });
+  }
 
   // --- text: every Korean string needs English after '||' ---
   const local = {};
