@@ -18,6 +18,7 @@ window.OOTD_CITY("ny", {
  "zineSticker": "star",
  "arrivePick": "내 숙소는…||I'm staying in…",
  "cover": "img/ny/cover.webp",
+ "coverArt": "collage",
  "country": "USA · NEW YORK",
  "lat": 40.71,
  "lon": -74.01,

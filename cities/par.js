@@ -18,6 +18,7 @@ window.OOTD_CITY("par", {
  "zineSticker": "star",
  "arrivePick": "내 숙소는…||I'm staying in…",
  "cover": "img/par/cover.webp",
+ "coverArt": "collage",
  "country": "FRANCE · PARIS",
  "lat": 48.86,
  "lon": 2.35,

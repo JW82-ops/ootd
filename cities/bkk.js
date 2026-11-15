@@ -18,6 +18,7 @@ window.OOTD_CITY("bkk", {
  "zineSticker": "star",
  "arrivePick": "내 숙소는…||I'm staying in…",
  "cover": "img/bkk/cover.webp",
+ "coverArt": "collage",
  "country": "THAILAND · BANGKOK",
  "lat": 13.75,
  "lon": 100.5,

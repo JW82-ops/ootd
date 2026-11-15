@@ -13,6 +13,7 @@ window.OOTD_CITY("sel", {
  "currency": "KRW",
  "tagline": "아는 도시를 여행자처럼||A city you know, seen like a traveller",
  "cover": "img/sel/cover.webp",
+ "coverArt": "collage",
  "checked": "2026년 11월||November 2026",
  "nick": "서울||Seoul",
  "short": "SEOUL",

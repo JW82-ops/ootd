@@ -18,6 +18,7 @@ window.OOTD_CITY("tyo", {
  "zineSticker": "star",
  "arrivePick": "내 숙소는…||I'm staying in…",
  "cover": "img/tyo/cover.webp",
+ "coverArt": "collage",
  "country": "JAPAN · TOKYO",
  "lat": 35.68,
  "lon": 139.76,

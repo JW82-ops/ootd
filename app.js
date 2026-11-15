@@ -706,7 +706,8 @@ ${tocHtml(city, r.idx)}
   function pCover(city) {
     const palm = (x, base, s, flip) => `<g transform="translate(${x} ${base}) scale(${flip ? -s : s} ${s})"><path d="M0 0 C 4 -80, 8 -160, 22 -238" stroke="#141210" stroke-width="9" fill="none" stroke-linecap="round"/><g fill="#141210"><path d="M22 -238 C 0 -262 -40 -262 -72 -232 C -40 -248 -10 -246 22 -234 Z"/><path d="M22 -238 C 6 -276 -26 -292 -56 -286 C -26 -280 -2 -264 22 -234 Z"/><path d="M22 -238 C 30 -280 52 -300 80 -298 C 54 -288 36 -268 24 -234 Z"/><path d="M22 -238 C 50 -258 86 -256 112 -228 C 84 -244 54 -244 24 -232 Z"/><path d="M22 -238 C 44 -232 70 -214 80 -186 C 64 -210 44 -222 22 -232 Z"/><path d="M22 -238 C 0 -230 -24 -212 -32 -184 C -18 -208 0 -222 22 -232 Z"/></g></g>`;
     const lines = city.coverLines.map((l, i) => `<span class="anton" style="display:inline-block;background:#141210;color:${i % 2 ? '#FFD23F' : '#F3EAD8'};font-size:22px;line-height:1;padding:3px 6px 2px">${esc(l)}</span>`).join('');
-    const scene = city.cover
+    const collage = city.coverArt === 'collage';   // cut-out collage on paper: the art sits in the middle, type goes on the paper above and below
+    const scene = collage ? `<img class="cover-collage" src="${city.cover}" alt="">` : city.cover
       ? `<img class="cover-scene cover-photo" src="${city.cover}" alt=""><div class="cover-tint"></div>`
       : city.sky ? skyScene(city) : `  <svg class="cover-scene" viewBox="0 0 390 844" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
     <defs>
@@ -724,7 +725,7 @@ ${tocHtml(city, r.idx)}
     ${palm(362, 860, 1.55, true)}${palm(280, 772, 1.0, true)}${palm(238, 716, 0.66, true)}${palm(219, 690, 0.42, true)}
   </svg>`;
     return `
-<section class="cover">
+<section class="cover${collage ? ' paper' : ''}">
 ${scene}
 
   <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;height:44px;background:#141210;padding:calc(env(safe-area-inset-top)) 6px 0 4px">
@@ -738,12 +739,13 @@ ${scene}
   <div style="position:absolute;right:12px;top:212px;width:124px;height:68px;border-radius:62px/34px;background:#FFD23F;border:2.5px solid #141210;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-8deg);color:#141210">
     <span class="anton" style="font-size:${city.short.length > 4 ? 24 : 30}px;line-height:1">${esc(city.short)}</span><span class="anton" style="font-size:13px;letter-spacing:2px;line-height:1.1">SPECIAL</span>
   </div>
-  ${burst('left:6px;top:250px;width:108px;height:108px;transform:rotate(-12deg);color:#141210', 'NEW', 'CITY!', '26px', '13px')}
+  ${collage ? '' : `  ${burst('left:6px;top:250px;width:108px;height:108px;transform:rotate(-12deg);color:#141210', 'NEW', 'CITY!', '26px', '13px')}
   <svg width="64" height="120" viewBox="0 0 54 100" aria-hidden="true" style="position:absolute;right:34px;top:300px;transform:rotate(10deg)"><path d="M34 0 L6 54 H24 L12 100 L50 38 H32 L44 0 Z" fill="#FFD23F" stroke="#141210" stroke-width="2.5" stroke-linejoin="round"/></svg>
   <div style="position:absolute;left:18px;top:378px;display:flex;flex-direction:column;align-items:flex-start;gap:4px">${lines}</div>
-  <div class="marker" style="position:absolute;right:18px;top:450px;width:190px;text-align:right;font-size:26px;line-height:1.05;transform:rotate(-6deg);color:#FFFFFF;text-shadow:2px 2px 0 #141210;word-break:keep-all">${esc(city.tagline)}</div>
+  <div class="marker" style="position:absolute;right:18px;top:450px;width:190px;text-align:right;font-size:26px;line-height:1.05;transform:rotate(-6deg);color:#FFFFFF;text-shadow:2px 2px 0 #141210;word-break:keep-all">${esc(city.tagline)}</div>`}
 
   <div style="position:absolute;left:0;right:0;bottom:0;padding:0 0 calc(22px + env(safe-area-inset-bottom))">
+    ${collage ? `<div style="text-align:right;margin:0 14px 6px"><span class="marker" style="display:inline-block;max-width:78%;padding:4px 10px 2px;background:#FFFFFF;border:2px solid #141210;box-shadow:3px 3px 0 #141210;font-size:20px;line-height:1.1;transform:rotate(2deg);color:#141210;word-break:keep-all;text-align:left">${esc(city.tagline)}</span></div>` : ''}
     <div class="torn" style="display:inline-block;margin-left:10px;padding:8px 16px 6px;background:#FFD23F;color:#141210;transform:rotate(-4deg)"><span class="anton" style="font-size:48px;line-height:1">${esc(city.coverHead[0])}</span></div><br>
     <div class="torn" style="display:inline-block;margin:-4px 0 0 32px;padding:6px 16px;background:#F2457C;color:#141210;transform:rotate(-2deg)"><span class="anton" style="font-size:${city.coverHead[1].length > 15 ? 32 : 36}px;line-height:1">${esc(city.coverHead[1])}</span></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:0 16px">

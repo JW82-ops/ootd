@@ -13,6 +13,7 @@ window.OOTD_CITY("la", {
  "currency": "USD",
  "tagline": "해 질 녘이 제일 예쁜 도시||The city that's prettiest at sunset",
  "cover": "img/la/cover.webp",
+ "coverArt": "collage",
  "checked": "2026년 11월||November 2026",
  "nick": "LA",
  "short": "L.A.",

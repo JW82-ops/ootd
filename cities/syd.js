@@ -18,6 +18,7 @@ window.OOTD_CITY("syd", {
  "zineSticker": "star",
  "arrivePick": "내 숙소는…||I'm staying in…",
  "cover": "img/syd/cover.webp",
+ "coverArt": "collage",
  "country": "AUSTRALIA · SYDNEY",
  "lat": -33.87,
  "lon": 151.21,

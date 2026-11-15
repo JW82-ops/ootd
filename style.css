@@ -255,3 +255,7 @@ button { cursor: pointer; }
 .city-badge { font-family: var(--anton); font-size: 10px; letter-spacing: 1px; padding: 1px 5px; background: var(--pink); border: 1.5px solid var(--ink); }
 input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
 .field input[type="search"] { font-family: inherit; font-size: 16px; font-weight: 500; min-height: 44px; background: var(--white); }
+
+/* collage covers: art on paper */
+.cover.paper { background: #FDE0B6; color: var(--ink); }
+.cover-collage { position: absolute; left: 0; top: 50%; width: 100%; transform: translateY(-49%); pointer-events: none; }

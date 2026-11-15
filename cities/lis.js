@@ -18,6 +18,7 @@ window.OOTD_CITY("lis", {
  "zineSticker": "star",
  "arrivePick": "내 숙소는…||I'm staying in…",
  "cover": "img/lis/cover.webp",
+ "coverArt": "collage",
  "country": "PORTUGAL · LISBON",
  "lat": 38.72,
  "lon": -9.14,
