@@ -656,10 +656,10 @@ window.OOTD_CITY("tyo", {
    "name": "파우더 팩트||Pressed powder",
    "why": "습한 날 번들거림 잡기||Tames shine on humid days",
    "pos": [
-    48,
+    53,
     4,
-    16,
-    38
+    14,
+    34
    ],
    "img": "img/items/101.webp"
   },

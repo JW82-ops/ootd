@@ -541,10 +541,10 @@ window.OOTD_CITY("lis", {
    "name": "미스트||Face mist",
    "why": "언덕 오른 뒤 한 번||After every hill",
    "pos": [
-    48,
+    53,
     4,
-    16,
-    38
+    14,
+    34
    ],
    "img": "img/items/103.webp"
   },

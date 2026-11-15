@@ -650,10 +650,10 @@ window.OOTD_CITY("ny", {
    "name": "핸드크림||Hand cream",
    "why": "손 씻을 일이 많아요||You will wash your hands a lot",
    "pos": [
-    48,
+    53,
     4,
-    16,
-    38
+    14,
+    34
    ],
    "img": "img/items/108.webp"
   },

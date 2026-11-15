@@ -541,10 +541,10 @@ window.OOTD_CITY("bkk", {
    "name": "쿨링 미스트||Cooling mist",
    "why": "걷다가 한 번||A spritz mid-walk",
    "pos": [
-    48,
+    53,
     4,
-    16,
-    38
+    14,
+    34
    ],
    "img": "img/items/103.webp"
   },

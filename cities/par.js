@@ -655,10 +655,10 @@ window.OOTD_CITY("par", {
    "name": "온천수 미스트||Thermal water mist",
    "why": "건조한 실내에서||For dry rooms",
    "pos": [
-    48,
+    53,
     4,
-    16,
-    38
+    14,
+    34
    ],
    "img": "img/items/103.webp"
   },

@@ -497,10 +497,10 @@ window.OOTD_CITY("la", {
    "name": "SPF 50+ 선크림||SPF 50+ sunscreen",
    "why": "낮엔 2~3시간마다 덧바르기||Reapply every 2–3 hours in daylight",
    "pos": [
-    48,
+    53,
     4,
-    16,
-    38
+    14,
+    34
    ]
   },
   {

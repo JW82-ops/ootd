@@ -646,10 +646,10 @@ window.OOTD_CITY("sel", {
    "name": "핸드크림||Hand cream",
    "why": "건조한 실내에서 수시로||Often, in dry rooms",
    "pos": [
-    48,
+    53,
     4,
-    16,
-    38
+    14,
+    34
    ],
    "img": "img/items/108.webp"
   },

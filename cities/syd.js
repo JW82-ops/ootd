@@ -543,10 +543,10 @@ window.OOTD_CITY("syd", {
    "name": "애프터선 젤||After-sun gel",
    "why": "바다 다녀온 날 밤에||For the night after the beach",
    "pos": [
-    48,
+    53,
     4,
-    16,
-    38
+    14,
+    34
    ],
    "img": "img/items/105.webp"
   },
