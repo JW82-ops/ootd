@@ -23,6 +23,7 @@ window.OOTD_CITY("par", {
  "lat": 48.86,
  "lon": 2.35,
  "tz": "Europe/Paris",
+ "sizes": "EU",
  "currency": "EUR",
  "cur": {
   "code": "EUR",

@@ -23,6 +23,8 @@ window.OOTD_CITY("lis", {
  "lat": 38.72,
  "lon": -9.14,
  "tz": "Europe/Lisbon",
+ "sizes": "EU",
+ "wet": [11, 12, 1],
  "currency": "EUR",
  "cur": {
   "code": "EUR",

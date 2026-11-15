@@ -62,6 +62,8 @@ function checkCity(meta) {
   try { new Intl.DateTimeFormat('en-US', { timeZone: c.tz }); } catch (e) { err('unknown time zone ' + c.tz); }
   ['lat', 'lon', 'tz', 'mapX', 'mapY'].forEach((k) => { if (c[k] !== meta[k]) err(k + ' differs from cities/index.js'); });
   if (!ICONS[c.boardArt]) err('unknown boardArt icon ' + c.boardArt);
+  if (['US', 'EU', 'UK', 'JP'].indexOf(c.sizes) < 0) err('"sizes" should be US, EU, UK or JP');
+  if (c.wet && !(Array.isArray(c.wet) && c.wet.every((m) => m >= 1 && m <= 12))) err('"wet" should list months 1-12');
 
   const norms = arr('normals', 12, true);
   norms.forEach((p, i) => { if (!Array.isArray(p) || p.length !== 2 || !(p[0] >= p[1])) err('normals month ' + (i + 1) + ' should be [high, low]'); });

@@ -23,6 +23,8 @@ window.OOTD_CITY("tyo", {
  "lat": 35.68,
  "lon": 139.76,
  "tz": "Asia/Tokyo",
+ "sizes": "JP",
+ "wet": [6, 7, 9],
  "currency": "JPY",
  "cur": {
   "code": "JPY",

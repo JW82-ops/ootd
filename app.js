@@ -37,6 +37,7 @@
   };
 
   const state = {
+    cur: (() => { const s = store.get('cur', null); if (s) return s; const l = (navigator.language || 'ko').toLowerCase(); return l.indexOf('ko') === 0 ? 'KRW' : l.indexOf('ja') === 0 ? 'JPY' : l === 'en-gb' ? 'GBP' : l === 'en-au' ? 'AUD' : l === 'en-ca' ? 'CAD' : /^(de|fr|es|it|pt|nl)/.test(l) && l !== 'pt-br' ? 'EUR' : l.indexOf('th') === 0 ? 'THB' : l.indexOf('zh') === 0 ? 'CNY' : 'USD'; })(),
     lang: store.get('lang', null) || ((navigator.language || 'ko').toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en'),
     who: store.get('who', 'her'),
     date: store.get('date', null),
@@ -117,8 +118,14 @@
   const mapsUrl = (q) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
   const fmtUSD = (n) => '$' + n.toFixed(2);
   // KRW for one unit of a city's currency (null until live rates arrive).
-  const krwPer = (city) => (city.cur && state.rates && state.rates[city.cur.code] ? state.rates.KRW / state.rates[city.cur.code] : null);
-  const fmtKRW = (n) => '₩' + Math.round(n).toLocaleString('ko-KR');
+  // Money is shown in the traveller's own currency (KRW unless they pick another on the home screen).
+  const CURS = { KRW: '₩', USD: '$', EUR: '€', JPY: '¥', GBP: '£', AUD: 'A$', CAD: 'C$', CNY: 'CN¥', THB: '฿', SGD: 'S$', HKD: 'HK$', TWD: 'NT$' };
+  const homeName = () => (state.cur === 'KRW' ? '원화' : state.cur);
+  const cityCur = (city) => (city.money === 'krw' ? 'KRW' : city.money === 'usd' ? 'USD' : city.cur ? city.cur.code : null);
+  // How much home currency one unit of the city's currency buys (null until live rates arrive, or when they are the same money).
+  const krwPer = (city) => { const cc = cityCur(city); return cc && cc !== state.cur && state.rates && state.rates[cc] && state.rates[state.cur] ? state.rates[state.cur] / state.rates[cc] : null; };
+  const fmtKRW = (n) => CURS[state.cur] + (state.cur === 'KRW' || state.cur === 'JPY' ? Math.round(n).toLocaleString('en-US') : n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+  const fmtWon = (n) => '₩' + Math.round(n).toLocaleString('en-US');
 
   function todayIn(tz) {
     return new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
@@ -135,9 +142,10 @@
   function localDay(tz) {
     return new Intl.DateTimeFormat(state.lang === 'en' ? 'en-US' : 'ko-KR', state.lang === 'en' ? { timeZone: tz, month: 'short', day: 'numeric', weekday: 'short' } : { timeZone: tz, month: 'numeric', day: 'numeric', weekday: 'short' }).format(new Date());
   }
-  function hoursBehindSeoul(tz) {
+  const HOME_TZ = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul'; } catch (e) { return 'Asia/Seoul'; } })();
+  function hoursBehindSeoul(tz) {   // hours the city is behind the traveller's own clock
     const now = new Date();
-    return (tzOffsetMin('Asia/Seoul', now) - tzOffsetMin(tz, now)) / 60;
+    try { return (tzOffsetMin(HOME_TZ, now) - tzOffsetMin(tz, now)) / 60; } catch (e) { return (tzOffsetMin('Asia/Seoul', now) - tzOffsetMin(tz, now)) / 60; }
   }
   function fmtDate(d) {
     const [y, m, dd] = d.split('-').map(Number);
@@ -196,12 +204,17 @@
   function loadWx(city) {
     if (state.wxReq[city.id]) return;
     state.wxReq[city.id] = true;
-    const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + city.lat + '&longitude=' + city.lon +
-      '&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,uv_index_max,precipitation_probability_max' +
-      '&timezone=' + encodeURIComponent(city.tz) + '&forecast_days=16';
-    const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-    const tm = setTimeout(() => { if (ctrl) ctrl.abort(); }, 6000);
-    fetch(url, ctrl ? { signal: ctrl.signal } : undefined).then((r) => { clearTimeout(tm); if (!r.ok) throw new Error('wx ' + r.status); return r.json(); })
+    // Extra daily fields (rain, snow, wind, feels-like) are asked for first; if the service rejects them we fall back to the basics.
+    const BASE = 'temperature_2m_max,temperature_2m_min,uv_index_max,precipitation_probability_max';
+    const MORE = ',weather_code,precipitation_sum,snowfall_sum,wind_speed_10m_max,apparent_temperature_max,apparent_temperature_min';
+    const get = (daily) => {
+      const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + city.lat + '&longitude=' + city.lon +
+        '&current=temperature_2m,weather_code&daily=' + daily + '&timezone=' + encodeURIComponent(city.tz) + '&forecast_days=16';
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const tm = setTimeout(() => { if (ctrl) ctrl.abort(); }, 6000);
+      return fetch(url, ctrl ? { signal: ctrl.signal } : undefined).then((r) => { clearTimeout(tm); if (!r.ok) throw new Error('wx ' + r.status); return r.json(); });
+    };
+    get(BASE + MORE).catch(() => get(BASE))
       .then((j) => { state.wx[city.id] = { ok: true, current: j.current, daily: j.daily }; refresh(); })
       .catch(() => { state.wx[city.id] = { ok: false }; refresh(); });
   }
@@ -209,7 +222,7 @@
     if (state.fxReq) return;
     state.fxReq = true;
     fetch('https://open.er-api.com/v6/latest/USD').then((r) => { if (!r.ok) throw new Error('fx'); return r.json(); })
-      .then((j) => { if (j && j.rates && j.rates.KRW) { state.fx = j.rates.KRW; state.rates = j.rates; refresh(); } })
+      .then((j) => { if (j && j.rates && j.rates.KRW) { state.rates = j.rates; state.fx = state.cur === 'USD' ? null : j.rates[state.cur] || null; refresh(); } })
       .catch(() => { state.fx = null; });
   }
 
@@ -220,11 +233,29 @@
     if (w && w.ok && w.daily && w.daily.time) {
       const i = w.daily.time.indexOf(d);
       if (i >= 0) {
-        return { max: Math.round(w.daily.temperature_2m_max[i]), min: Math.round(w.daily.temperature_2m_min[i]), uv: w.daily.uv_index_max[i], pop: w.daily.precipitation_probability_max[i], src: 'forecast', date: d };
+        const dl = w.daily, at = (k) => (dl[k] && dl[k][i] != null ? dl[k][i] : null);
+        return { max: Math.round(dl.temperature_2m_max[i]), min: Math.round(dl.temperature_2m_min[i]), uv: dl.uv_index_max[i], pop: dl.precipitation_probability_max[i],
+          code: at('weather_code'), rain: at('precipitation_sum'), snow: at('snowfall_sum'), wind: at('wind_speed_10m_max'), feelMax: at('apparent_temperature_max'), feelMin: at('apparent_temperature_min'), src: 'forecast', date: d };
       }
     }
     const m = +d.slice(5, 7) - 1;
-    return { max: city.normals[m][0], min: city.normals[m][1], uv: null, pop: null, src: 'normal', date: d };
+    return { max: city.normals[m][0], min: city.normals[m][1], uv: null, pop: null, wet: (city.wet || []).indexOf(m + 1) >= 0, src: 'normal', date: d };
+  }
+  // What the day's weather asks for beyond temperature: a short label for the weather strip and things to add to the look.
+  function conditions(city, w) {
+    const out = [];
+    const add = (label, items) => out.push({ label, items: items || [] });
+    const item = (icon, c, name, note) => ({ slot: null, icon, c, name, note });
+    const snowy = (w.snow != null && w.snow > 0) || [71, 73, 75, 77, 85, 86].indexOf(w.code) >= 0;
+    const rainy = !snowy && ((w.pop != null && w.pop >= 50) || (w.rain != null && w.rain >= 1) || (w.code != null && ((w.code >= 51 && w.code <= 67) || (w.code >= 80 && w.code <= 82) || w.code >= 95)));
+    if (snowy) add('눈 예보', [item('boots', '#8A5A3B', '미끄럽지 않은 신발', '눈길 대비'), item('knit', '#F2457C', '장갑·목도리', '눈 오는 날')]);
+    if (rainy) add(w.pop != null ? '비 ' + w.pop + '%' : '비 예보', [item('umbrella', '#2D5BFF', '접이식 우산', w.pop != null ? '비 올 확률 ' + w.pop + '%' : '비 예보')].concat(w.rain != null && w.rain >= 10 ? [item('boots', '#141210', '방수 신발', '비가 많이 와요')] : []));
+    if (w.wet && !rainy) add('우기 — 소나기 대비', [item('umbrella', '#2D5BFF', '접이식 우산', '우기엔 갑자기 쏟아져요')]);
+    if (w.wind != null && w.wind >= 30) add('바람 강함', [item('jacket', '#3A3F5C', '바람막이', '바람이 세요')]);
+    if (w.feelMax != null && w.max >= 26 && w.feelMax - w.max >= 3) add('체감 ' + Math.round(w.feelMax) + '°');
+    if (w.feelMin != null && w.min <= 10 && w.min - w.feelMin >= 4) add('체감 ' + Math.round(w.feelMin) + '°', snowy ? [] : [item('knit', '#F2457C', '목도리', '체감 온도가 낮아요')]);
+    if (w.uv != null && w.uv >= 8) add('자외선 매우 강함', [item('hat', '#F3EAD8', '챙 있는 모자', '자외선 지수 ' + Math.round(w.uv))]);
+    return out;
   }
   const bucketOf = (w, city) => (w.max >= 27 ? 'hot' : w.max >= 20 ? 'mild' : (w.max < 8 && city.looks.cold) ? 'cold' : 'cool');
   function lookFor(city) {
@@ -232,8 +263,11 @@
     const b = bucketOf(w, city);
     const look = city.looks[b];
     const items = look[state.who].slice();
-    if (w.pop != null && w.pop >= 50) items.push({ slot: null, icon: 'umbrella', c: '#2D5BFF', name: '접이식 우산', note: '비 올 확률 ' + w.pop + '%' });
-    return { w, b, look, items };
+    const cond = conditions(city, w);
+    const hasHat = items.some((it) => it.icon === 'hat' || it.icon === 'cap');
+    const hasBoots = items.some((it) => it.icon === 'boots');
+    cond.forEach((cd) => cd.items.forEach((x) => { if (x.icon === 'hat' && hasHat) return; if (x.icon === 'boots' && hasBoots) return; if (!items.some((it) => it.name === x.name)) items.push(x); }));
+    return { w, b, look, items, cond };
   }
 
   /* ---------- router ---------- */
@@ -410,7 +444,8 @@ ${store.get('seen', false) ? '' : introHtml()}`;
       <div style="flex:none;min-width:96px;text-align:center"><div class="anton" style="font-size:11px;letter-spacing:2px">MY TRIP</div><div class="anton" style="font-size:38px;line-height:1;color:#F2457C;text-shadow:2px 2px 0 #141210">${big}</div></div>
       <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700">${sub}</span>
         <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700">여행 도시<select data-trip style="flex:1;min-width:0;min-height:36px;border:2px solid #141210;border-radius:8px;background:#F3EAD8;padding:0 6px;font-size:13px;font-weight:700">${open.slice().sort((x, y) => C[x].en.localeCompare(C[y].en)).map((id) => `<option value="${id}"${city.id === id ? ' selected' : ''}>${esc(TR(C[id].name))}</option>`).join('')}</select></label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700">가는 날<input type="date" data-date value="${state.date || ''}" style="min-height:36px;border:2px solid #141210;border-radius:8px;background:#F3EAD8;padding:0 6px;font-size:13px"></label></div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700">가는 날<input type="date" data-date value="${state.date || ''}" style="min-height:36px;border:2px solid #141210;border-radius:8px;background:#F3EAD8;padding:0 6px;font-size:13px"></label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700">내 통화<select data-cur style="min-height:36px;border:2px solid #141210;border-radius:8px;background:#F3EAD8;padding:0 6px;font-size:13px;font-weight:700">${Object.keys(CURS).map((k) => `<option value="${k}"${state.cur === k ? ' selected' : ''}>${k} ${CURS[k]}</option>`).join('')}</select></label></div>
     </section>`;
   }
 
@@ -595,6 +630,7 @@ ${store.get('seen', false) ? '' : introHtml()}`;
       render({ keepScroll: true });
       toast(state.date ? 'D-day를 맞췄어요' : '날짜를 지웠어요');
     }));
+    $app.querySelectorAll('[data-cur]').forEach((b) => b.addEventListener('change', () => { state.cur = b.value; store.set('cur', state.cur); state.fx = state.rates && state.cur !== 'USD' ? state.rates[state.cur] || null : null; toast('내 통화를 바꿨어요'); }));
     $app.querySelectorAll('[data-trip]').forEach((b) => b.addEventListener('change', () => { state.trip = b.value; store.set('trip', state.trip); render({ keepScroll: true }); }));
     $app.querySelectorAll('[data-unsave]').forEach((b) => b.addEventListener('click', () => { toggleCloset({ id: b.getAttribute('data-unsave') }); render({ keepScroll: true }); toast('옷장에서 뺐어요'); }));
     const introBtn = $app.querySelector('[data-intro-close]');
@@ -658,6 +694,7 @@ ${tocHtml(city, r.idx)}
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="anton" style="font-size:24px;line-height:1">${w.max}° / ${w.min}°</span><span style="font-size:11px;font-weight:700">${src}</span></div>
         <div style="font-size:12px;font-weight:500;margin-top:2px">${opts && opts.extra ? opts.extra(w) : ''}</div>
+        ${(() => { const cd = conditions(city, w); return cd.length ? `<div class="wx-tags">${cd.map((x) => `<span>${esc(x.label)}</span>`).join('')}</div>` : ''; })()}
       </div>
       <label style="display:flex;flex-direction:column;gap:2px;font-size:10px;font-weight:700">여행 날짜<input type="date" data-date value="${w.date}"></label>
     </div>`;
@@ -774,10 +811,11 @@ ${scene}
     else if (w && !w.ok) { const m = +todayIn(city.tz).slice(5, 7) - 1; wxV = city.normals[m][0] + '° / ' + city.normals[m][1] + '°'; wxD = '이번 달 평년 낮·밤 기온'; }
     const kr = city.money === 'krw';
     const intl = city.money === 'intl', per = krwPer(city);
-    const fxV = kr ? '₩ KRW' : intl ? (per ? fmtKRW(per * city.cur.unit) : city.cur.code + ' ' + city.cur.sym) : state.fx ? '₩' + Math.round(state.fx).toLocaleString('ko-KR') : 'USD $';
-    const fxD = kr ? '팁 없음 · 가격에 부가세 포함' : intl ? (per ? city.cur.sym + city.cur.unit + ' 기준 (실시간 환율)' : '현지 통화 · ' + city.cur.code) : state.fx ? '1달러 기준 (실시간 환율)' : '식당 팁 18~20%가 보통';
+    const fxV = kr ? (per ? fmtKRW(per * 10000) : '₩ KRW') : intl ? (per ? fmtKRW(per * city.cur.unit) : city.cur.code + ' ' + city.cur.sym) : per ? fmtKRW(per) : 'USD $';
+    const fxD = kr ? (per ? '₩10,000 기준 (실시간 환율)' : '팁 없음 · 가격에 부가세 포함') : intl ? (per ? city.cur.sym + city.cur.unit + ' 기준 (실시간 환율)' : '현지 통화 · ' + city.cur.code) : per ? '1달러 기준 (실시간 환율)' : '식당 팁 18~20%가 보통';
+    const home = HOME_TZ === 'Asia/Seoul' ? '한국' : '내 시간';
     const live = [
-      { k: 'LOCAL TIME', v: `<span data-clock>${esc(localTime(city.tz))}</span>`, d: `${esc(localDay(city.tz))} · ${diff === 0 ? '한국 시간 그대로예요' : diff > 0 ? '한국보다 ' + diff + '시간 느려요' : '한국보다 ' + (-diff) + '시간 빨라요'}` },
+      { k: 'LOCAL TIME', v: `<span data-clock>${esc(localTime(city.tz))}</span>`, d: `${esc(localDay(city.tz))} · ${diff === 0 ? (home === '한국' ? '한국 시간 그대로예요' : '내 시간과 같아요') : diff > 0 ? home + '보다 ' + diff + '시간 느려요' : home + '보다 ' + (-diff) + '시간 빨라요'}` },
       { k: 'WEATHER', v: wxV, d: wxD },
       { k: 'MONEY', v: fxV, d: fxD }
     ];
@@ -1022,17 +1060,19 @@ ${city.read.map((g) => `<div class="section"><div class="rule"><span>${g.k}</spa
   const taxRate = (city) => (state.taxRate != null ? state.taxRate : city.tax[0].rate);
   function shopHtml(city) {
     const p = parseFloat(String(state.shopPrice).replace(/,/g, ''));
-    if (!(p > 0)) return '<p class="muted" style="font-size:13px;margin:12px 0 0">가격을 넣으면 세금 포함 금액과 원화가 나와요.</p>';
+    if (!(p > 0)) return '<p class="muted" style="font-size:13px;margin:12px 0 0">가격을 넣으면 세금 포함 금액이 나와요.</p>';
     const r = taxRate(city);
     const tax = p * r / 100, total = p + tax;
-    const krw = state.fx ? `<div><small>원화 (실시간)</small><b>${fmtKRW(total * state.fx)}</b></div>` : `<div><small>원화</small><b>—</b></div>`;
+    const krw = state.fx ? `<div><small>${homeName()} (실시간)</small><b>${fmtKRW(total * state.fx)}</b></div>` : state.cur === 'USD' ? '' : `<div><small>${homeName()}</small><b>—</b></div>`;
     return `<div class="result"><div><small>세금 ${r}%</small><b>${fmtUSD(tax)}</b></div><div><small>결제 금액</small><b>${fmtUSD(total)}</b></div>${krw}</div>`;
   }
 
   function splitHtmlKr() {
     const amt = parseFloat(String(state.bill).replace(/,/g, ''));
     if (!(amt > 0)) return '<p class="muted" style="font-size:13px;margin:12px 0 0">금액을 넣으면 1인당 금액이 나와요.</p>';
-    return `<div class="result" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div><small>합계</small><b>${fmtKRW(amt)}</b></div><div><small>1인당 (${state.split}명)</small><b>${fmtKRW(Math.ceil(amt / state.split / 100) * 100)}</b></div></div><p class="muted" style="font-size:12px;margin:8px 0 0">1인당 금액은 100원 단위로 올림했어요.</p>`;
+    const each = Math.ceil(amt / state.split / 100) * 100;
+    const per = state.cur !== 'KRW' && state.rates && state.rates[state.cur] ? state.rates[state.cur] / state.rates.KRW : null;
+    return `<div class="result" style="grid-template-columns:repeat(${per ? 3 : 2},minmax(0,1fr))"><div><small>합계</small><b>${fmtWon(amt)}</b></div><div><small>1인당 (${state.split}명)</small><b>${fmtWon(each)}</b></div>${per ? `<div><small>1인당 ${homeName()}</small><b>${fmtKRW(each * per)}</b></div>` : ''}</div><p class="muted" style="font-size:12px;margin:8px 0 0">1인당 금액은 100원 단위로 올림했어요.</p>`;
   }
   function pToolsKr(city) {
     return `
@@ -1050,22 +1090,24 @@ ${head(7, 'TOOLS', '같이 간 사람과 깔끔하게')}
     <li>인기 팝업·맛집은 현장 대기 앱이나 예약이 필요한 곳이 많아요.</li>
     <li>시장에선 현금이나 계좌이체가 편할 때가 있어요.</li>
   </ul>
-</section>`;
+</section>
+${sizeHtml(city)}`;
   }
 
   function fxHtml(city) {
     const amt = parseFloat(String(state.bill).replace(/,/g, ''));
     const per = krwPer(city);
-    if (!(amt > 0)) return '<p class="muted" style="font-size:13px;margin:12px 0 0">금액을 넣으면 원화와 1인당 금액이 나와요.</p>';
+    if (!(amt > 0)) return '<p class="muted" style="font-size:13px;margin:12px 0 0">금액을 넣으면 내 통화와 1인당 금액이 나와요.</p>';
     const each = amt / state.split;
     const fmtL = (n) => city.cur.sym + (city.cur.code === 'JPY' ? Math.round(n).toLocaleString('en-US') : n.toFixed(2));
-    return `<div class="result"><div><small>원화 (실시간)</small><b>${per ? fmtKRW(amt * per) : '—'}</b></div><div><small>1인당 (${state.split}명)</small><b>${fmtL(each)}</b></div><div><small>1인당 원화</small><b>${per ? fmtKRW(each * per) : '—'}</b></div></div>${per ? '' : '<p class="muted" style="font-size:12px;margin:8px 0 0">환율을 불러오지 못했어요. 연결되면 원화가 표시돼요.</p>'}`;
+    if (cityCur(city) === state.cur) return `<div class="result" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div><small>합계</small><b>${fmtL(amt)}</b></div><div><small>1인당 (${state.split}명)</small><b>${fmtL(each)}</b></div></div>`;
+    return `<div class="result"><div><small>${homeName()} (실시간)</small><b>${per ? fmtKRW(amt * per) : '—'}</b></div><div><small>1인당 (${state.split}명)</small><b>${fmtL(each)}</b></div><div><small>1인당 ${homeName()}</small><b>${per ? fmtKRW(each * per) : '—'}</b></div></div>${per ? '' : '<p class="muted" style="font-size:12px;margin:8px 0 0">환율을 불러오지 못했어요. 연결되면 내 통화로 표시돼요.</p>'}`;
   }
   function pToolsIntl(city) {
     return `
 ${head(7, 'TOOLS', '현지에서 바로 쓰는 계산기')}
 <section class="card tool" aria-label="환율 계산기">
-  <div style="display:flex;align-items:center;justify-content:space-between"><h3 class="anton" style="margin:0;font-size:20px;font-weight:400">${esc(city.cur.code)} → KRW</h3><span class="pen" style="font-size:19px">얼마지? 바로 계산!</span></div>
+  <div style="display:flex;align-items:center;justify-content:space-between"><h3 class="anton" style="margin:0;font-size:20px;font-weight:400">${esc(city.cur.code)}${city.cur.code === state.cur ? '' : ' → ' + state.cur}</h3><span class="pen" style="font-size:19px">얼마지? 바로 계산!</span></div>
   <label class="field" style="margin-top:10px"><span class="anton" style="font-size:24px">${esc(city.cur.sym)}</span><input data-kbill inputmode="decimal" placeholder="현지 금액" value="${esc(state.bill)}" aria-label="현지 금액"></label>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px"><span style="font-size:13px;font-weight:700">나눠 낼 사람</span><div class="stepper"><button type="button" data-ksplit="-1" aria-label="한 명 빼기">−</button><output data-ksplitout>${state.split}</output><button type="button" data-ksplit="1" aria-label="한 명 더하기">+</button></div></div>
   <div data-kout>${fxHtml(city)}</div>
@@ -1073,17 +1115,31 @@ ${head(7, 'TOOLS', '현지에서 바로 쓰는 계산기')}
 <section class="card tool" aria-label="알아 두면 좋은 것">
   <h3 class="anton" style="margin:0;font-size:20px;font-weight:400">GOOD TO KNOW</h3>
   <ul style="margin:10px 0 0;padding-left:18px;font-size:14px;line-height:1.7">${city.know.map((k) => `<li>${esc(k)}</li>`).join('')}</ul>
+</section>
+${sizeHtml(city)}`;
+  }
+
+  // Korean sizes against the region the traveller is shopping in.
+  const SIZE_COL = { US: 1, EU: 2, UK: 3, JP: 4 };
+  function sizeHtml(city) {
+    const g = state.sizeG, t = state.sizeT;
+    const reg = state.sizeR || city.sizes || (city.tools === 'us' ? 'US' : 'EU');
+    const rows = SIZES[g][t], col = SIZE_COL[reg];
+    return `<section class="card tool" aria-label="사이즈 변환표">
+  <h3 class="anton" style="margin:0;font-size:20px;font-weight:400">SIZE GUIDE</h3>
+  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+    <div class="seg" role="group" aria-label="성별"><button type="button" data-sg="women" aria-pressed="${g === 'women'}">여성</button><button type="button" data-sg="men" aria-pressed="${g === 'men'}">남성</button></div>
+    <div class="seg" role="group" aria-label="종류"><button type="button" data-st="clothes" aria-pressed="${t === 'clothes'}">옷</button><button type="button" data-st="shoes" aria-pressed="${t === 'shoes'}">신발</button></div>
+  </div>
+  <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap" role="group" aria-label="사이즈 기준">${Object.keys(SIZE_COL).map((k) => `<button type="button" class="chip" data-sr="${k}" aria-pressed="${reg === k}">${k}</button>`).join('')}</div>
+  <table class="size-table"><thead><tr><th>${t === 'shoes' ? '한국 (mm)' : '한국'}</th><th>${reg}</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${r[0]}</td><td><b>${r[col]}</b></td></tr>`).join('')}</tbody></table>
+  <p class="muted" style="font-size:12px;margin:10px 0 0">일반적인 기준이에요. 브랜드마다 달라서 꼭 입어 보세요.</p>
 </section>`;
   }
 
   function pTools(city) {
     if (city.tools === 'kr') return pToolsKr(city);
     if (city.tools === 'intl') return pToolsIntl(city);
-    const g = state.sizeG, t = state.sizeT;
-    const rows = SIZES[g][t];
-    const table = t === 'clothes'
-      ? `<table class="size-table"><thead><tr><th>한국</th><th>US 사이즈</th>${g === 'women' ? '<th>US 숫자</th>' : ''}</tr></thead><tbody>${rows.map((r) => `<tr><td>${r[0]}</td><td><b>${r[1]}</b></td>${g === 'women' ? `<td>${r[2]}</td>` : ''}</tr>`).join('')}</tbody></table>`
-      : `<table class="size-table"><thead><tr><th>한국 (mm)</th><th>US</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${r[0]}</td><td><b>${r[1]}</b></td></tr>`).join('')}</tbody></table>`;
     return `
 ${head(7, 'TOOLS', '현지에서 바로 쓰는 계산기')}
 <section class="card tool" aria-label="팁 계산기">
@@ -1101,15 +1157,7 @@ ${head(7, 'TOOLS', '현지에서 바로 쓰는 계산기')}
   <div data-shopout>${shopHtml(city)}</div>
   <p class="muted" style="font-size:12px;margin:10px 0 0">${esc(city.taxNote)}</p>
 </section>
-<section class="card tool" aria-label="사이즈 변환표">
-  <h3 class="anton" style="margin:0;font-size:20px;font-weight:400">SIZE GUIDE</h3>
-  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-    <div class="seg" role="group" aria-label="성별"><button type="button" data-sg="women" aria-pressed="${g === 'women'}">여성</button><button type="button" data-sg="men" aria-pressed="${g === 'men'}">남성</button></div>
-    <div class="seg" role="group" aria-label="종류"><button type="button" data-st="clothes" aria-pressed="${t === 'clothes'}">옷</button><button type="button" data-st="shoes" aria-pressed="${t === 'shoes'}">신발</button></div>
-  </div>
-  ${table}
-  <p class="muted" style="font-size:12px;margin:10px 0 0">일반적인 기준이에요. 미국 옷은 한 치수 크게 나오는 편이라 꼭 입어 보세요.</p>
-</section>`;
+${sizeHtml(city)}`;
   }
 
   function packGroups(city) {
@@ -1372,8 +1420,11 @@ ${head(10, 'NEXT STOP', soon.length ? '다음 도시를 준비 중이에요' : '
         $app.querySelectorAll('[data-tax]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
         shopOut.innerHTML = shopHtml(city);
       }));
+    }
+    if (page.id === 'tools') {
       $app.querySelectorAll('[data-sg]').forEach((b) => b.addEventListener('click', () => { state.sizeG = b.getAttribute('data-sg'); refresh(); }));
       $app.querySelectorAll('[data-st]').forEach((b) => b.addEventListener('click', () => { state.sizeT = b.getAttribute('data-st'); refresh(); }));
+      $app.querySelectorAll('[data-sr]').forEach((b) => b.addEventListener('click', () => { state.sizeR = b.getAttribute('data-sr'); refresh(); }));
     }
 
     if (page.id === 'pack') {

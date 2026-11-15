@@ -23,6 +23,7 @@ window.OOTD_CITY("syd", {
  "lat": -33.87,
  "lon": 151.21,
  "tz": "Australia/Sydney",
+ "sizes": "UK",
  "currency": "AUD",
  "cur": {
   "code": "AUD",

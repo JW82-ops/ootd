@@ -10,6 +10,7 @@ window.OOTD_CITY("la", {
  "lat": 34.05,
  "lon": -118.24,
  "tz": "America/Los_Angeles",
+ "sizes": "US",
  "currency": "USD",
  "tagline": "해 질 녘이 제일 예쁜 도시||The city that's prettiest at sunset",
  "cover": "img/la/cover.webp",

@@ -23,6 +23,8 @@ window.OOTD_CITY("bkk", {
  "lat": 13.75,
  "lon": 100.5,
  "tz": "Asia/Bangkok",
+ "sizes": "US",
+ "wet": [5, 6, 7, 8, 9, 10],
  "currency": "THB",
  "cur": {
   "code": "THB",

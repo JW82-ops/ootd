@@ -10,6 +10,8 @@ window.OOTD_CITY("sel", {
  "lat": 37.57,
  "lon": 126.98,
  "tz": "Asia/Seoul",
+ "sizes": "US",
+ "wet": [7, 8],
  "currency": "KRW",
  "tagline": "아는 도시를 여행자처럼||A city you know, seen like a traveller",
  "cover": "img/sel/cover.webp",

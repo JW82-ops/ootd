@@ -23,6 +23,7 @@ window.OOTD_CITY("ny", {
  "lat": 40.71,
  "lon": -74.01,
  "tz": "America/New_York",
+ "sizes": "US",
  "currency": "USD",
  "tagline": "걷는 만큼 보이는 도시||The city that rewards walking",
  "nick": "뉴욕||New York",
