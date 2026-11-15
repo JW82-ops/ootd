@@ -642,7 +642,7 @@ ${tocHtml(city, r.idx)}
   }
 
   function head(n, title, sub, right) {
-    return `<div class="page-head"><div style="display:flex;align-items:flex-end;gap:10px"><span class="page-num">${String(curIdx).padStart(2, '0')}</span><div><h2 class="page-title" style="margin:0">${title}</h2><div class="page-sub">${sub}</div></div></div>${right || ''}</div>`;
+    return `<div class="page-head"><div style="display:flex;align-items:flex-end;gap:10px;flex:1;min-width:0"><span class="page-num">${String(curIdx).padStart(2, '0')}</span><div><h2 class="page-title" style="margin:0">${title}</h2><div class="page-sub">${sub}</div></div></div>${right || ''}</div>`;
   }
 
   function wxLine(city, opts) {
@@ -860,6 +860,31 @@ ${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
 </div>`;
   }
 
+  // Paper-collage backdrop for the look and beauty boards: torn colour bands, a halftone sunburst, like the covers.
+  function collageBg(seedStr, short) {
+    let seed = 7; for (let i = 0; i < seedStr.length; i++) seed = (seed * 31 + seedStr.charCodeAt(i)) % 233280;
+    const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    const H = short ? 380 : 520;
+    const torn = (y0, y1, slope, col) => {      // a band across the board with ragged top and bottom edges
+      let top = '', bot = '';
+      for (let x = -10; x <= 370; x += 18) { top += `${x},${(y0 + slope * x + (rnd() - 0.5) * 9).toFixed(1)} `; bot = `${x},${(y1 + slope * x + (rnd() - 0.5) * 9).toFixed(1)} ` + bot; }
+      return `<polygon points="${top}${bot}" fill="${col}"/>`;
+    };
+    const cols = [['#F2457C', '#FFD23F', '#2D5BFF'], ['#FFD23F', '#2D5BFF', '#F2457C'], ['#2D5BFF', '#F2457C', '#FFD23F']][Math.floor(rnd() * 3)];
+    const s = (rnd() - 0.5) * 0.24, y = H * (0.5 + rnd() * 0.08);
+    const cx = 250 + rnd() * 50, cy = short ? 120 : 150;
+    let star = '';
+    for (let i = 0; i < 28; i++) { const ang = i / 28 * Math.PI * 2, rad = i % 2 ? 78 : 128; star += `${(cx + Math.cos(ang) * rad).toFixed(1)},${(cy + Math.sin(ang) * rad).toFixed(1)} `; }
+    const id = 'ht' + seed;
+    return `<svg class="board-bg" viewBox="0 0 360 ${H}" preserveAspectRatio="none" aria-hidden="true">
+      <defs><pattern id="${id}" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.3" fill="#141210"/></pattern></defs>
+      <rect width="360" height="${H}" fill="#FDE9C8"/>
+      <polygon points="${star}" fill="#FFD23F"/><polygon points="${star}" fill="url(#${id})" opacity=".16"/>
+      ${torn(y, y + H * 0.2, s, cols[0])}${torn(y + H * 0.17, y + H * 0.33, s * 0.6, cols[1])}${torn(y + H * 0.3, y + H * 0.62, s * 1.3, cols[2])}
+      <rect width="360" height="${H}" fill="url(#${id})" opacity=".05"/>
+    </svg>`;
+  }
+
   function pieces(items) {
     return items.filter((it) => it.slot).map((it, i) => {
       const p = SLOTS[it.slot];
@@ -875,7 +900,8 @@ ${head(0, 'NEIGHBORHOODS', '동네마다 옷이 달라요')}
     return `
 ${head(2, 'THE LOOK', esc(L.look.ko), `<div class="seg" role="group" aria-label="룩 선택"><button type="button" data-who="her" aria-pressed="${state.who === 'her'}">HER</button><button type="button" data-who="him" aria-pressed="${state.who === 'him'}">HIM</button></div>`)}
 ${wxLine(city, { extra: () => `이 날씨엔 <b>${esc(L.look.name)}</b> — ${esc(L.look.tip)}` })}
-<div class="board" style="container-type:inline-size">
+<div class="board collage" style="container-type:inline-size">
+  ${collageBg(city.id + L.b + state.who)}
   ${L.items.some((it) => it.img)
     ? `<div style="position:absolute;left:4%;top:3%;width:42%;height:22%;background:#141210;color:#F3EAD8;transform:rotate(-3deg);display:flex;flex-direction:column;justify-content:center;padding:0 5%"><span class="anton" style="font-size:3.4cqw;letter-spacing:.5cqw;color:#FFD23F">TODAY'S LOOK</span><span class="anton" style="font-size:7cqw;line-height:1.02">${esc(L.look.name)}</span><span class="pen" style="font-size:5.4cqw;line-height:1.1">${esc(fmtDate(L.w.date))} · ${L.w.max}° / ${L.w.min}°</span></div><div class="tape" style="left:16%;top:.5%;width:18%;height:3.6%;transform:rotate(-8deg)"></div>`
     : `<div style="position:absolute;left:3%;top:2%;width:44%;height:25%;background:#F3E6CF;display:flex;align-items:center;justify-content:center">${svgIcon(city.boardArt, '#F2457C')}</div>`}
@@ -894,12 +920,13 @@ ${wxLine(city, { extra: () => `이 날씨엔 <b>${esc(L.look.name)}</b> — ${es
     return `
 ${head(3, 'BEAUTY KIT', esc(city.beautySub))}
 ${wxLine(city, { extra: () => esc(note) })}
-<div class="board short" style="container-type:inline-size">
-  <div class="word" style="left:4%;top:5%;font-size:14cqw"><div>${esc(city.glow[0])}</div><div style="padding-left:9%;color:#F2457C">${esc(city.glow[1])}</div><div style="padding-left:3%">${esc(city.glow[2])}</div></div>
+<div class="board short collage" style="container-type:inline-size">
+  ${collageBg(city.id + 'beauty', true)}
+  <div class="word" style="left:4%;top:5%;font-size:${Math.max.apply(null, city.glow.map((g) => g.length)) >= 5 ? 11.5 : 14}cqw"><div>${esc(city.glow[0])}</div><div style="padding-left:9%;color:#F2457C">${esc(city.glow[1])}</div><div style="padding-left:3%">${esc(city.glow[2])}</div></div>
   ${city.beauty.map((b, i) => `<button class="piece" type="button" data-pick="${i}" aria-pressed="${state.pick === i}" aria-label="${i + 1}. ${esc(b.name)}" style="left:${b.pos[0]}%;top:${b.pos[1]}%;width:${b.pos[2]}%;height:${b.pos[3]}%">${art(b)}<span class="num">${i + 1}</span></button>`).join('')}
   ${city.beauty.some((b) => b.img) ? '' : `<div style="position:absolute;left:24%;top:80%;width:18%;height:13%;transform:rotate(-10deg)">${svgIcon('clip', '#FFD23F')}</div>`}
   ${burst('left:80%;top:40%;width:17cqw;height:17cqw;transform:rotate(12deg)', String(city.beauty.length), 'ITEMS', '5cqw', '2.5cqw')}
-  <div class="pen" style="position:absolute;left:4%;top:60%;font-size:6.2cqw;line-height:1.05;color:#C2185B;transform:rotate(-4deg)">${esc(city.beautyScribble[0])}<br>${esc(city.beautyScribble[1])}</div>
+  <div class="pen" style="position:absolute;left:4%;top:60%;padding:1.2cqw 2.4cqw;background:#FFFFFF;border:2px solid #141210;box-shadow:3px 3px 0 #141210;font-size:6.2cqw;line-height:1.05;color:#C2185B;transform:rotate(-4deg)">${esc(city.beautyScribble[0])}<br>${esc(city.beautyScribble[1])}</div>
 </div>
 <ol class="item-list">${city.beauty.map((b, i) => `<li data-row="${i}" class="${state.pick === i ? 'hl' : ''}"><span class="num">${i + 1}</span><span><b>${esc(b.name)}</b> <span class="muted">— ${esc(b.why)}</span></span></li>`).join('')}</ol>`;
   }
@@ -1176,7 +1203,7 @@ ${head(10, 'NEXT STOP', soon.length ? '다음 도시를 준비 중이에요' : '
     for (let i = 0; i < board.length; i++) {
       const it = board[i];
       const r = P(SLOTS[it.slot]);
-      if (it.img) { const ph = await loadImg(it.img); if (ph) { const k = Math.min(r[2] / ph.width, r[3] / ph.height); g.globalCompositeOperation = 'multiply'; g.drawImage(ph, r[0] + (r[2] - ph.width * k) / 2, r[1] + (r[3] - ph.height * k) / 2, ph.width * k, ph.height * k); g.globalCompositeOperation = 'source-over'; } }
+      if (it.img) { const ph = await loadImg(it.img); if (ph) { const k = Math.min(r[2] / ph.width, r[3] / ph.height); g.save(); g.shadowColor = 'rgba(20,18,16,.9)'; g.shadowOffsetX = 6; g.shadowOffsetY = 6; g.shadowBlur = 0; g.drawImage(ph, r[0] + (r[2] - ph.width * k) / 2, r[1] + (r[3] - ph.height * k) / 2, ph.width * k, ph.height * k); g.restore(); } }
       else await fit(IC[it.icon](it.c, it.a), r);
       g.fillStyle = INK; g.beginPath(); g.arc(r[0] + 8, r[1] + 8, 17, 0, Math.PI * 2); g.fill();
       g.fillStyle = '#F3EAD8'; g.font = "400 20px 'Anton', sans-serif"; g.textAlign = 'center'; g.fillText(String(i + 1), r[0] + 8, r[1] + 15); g.textAlign = 'left';
